@@ -1,0 +1,82 @@
+:root {
+  --background: #f6f8ff;
+  --foreground: #0f172a;
+  --muted: #5b6478;
+  --border: #e2e8f5;
+  --surface: #ffffff;
+  --surface-muted: #eef2ff;
+  --accent: #5046e5;
+  --accent-secondary: #f97316;
+  --accent-tertiary: #06b6d4;
+  --accent-pink: #ec4899;
+  --gradient-start: #5046e5;
+  --gradient-mid: #7c3aed;
+  --gradient-end: #06b6d4;
+}
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+}
+.mesh-bg {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(at 0% 0%, color-mix(in srgb, var(--accent) 18%, transparent) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, color-mix(in srgb, var(--accent-tertiary) 16%, transparent) 0px, transparent 45%);
+}
+.gradient-text {
+  background: linear-gradient(120deg, var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.pill {
+  display: inline-flex;
+  border-radius: 9999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
+}
+.btn-gradient {
+  background: linear-gradient(120deg, var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+  color: #fff;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.65rem 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+.btn-secondary {
+  border: 2px solid color-mix(in srgb, var(--accent) 25%, var(--border));
+  background: var(--surface);
+  color: var(--foreground);
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.65rem 1.25rem;
+  display: inline-flex;
+  text-decoration: none;
+}
+.glass-panel {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  backdrop-filter: blur(12px);
+}
+.card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 1rem;
+}
+.text-muted { color: var(--muted); }
+.border-border { border-color: var(--border); }
+.rich-content h2 { font-size: 1.35rem; font-weight: 600; margin-top: 1.5rem; color: var(--foreground); }
+.rich-content p { margin-top: 1rem; line-height: 1.65; color: var(--muted); }
+.rich-content a { color: var(--accent); }
+.container { max-width: 72rem; margin: 0 auto; padding: 0 1rem; }
+@media (min-width: 640px) { .container { padding: 0 1.5rem; } }
