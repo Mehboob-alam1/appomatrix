@@ -30,6 +30,21 @@ if ($path === '/admin/login') {
 Auth::require();
 
 if ($method === 'POST' && $path === '/admin/settings') {
+    $logoUrl = trim($_POST['logo_url'] ?? '');
+    if (!empty($_FILES['logo_file']['tmp_name']) && is_uploaded_file($_FILES['logo_file']['tmp_name'])) {
+        $ext = strtolower(pathinfo($_FILES['logo_file']['name'], PATHINFO_EXTENSION));
+        if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'svg', 'gif'], true)) {
+            $uploadDir = dirname(__DIR__) . '/uploads';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            $filename = 'logo.' . ($ext === 'jpeg' ? 'jpg' : $ext);
+            if (move_uploaded_file($_FILES['logo_file']['tmp_name'], $uploadDir . '/' . $filename)) {
+                $logoUrl = '/uploads/' . $filename;
+            }
+        }
+    }
+
     $repo->saveSettings([
         'head_html' => $_POST['head_html'] ?? '',
         'body_start_html' => $_POST['body_start_html'] ?? '',
@@ -43,6 +58,8 @@ if ($method === 'POST' && $path === '/admin/settings') {
         'contact_phone' => trim($_POST['contact_phone'] ?? ''),
         'contact_whatsapp' => trim($_POST['contact_whatsapp'] ?? ''),
         'contact_address' => trim($_POST['contact_address'] ?? ''),
+        'logo_url' => $logoUrl,
+        'site_name' => trim($_POST['site_name'] ?? ''),
     ]);
     redirect('/admin/settings?saved=1');
 }

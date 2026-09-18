@@ -20,6 +20,12 @@ if ($path === '/assets/site.css') {
     exit;
 }
 
+if ($path === '/assets/site.js') {
+    header('Content-Type: application/javascript; charset=utf-8');
+    readfile(__DIR__ . '/assets/site.js');
+    exit;
+}
+
 if ($method === 'POST' && $path === '/contact') {
     if (isset($_POST['_contact'])) {
         $repo->saveSubmission([

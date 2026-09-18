@@ -32,7 +32,8 @@ final class Repository
         $stmt = $this->db->prepare(
             'UPDATE site_settings SET head_html = ?, body_start_html = ?, body_end_html = ?, announcement_html = ?,
             blog_sidebar_html = ?, blog_in_article_html = ?, global_seo_extra = ?, calendly_url = ?,
-            contact_email = ?, contact_phone = ?, contact_whatsapp = ?, contact_address = ?, updated_at = ?
+            contact_email = ?, contact_phone = ?, contact_whatsapp = ?, contact_address = ?,
+            logo_url = ?, site_name = ?, updated_at = ?
             WHERE id = \'global\''
         );
         $stmt->execute([
@@ -40,8 +41,20 @@ final class Repository
             $data['announcement_html'] ?? '', $data['blog_sidebar_html'] ?? '', $data['blog_in_article_html'] ?? '',
             $data['global_seo_extra'] ?? '', $data['calendly_url'] ?? '',
             $data['contact_email'] ?? '', $data['contact_phone'] ?? '', $data['contact_whatsapp'] ?? '',
-            $data['contact_address'] ?? '', date('c'),
+            $data['contact_address'] ?? '', $data['logo_url'] ?? '', $data['site_name'] ?? '', date('c'),
         ]);
+    }
+
+    public function getBrandName(): string
+    {
+        $s = $this->getSettings();
+        $name = trim($s['site_name'] ?? '');
+        return $name !== '' ? $name : (string) config('site_name', 'Appo Matrix');
+    }
+
+    public function getLogoUrl(): string
+    {
+        return trim($this->getSettings()['logo_url'] ?? '');
     }
 
     /** @return list<array<string, mixed>> */

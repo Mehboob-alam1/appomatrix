@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { siteConfig } from "@/lib/site-config";
@@ -9,9 +10,16 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { cn } from "@/lib/cn";
 
-export function SiteHeader() {
+export function SiteHeader({
+  brandName = siteConfig.name,
+  logoUrl,
+}: {
+  brandName?: string;
+  logoUrl?: string;
+}) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const initial = brandName.charAt(0).toUpperCase();
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 glass-panel">
@@ -20,13 +28,24 @@ export function SiteHeader() {
           href="/"
           className="group flex min-w-0 shrink items-center gap-2 font-display text-base font-semibold sm:gap-2.5 sm:text-lg"
         >
-          <span
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent via-accent-pink to-accent-tertiary text-sm font-bold text-white shadow-md"
-            aria-hidden
-          >
-            A
-          </span>
-          <span className="truncate transition-colors group-hover:text-accent">{siteConfig.name}</span>
+          {logoUrl ? (
+            <Image
+              src={logoUrl}
+              alt={brandName}
+              width={132}
+              height={36}
+              className="h-9 w-auto max-w-[140px] object-contain"
+              unoptimized={logoUrl.startsWith("/uploads")}
+            />
+          ) : (
+            <span
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent via-accent-pink to-accent-tertiary text-sm font-bold text-white shadow-md"
+              aria-hidden
+            >
+              {initial}
+            </span>
+          )}
+          <span className="truncate transition-colors group-hover:text-accent">{brandName}</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Main">

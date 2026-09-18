@@ -103,5 +103,7 @@ export const siteSettings = sqliteTable("site_settings", {
   contactPhone: text("contact_phone"),
   contactWhatsapp: text("contact_whatsapp"),
   contactAddress: text("contact_address"),
+  logoUrl: text("logo_url"),
+  siteName: text("site_name"),
   updatedAt: text("updated_at"),
 });

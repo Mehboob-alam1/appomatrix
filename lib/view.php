@@ -8,7 +8,7 @@ function render(string $template, array $vars = []): void
     extract($vars);
     $contact = $repo->getContact();
     $settings = $repo->getSettings();
-    $siteName = (string) config('site_name', 'Appo Matrix');
+    $siteName = $repo->getBrandName();
     $pageTitle = $vars['pageTitle'] ?? $siteName;
     $metaDescription = $vars['metaDescription'] ?? 'Appo Matrix — software development agency in Gilgit-Baltistan, Pakistan.';
 

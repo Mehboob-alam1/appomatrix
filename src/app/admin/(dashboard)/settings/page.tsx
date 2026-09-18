@@ -64,6 +64,30 @@ export default async function AdminSettingsPage({ searchParams }: PageProps) {
         </AdminFormSection>
 
         <AdminFormSection
+          title="Brand & logo"
+          description="Site name and logo in the header. Logo URL can be /uploads/logo.png or any HTTPS image."
+        >
+          <label className={adminLabelClass}>
+            Site name
+            <input
+              name="siteName"
+              defaultValue={settings.siteName || siteConfig.name}
+              className={adminInputClass}
+              placeholder={siteConfig.name}
+            />
+          </label>
+          <label className={adminLabelClass}>
+            Logo URL
+            <input
+              name="logoUrl"
+              defaultValue={settings.logoUrl}
+              className={adminInputClass}
+              placeholder="/uploads/logo.svg"
+            />
+          </label>
+        </AdminFormSection>
+
+        <AdminFormSection
           title="Contact details"
           description="Shown in the footer, Contact page, About page, and WhatsApp button. Leave a field blank to use the built-in default."
         >

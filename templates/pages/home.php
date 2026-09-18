@@ -1,62 +1,76 @@
-<section class="relative overflow-hidden border-b py-12 sm:py-20" style="border-color: var(--border)">
-  <div class="container grid items-center gap-12 lg:grid-cols-2">
-    <div>
-      <span class="pill">Gilgit-Baltistan → Global clients</span>
-      <h1 class="mt-5 text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl">
-        Software that wins <span class="gradient-text">trust & revenue</span>
-      </h1>
-      <p class="mt-5 max-w-xl text-base text-muted sm:text-lg">Appo Matrix partners with founders and enterprises to design, build, and ship web, mobile, and SaaS products—with clear communication every step.</p>
-      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-        <a href="<?= e(site_url('/contact')) ?>" class="btn-gradient w-full justify-center sm:w-auto">Book a Free Consultation</a>
-        <a href="<?= e(site_url('/work')) ?>" class="btn-secondary w-full justify-center sm:w-auto">View Our Work</a>
+<section class="hero">
+  <div class="hero-blob hero-blob-a" aria-hidden="true"></div>
+  <div class="hero-blob hero-blob-b" aria-hidden="true"></div>
+  <div class="container hero-grid">
+    <div class="reveal">
+      <span class="pill">Gilgit-Baltistan → Global</span>
+      <h1 class="hero-title">Software that wins <span class="gradient-text">trust & revenue</span></h1>
+      <p class="lead">We design, build, and ship web, mobile, and SaaS—with clear communication every step.</p>
+      <div class="btn-row">
+        <a href="<?= e(site_url('/contact')) ?>" class="btn-gradient">Book a Free Consultation</a>
+        <a href="<?= e(site_url('/work')) ?>" class="btn-secondary">View Our Work</a>
       </div>
     </div>
-    <div class="glass-panel rounded-2xl p-5 sm:p-7">
-      <p class="text-sm font-semibold" style="color: var(--accent)">Why teams choose us</p>
-      <ul class="mt-5 space-y-4 text-sm">
-        <li class="card p-3">Ship faster — roadmaps you can follow</li>
-        <li class="card p-3">Build for reality — low bandwidth when needed</li>
-        <li class="card p-3">Talk to builders — meet the people writing code</li>
+    <div class="glass-panel card-pad reveal">
+      <p class="card-meta card-meta--accent">Why teams choose us</p>
+      <ul class="bullet-list">
+        <li class="card card-pad-sm">Ship faster — roadmaps you can follow</li>
+        <li class="card card-pad-sm">Build for reality — low bandwidth when needed</li>
+        <li class="card card-pad-sm">Talk to builders — meet the people writing code</li>
       </ul>
     </div>
   </div>
 </section>
-<section class="py-10">
-  <div class="container grid grid-cols-2 gap-4 md:grid-cols-4">
+
+<section class="section section--flush-top">
+  <div class="container grid grid-4">
     <?php foreach ([['120+','Projects'],['8+','Years'],['15+','Countries'],['94%','Retention']] as [$v,$l]): ?>
-      <div class="card rounded-2xl p-4 text-center sm:p-5">
-        <p class="text-2xl font-bold sm:text-3xl"><?= e($v) ?></p>
-        <p class="mt-1 text-xs text-muted sm:text-sm"><?= e($l) ?></p>
+      <div class="stat-card card card-hover reveal">
+        <p class="stat-value"><?= e($v) ?></p>
+        <p class="stat-label"><?= e($l) ?></p>
       </div>
     <?php endforeach; ?>
   </div>
 </section>
-<section class="py-16">
+
+<section class="section">
   <div class="container">
-    <h2 class="text-2xl font-semibold sm:text-3xl"><span class="gradient-text">Services built for growth</span></h2>
-    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="section-head reveal">
+      <div>
+        <span class="pill">What we do</span>
+        <h2><span class="gradient-text">Services built for growth</span></h2>
+      </div>
+    </div>
+    <div class="grid grid-sm-2 grid-lg-4">
       <?php foreach ($services as $s): ?>
-        <a href="<?= e(site_url('/services/' . $s['slug'])) ?>" class="card block p-5 transition hover:shadow-md">
-          <h3 class="font-semibold"><?= e($s['title']) ?></h3>
-          <p class="mt-2 text-sm text-muted"><?= e($s['short_description']) ?></p>
+        <a href="<?= e(site_url('/services/' . $s['slug'])) ?>" class="card card-hover card-pad reveal">
+          <h3 class="card-title"><?= e($s['title']) ?></h3>
+          <p class="card-text"><?= e($s['short_description']) ?></p>
         </a>
       <?php endforeach; ?>
     </div>
   </div>
 </section>
-<section class="border-y py-16" style="border-color: var(--border); background: color-mix(in srgb, var(--surface) 60%, transparent)">
+
+<section class="section section--alt">
   <div class="container">
-    <h2 class="text-2xl font-semibold">Featured work</h2>
-    <div class="mt-10 grid gap-6 md:grid-cols-3">
+    <div class="section-head reveal">
+      <div>
+        <span class="pill">Portfolio</span>
+        <h2>Featured work</h2>
+      </div>
+      <a href="<?= e(site_url('/work')) ?>" class="btn-secondary">All case studies</a>
+    </div>
+    <div class="grid grid-md-3">
       <?php foreach (array_slice($projects, 0, 3) as $p): ?>
-        <a href="<?= e(site_url('/work/' . $p['slug'])) ?>" class="card overflow-hidden">
+        <a href="<?= e(site_url('/work/' . $p['slug'])) ?>" class="card card-hover reveal" style="overflow:hidden">
           <?php if ($img = image_url($p['cover_image'])): ?>
-            <img src="<?= e($img) ?>" alt="<?= e($p['title']) ?>" class="aspect-video w-full object-cover">
+            <img src="<?= e($img) ?>" alt="<?= e($p['title']) ?>" class="media-16-10" loading="lazy">
           <?php endif; ?>
-          <div class="p-5">
-            <span class="text-xs font-semibold" style="color: var(--accent-tertiary)"><?= e($p['category']) ?></span>
-            <h3 class="mt-1 font-semibold"><?= e($p['title']) ?></h3>
-            <p class="mt-2 text-sm text-muted"><?= e($p['excerpt'] ?? '') ?></p>
+          <div class="card-pad">
+            <p class="card-meta"><?= e($p['category']) ?></p>
+            <h3 class="card-title"><?= e($p['title']) ?></h3>
+            <p class="card-text"><?= e($p['excerpt'] ?? '') ?></p>
           </div>
         </a>
       <?php endforeach; ?>

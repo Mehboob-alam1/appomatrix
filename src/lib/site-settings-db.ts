@@ -16,6 +16,8 @@ export type SiteSettingsRecord = {
   contactPhone: string;
   contactWhatsapp: string;
   contactAddress: string;
+  logoUrl: string;
+  siteName: string;
 };
 
 export type SiteContact = {
@@ -38,6 +40,8 @@ const DEFAULTS: SiteSettingsRecord = {
   contactPhone: "",
   contactWhatsapp: "",
   contactAddress: "",
+  logoUrl: "",
+  siteName: "",
 };
 
 function mapRow(row: typeof siteSettings.$inferSelect): SiteSettingsRecord {
@@ -54,7 +58,19 @@ function mapRow(row: typeof siteSettings.$inferSelect): SiteSettingsRecord {
     contactPhone: row.contactPhone ?? "",
     contactWhatsapp: row.contactWhatsapp ?? "",
     contactAddress: row.contactAddress ?? "",
+    logoUrl: row.logoUrl ?? "",
+    siteName: row.siteName ?? "",
   };
+}
+
+export function getSiteBrandName(): string {
+  const s = getSiteSettings();
+  const name = s.siteName.trim();
+  return name || siteConfig.name;
+}
+
+export function getSiteLogoUrl(): string {
+  return getSiteSettings().logoUrl.trim();
 }
 
 export function getSiteSettings(): SiteSettingsRecord {

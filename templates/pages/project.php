@@ -1,14 +1,15 @@
-<section class="py-12 sm:py-16">
-  <div class="container max-w-3xl">
+<section class="page-block">
+  <div class="container content-narrow reveal">
     <?php if ($img = image_url($project['cover_image'])): ?>
-      <img src="<?= e($img) ?>" alt="<?= e($project['title']) ?>" class="mb-8 aspect-video w-full rounded-2xl object-cover">
+      <img src="<?= e($img) ?>" alt="<?= e($project['title']) ?>" class="media-16-10" style="border-radius:var(--radius);margin-bottom:var(--space-3)">
     <?php endif; ?>
-    <p class="text-sm" style="color: var(--accent)"><?= e($project['category']) ?> · <?= e($project['client_name']) ?></p>
-    <h1 class="mt-2 text-3xl font-semibold"><?= e($project['title']) ?></h1>
+    <span class="pill"><?= e($project['category']) ?></span>
+    <h1 class="page-title"><?= e($project['title']) ?></h1>
+    <p class="card-text" style="-webkit-line-clamp:unset"><?= e($project['client_name']) ?></p>
     <?php foreach (['problem' => 'Problem', 'solution' => 'Solution', 'result' => 'Result'] as $key => $label): ?>
       <?php if (!empty($project[$key])): ?>
-        <h2 class="mt-10 text-xl font-semibold"><?= e($label) ?></h2>
-        <div class="rich-content mt-3"><?= rich_html($project[$key]) ?></div>
+        <h2 class="card-title" style="margin-top:var(--space-4)"><?= e($label) ?></h2>
+        <div class="rich-content"><?= rich_html($project[$key]) ?></div>
       <?php endif; ?>
     <?php endforeach; ?>
   </div>

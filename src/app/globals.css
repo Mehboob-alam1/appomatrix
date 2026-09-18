@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f8ff;
+  --background: #e8ecf8;
   --foreground: #0f172a;
   --muted: #5b6478;
   --border: #e2e8f5;
-  --surface: #ffffff;
-  --surface-muted: #eef2ff;
+  --surface: #f4f6fc;
+  --surface-muted: #dfe6f5;
   --accent: #5046e5;
   --accent-hover: #4338ca;
   --accent-secondary: #f97316;
@@ -47,7 +47,7 @@
   --color-accent-tertiary: var(--accent-tertiary);
   --color-accent-pink: var(--accent-pink);
   --font-sans: var(--font-dm-sans);
-  --font-display: var(--font-syne);
+  --font-display: var(--font-space-grotesk);
 }
 
 html {
@@ -67,7 +67,7 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-syne), var(--font-dm-sans), system-ui, sans-serif;
+  font-family: var(--font-space-grotesk), var(--font-dm-sans), system-ui, sans-serif;
 }
 
 .mesh-bg {
@@ -142,7 +142,7 @@ body {
 
 .rich-content h1 {
   margin-top: 2rem;
-  font-family: var(--font-syne), var(--font-dm-sans), system-ui, sans-serif;
+  font-family: var(--font-space-grotesk), var(--font-dm-sans), system-ui, sans-serif;
   font-size: 1.875rem;
   font-weight: 600;
   line-height: 1.2;
@@ -155,7 +155,7 @@ body {
 
 .rich-content h2 {
   margin-top: 2rem;
-  font-family: var(--font-syne), var(--font-dm-sans), system-ui, sans-serif;
+  font-family: var(--font-space-grotesk), var(--font-dm-sans), system-ui, sans-serif;
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--foreground);

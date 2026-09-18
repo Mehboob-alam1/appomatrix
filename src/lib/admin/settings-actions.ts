@@ -23,6 +23,8 @@ export async function saveSiteSettings(formData: FormData) {
     contactPhone: String(formData.get("contactPhone") ?? "").trim(),
     contactWhatsapp: String(formData.get("contactWhatsapp") ?? "").trim(),
     contactAddress: String(formData.get("contactAddress") ?? "").trim(),
+    logoUrl: String(formData.get("logoUrl") ?? "").trim(),
+    siteName: String(formData.get("siteName") ?? "").trim(),
     updatedAt: new Date().toISOString(),
   };
 

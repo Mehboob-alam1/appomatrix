@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Sans, Syne } from "next/font/google";
+import { DM_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { buildMetadata } from "@/lib/metadata";
 import { ThemeProvider } from "@/components/providers/theme-provider";
@@ -11,9 +11,10 @@ const dmSans = DM_Sans({
   subsets: ["latin"],
 });
 
-const syne = Syne({
-  variable: "--font-syne",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = buildMetadata({});
@@ -26,7 +27,7 @@ export const viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${dmSans.variable} ${syne.variable} h-full scroll-smooth`}>
+    <html lang="en" suppressHydrationWarning className={`${dmSans.variable} ${spaceGrotesk.variable} h-full scroll-smooth`}>
       <head>
         <SiteHeadHtml />
       </head>
