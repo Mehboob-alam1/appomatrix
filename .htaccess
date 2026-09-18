@@ -11,8 +11,10 @@ Options -Indexes
   RewriteRule ^drizzle/ - [F,L]
   RewriteRule ^admin/.+\.php$ - [F,L]
 
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
+  # Physical admin/ folder exists — route CMS URLs through index.php (avoid 403 with -Indexes).
+  RewriteRule ^admin(/.*)?$ index.php [L,QSA]
+
+  RewriteCond %{REQUEST_FILENAME} -f
   RewriteRule ^ - [L]
 
   RewriteRule ^ index.php [L,QSA]
