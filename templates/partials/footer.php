@@ -5,17 +5,17 @@ $footerName = trim($settings['site_name'] ?? '') ?: $siteName;
   <div class="footer-cta">
     <div class="container footer-cta-inner">
       <div>
-        <p class="footer-cta-title">Ready to build something great?</p>
-        <p class="footer-cta-sub">Free consultation · Clear roadmap · Global delivery</p>
+        <p class="footer-cta-title">Plan your next digital product</p>
+        <p class="footer-cta-sub">Discovery · Defined builds · Long-term operation</p>
       </div>
-      <a href="<?= e(site_url('/contact')) ?>" class="btn-gradient">Book a Free Consultation</a>
+      <a href="<?= e(site_url('/contact')) ?>" class="btn-gradient">Get a quote</a>
     </div>
   </div>
   <div class="container footer-grid">
     <div>
       <?php require __DIR__ . '/logo.php'; ?>
-      <p class="card-text" style="-webkit-line-clamp:unset;margin-top:0.65rem">Software agency in Gilgit-Baltistan — web, mobile, and SaaS for global clients.</p>
-      <p class="card-text" style="-webkit-line-clamp:unset"><?= e($contact['address']) ?></p>
+      <p class="footer-tagline">Web, mobile, and SaaS—from Gilgit-Baltistan to global clients.</p>
+      <p class="footer-office"><strong>Gilgit-Baltistan</strong><br><?= e($contact['address']) ?></p>
     </div>
     <div>
       <p class="footer-col-title">Explore</p>

@@ -18,7 +18,7 @@ $current = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
         <a href="<?= e(site_url($item['href'])) ?>" class="nav-link<?= $active ? ' is-active' : '' ?>"><?= e($item['label']) ?></a>
       <?php endforeach; ?>
     </nav>
-    <a href="<?= e(site_url('/contact')) ?>" class="btn-gradient header-cta">Book a call</a>
+    <a href="<?= e(site_url('/contact')) ?>" class="btn-gradient header-cta">Talk to an expert</a>
     <button type="button" class="menu-btn" id="menu-toggle" aria-expanded="false">Menu</button>
   </div>
   <div id="mobile-nav" class="mobile-nav">
@@ -26,7 +26,7 @@ $current = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
       <?php foreach ($nav as $item): ?>
         <a href="<?= e(site_url($item['href'])) ?>" class="nav-link"><?= e($item['label']) ?></a>
       <?php endforeach; ?>
-      <a href="<?= e(site_url('/contact')) ?>" class="btn-gradient" style="margin-top:0.35rem">Free consultation</a>
+      <a href="<?= e(site_url('/contact')) ?>" class="btn-gradient" style="margin-top:0.35rem">Talk to an expert</a>
     </div>
   </div>
 </header>
