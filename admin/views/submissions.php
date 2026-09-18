@@ -1,28 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Submissions</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="min-h-screen bg-zinc-950 text-zinc-100">
-  <div class="mx-auto max-w-5xl px-4 py-10">
-    <?php require __DIR__ . '/_nav.php'; ?>
-    <h1 class="text-2xl font-semibold">Form submissions</h1>
-    <div class="mt-8 space-y-4">
-      <?php foreach ($items as $row): ?>
-        <article class="rounded-xl border border-zinc-800 bg-zinc-900 p-4 text-sm">
-          <p class="font-medium"><?= e($row['name']) ?> · <?= e($row['email']) ?></p>
-          <p class="mt-1 text-zinc-400"><?= e($row['project_type']) ?> · <?= e($row['budget']) ?> · <?= e($row['timeline']) ?></p>
-          <p class="mt-2 text-zinc-300"><?= e($row['details']) ?></p>
-          <p class="mt-2 text-xs text-zinc-500"><?= e($row['submitted_at']) ?></p>
-        </article>
-      <?php endforeach; ?>
-      <?php if (!$items): ?>
-        <p class="text-zinc-500">No submissions yet.</p>
-      <?php endif; ?>
-    </div>
-  </div>
-</body>
-</html>
+<?php $adminTitle = 'Form submissions'; require __DIR__ . '/_head.php'; ?>
+
+<h1 class="admin-h1">Form submissions</h1>
+<p class="admin-lead">Inquiries from the contact page and homepage form.</p>
+
+<div style="margin-top:1.25rem">
+  <?php foreach ($items as $row): ?>
+    <article class="admin-submission">
+      <p><strong><?= e($row['name']) ?></strong> · <?= e($row['email']) ?><?= !empty($row['phone']) ? ' · ' . e($row['phone']) : '' ?></p>
+      <p class="admin-submission-meta"><?= e($row['project_type']) ?> · Budget: <?= e($row['budget']) ?> · <?= e($row['timeline']) ?><?= !empty($row['source']) ? ' · Source: ' . e($row['source']) : '' ?></p>
+      <p style="margin:0.65rem 0 0"><?= e($row['details']) ?></p>
+      <p class="admin-submission-meta" style="margin-top:0.5rem;font-size:0.75rem"><?= e($row['submitted_at']) ?></p>
+    </article>
+  <?php endforeach; ?>
+  <?php if (!$items): ?>
+    <p class="admin-empty">No submissions yet.</p>
+  <?php endif; ?>
+</div>
+
+<?php require __DIR__ . '/_foot.php'; ?>

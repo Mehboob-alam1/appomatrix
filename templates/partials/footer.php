@@ -34,6 +34,6 @@ $footerName = trim($settings['site_name'] ?? '') ?: $siteName;
       </ul>
     </div>
   </div>
-  <div class="footer-copy">© <?= date('Y') ?> <?= e($footerName) ?> · Gilgit-Baltistan → worldwide</div>
+  <div class="footer-copy">© <?= date('Y') ?> <?= e($footerName) ?> · Gilgit-Baltistan → worldwide · <a href="<?= e(site_url('/admin/login')) ?>" style="color:inherit;opacity:0.7;text-decoration:none">Admin</a></div>
 </footer>
 <a href="https://wa.me/<?= e($contact['whatsapp']) ?>?text=<?= urlencode("Hi — I'd like to discuss a project.") ?>" target="_blank" rel="noopener" aria-label="WhatsApp" class="wa-fab">✆</a>

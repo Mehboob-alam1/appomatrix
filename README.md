@@ -24,7 +24,9 @@ Lead-generation site for **Appo Matrix** (Gilgit-Baltistan). PHP + SQLite for Ap
 
 4. Open the site — migrations in `drizzle/*.sql` run automatically; empty DB is seeded with sample content.
 
-5. Admin: `/admin/login`
+5. **Admin CMS:** [https://yourdomain.com/admin/login](https://appomatrix.com/admin/login)  
+   - Set `admin_password` in `config.local.php` (or `ADMIN_PASSWORD` in `.env`) before first login.  
+   - Manage **settings** (logo, contact, Calendly), **services**, **projects**, **blog**, **testimonials**, **team**, and **form submissions**.
 
 ## Local dev
 

@@ -141,7 +141,16 @@ if ($method === 'POST' && isset($_POST['entity'], $_POST['action'])) {
 }
 
 match (true) {
-    $path === '/admin' || $path === '/admin/' => render_admin('dashboard'),
+    $path === '/admin' || $path === '/admin/' => render_admin('dashboard', [
+        'stats' => [
+            'posts' => count($repo->all('posts')),
+            'projects' => count($repo->all('projects')),
+            'services' => count($repo->all('services')),
+            'testimonials' => count($repo->all('testimonials')),
+            'team' => count($repo->all('team_members')),
+            'submissions' => count($repo->submissions()),
+        ],
+    ]),
     $path === '/admin/settings' => render_admin('settings', [
         'settings' => $repo->getSettings(),
         'contact' => $repo->getContact(),

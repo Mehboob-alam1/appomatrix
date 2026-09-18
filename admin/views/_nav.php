@@ -1,11 +1,24 @@
-<nav class="mb-8 flex flex-wrap gap-2 text-sm">
-  <a href="<?= e(site_url('/admin')) ?>" class="rounded-lg px-3 py-1.5 bg-zinc-800">Dashboard</a>
-  <a href="<?= e(site_url('/admin/posts')) ?>" class="rounded-lg px-3 py-1.5 bg-zinc-800/50">Posts</a>
-  <a href="<?= e(site_url('/admin/projects')) ?>" class="rounded-lg px-3 py-1.5 bg-zinc-800/50">Projects</a>
-  <a href="<?= e(site_url('/admin/services')) ?>" class="rounded-lg px-3 py-1.5 bg-zinc-800/50">Services</a>
-  <a href="<?= e(site_url('/admin/testimonials')) ?>" class="rounded-lg px-3 py-1.5 bg-zinc-800/50">Testimonials</a>
-  <a href="<?= e(site_url('/admin/team')) ?>" class="rounded-lg px-3 py-1.5 bg-zinc-800/50">Team</a>
-  <a href="<?= e(site_url('/admin/submissions')) ?>" class="rounded-lg px-3 py-1.5 bg-zinc-800/50">Submissions</a>
-  <a href="<?= e(site_url('/admin/settings')) ?>" class="rounded-lg px-3 py-1.5 bg-zinc-800/50">Settings</a>
-  <a href="<?= e(site_url('/admin/logout')) ?>" class="ml-auto rounded-lg px-3 py-1.5 text-red-300">Logout</a>
+<?php
+$apath = parse_url($_SERVER['REQUEST_URI'] ?? '/admin', PHP_URL_PATH) ?: '/admin';
+$apath = rtrim($apath, '/') ?: '/admin';
+$links = [
+    ['href' => '/admin', 'label' => 'Dashboard', 'match' => fn ($p) => $p === '/admin'],
+    ['href' => '/admin/posts', 'label' => 'Posts'],
+    ['href' => '/admin/projects', 'label' => 'Projects'],
+    ['href' => '/admin/services', 'label' => 'Services'],
+    ['href' => '/admin/testimonials', 'label' => 'Testimonials'],
+    ['href' => '/admin/team', 'label' => 'Team'],
+    ['href' => '/admin/submissions', 'label' => 'Submissions'],
+    ['href' => '/admin/settings', 'label' => 'Settings'],
+];
+?>
+<nav class="admin-nav" aria-label="Admin">
+  <?php foreach ($links as $link): ?>
+    <?php
+      $href = $link['href'];
+      $active = isset($link['match']) ? ($link['match'])($apath) : ($apath === $href || str_starts_with($apath, $href . '/'));
+    ?>
+    <a href="<?= e(site_url($href)) ?>"<?= $active ? ' class="is-active"' : '' ?>><?= e($link['label']) ?></a>
+  <?php endforeach; ?>
+  <a href="<?= e(site_url('/admin/logout')) ?>" class="admin-nav-logout">Logout</a>
 </nav>
