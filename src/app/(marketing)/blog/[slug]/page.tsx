@@ -117,7 +117,10 @@ export default async function BlogPostPage({ params }: PageProps) {
 
           <header className="mt-6 max-w-3xl">
             <p className="text-sm font-medium text-accent">{post.category}</p>
-            <h1 itemProp="headline" className="mt-2 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1
+              itemProp="headline"
+              className="mt-2 font-display text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl"
+            >
               {post.title}
             </h1>
             <p className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted">
@@ -151,7 +154,12 @@ export default async function BlogPostPage({ params }: PageProps) {
           ) : null}
 
           <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
-            <div className="min-w-0">
+            <aside className="order-1 space-y-6 lg:order-2 lg:sticky lg:top-24 lg:self-start">
+              <ArticleToc items={toc} />
+              <BlogAdSlot slot="sidebar" />
+            </aside>
+
+            <div className="order-2 min-w-0 lg:order-1">
               <BlogAdSlot slot="in-article" />
               <div itemProp="articleBody" className="mt-8 max-w-3xl">
                 <ArticleContent html={post.content} fallback={post.excerpt} />
@@ -177,11 +185,6 @@ export default async function BlogPostPage({ params }: PageProps) {
                 </div>
               </div>
             </div>
-
-            <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
-              <ArticleToc items={toc} />
-              <BlogAdSlot slot="sidebar" />
-            </aside>
           </div>
         </Container>
 

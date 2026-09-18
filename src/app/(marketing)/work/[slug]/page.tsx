@@ -40,7 +40,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
 
   return (
     <>
-      <div className="relative aspect-[21/9] max-h-[480px] w-full bg-surface-muted">
+      <div className="relative aspect-[16/10] max-h-[360px] w-full bg-surface-muted sm:aspect-[21/9] sm:max-h-[480px]">
         {hero ? (
           <Image src={hero} alt={heroAlt} fill priority className="object-cover" sizes="100vw" />
         ) : null}
@@ -50,7 +50,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
             <p className="text-sm text-accent">
               {project.category} · {project.clientName}
             </p>
-            <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">{project.title}</h1>
+            <h1 className="mt-2 font-display text-2xl font-semibold sm:text-3xl md:text-4xl">{project.title}</h1>
           </div>
         </Container>
       </div>

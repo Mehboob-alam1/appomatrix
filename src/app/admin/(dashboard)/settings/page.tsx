@@ -8,12 +8,14 @@ import {
   adminTextareaClass,
 } from "@/components/admin/admin-form-styles";
 import { saveSiteSettings } from "@/lib/admin/settings-actions";
-import { getSiteSettings } from "@/lib/site-settings-db";
+import { getSiteContact, getSiteSettings } from "@/lib/site-settings-db";
+import { siteConfig } from "@/lib/site-config";
 
 type PageProps = { searchParams: Promise<{ saved?: string }> };
 
 export default async function AdminSettingsPage({ searchParams }: PageProps) {
   const settings = getSiteSettings();
+  const contact = getSiteContact();
   const { saved } = await searchParams;
 
   return (
@@ -57,6 +59,56 @@ export default async function AdminSettingsPage({ searchParams }: PageProps) {
               defaultValue={settings.bodyEndHtml}
               className={adminTextareaClass}
               placeholder={'<script>...</script>'}
+            />
+          </label>
+        </AdminFormSection>
+
+        <AdminFormSection
+          title="Contact details"
+          description="Shown in the footer, Contact page, About page, and WhatsApp button. Leave a field blank to use the built-in default."
+        >
+          <label className={adminLabelClass}>
+            Email
+            <input
+              name="contactEmail"
+              type="email"
+              defaultValue={settings.contactEmail || contact.email}
+              className={adminInputClass}
+              placeholder={siteConfig.contact.email}
+            />
+          </label>
+          <label className={adminLabelClass}>
+            Phone (display &amp; tel: link)
+            <input
+              name="contactPhone"
+              type="tel"
+              defaultValue={settings.contactPhone || contact.phone}
+              className={adminInputClass}
+              placeholder={siteConfig.contact.phone}
+            />
+          </label>
+          <label className={adminLabelClass}>
+            WhatsApp number
+            <input
+              name="contactWhatsapp"
+              type="tel"
+              defaultValue={settings.contactWhatsapp || contact.whatsapp}
+              className={adminInputClass}
+              placeholder={siteConfig.contact.whatsapp}
+            />
+            <p className={adminHintClass}>
+              Country code + number, digits only (e.g. 923001234567). Used for the floating WhatsApp
+              button.
+            </p>
+          </label>
+          <label className={adminLabelClass}>
+            Office address
+            <textarea
+              name="contactAddress"
+              rows={2}
+              defaultValue={settings.contactAddress || contact.address}
+              className={adminTextareaClass}
+              placeholder={siteConfig.contact.address}
             />
           </label>
         </AdminFormSection>

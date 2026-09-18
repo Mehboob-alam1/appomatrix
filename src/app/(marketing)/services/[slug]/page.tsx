@@ -37,10 +37,10 @@ export default async function ServiceDetailPage({ params }: PageProps) {
 
   return (
     <>
-      <Container className="py-16 sm:py-20">
+      <Container className="py-12 sm:py-16 md:py-20">
         <p className="text-sm text-accent">Service</p>
-        <h1 className="mt-2 font-display text-4xl font-semibold">{service.title}</h1>
-        <p className="mt-4 max-w-3xl text-lg text-muted">{service.shortDescription}</p>
+        <h1 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">{service.title}</h1>
+        <p className="mt-4 max-w-3xl text-base text-muted sm:text-lg">{service.shortDescription}</p>
         <div className="mt-8 max-w-3xl">
           <RichText value={service.fullDescription} />
         </div>

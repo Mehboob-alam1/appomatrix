@@ -17,9 +17,10 @@ export function LeadCtaBlock({
           <div className="relative">
             <h2 className="font-display text-2xl font-semibold sm:text-3xl">{title}</h2>
             <p className="mx-auto mt-3 max-w-xl text-muted">{description}</p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap">
               <Button
                 href="/contact"
+                className="w-full justify-center sm:w-auto"
                 analyticsLabel="Lead CTA — Contact"
                 analyticsLocation="cta-block"
               >
@@ -28,6 +29,7 @@ export function LeadCtaBlock({
               <Button
                 href="/work"
                 variant="secondary"
+                className="w-full justify-center sm:w-auto"
                 analyticsLabel="Lead CTA — Work"
                 analyticsLocation="cta-block"
               >

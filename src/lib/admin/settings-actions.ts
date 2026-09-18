@@ -19,6 +19,10 @@ export async function saveSiteSettings(formData: FormData) {
     blogInArticleHtml: String(formData.get("blogInArticleHtml") ?? ""),
     globalSeoExtra: String(formData.get("globalSeoExtra") ?? ""),
     calendlyUrl: String(formData.get("calendlyUrl") ?? "").trim(),
+    contactEmail: String(formData.get("contactEmail") ?? "").trim(),
+    contactPhone: String(formData.get("contactPhone") ?? "").trim(),
+    contactWhatsapp: String(formData.get("contactWhatsapp") ?? "").trim(),
+    contactAddress: String(formData.get("contactAddress") ?? "").trim(),
     updatedAt: new Date().toISOString(),
   };
 

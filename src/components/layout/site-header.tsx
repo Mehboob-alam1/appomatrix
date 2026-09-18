@@ -15,15 +15,18 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 glass-panel">
-      <Container className="flex h-[4.25rem] items-center justify-between gap-4">
-        <Link href="/" className="group flex items-center gap-2.5 font-display text-lg font-semibold">
+      <Container className="flex h-16 min-w-0 items-center justify-between gap-2 sm:h-[4.25rem] sm:gap-4">
+        <Link
+          href="/"
+          className="group flex min-w-0 shrink items-center gap-2 font-display text-base font-semibold sm:gap-2.5 sm:text-lg"
+        >
           <span
             className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent via-accent-pink to-accent-tertiary text-sm font-bold text-white shadow-md"
             aria-hidden
           >
             A
           </span>
-          <span className="group-hover:text-accent transition-colors">{siteConfig.name}</span>
+          <span className="truncate transition-colors group-hover:text-accent">{siteConfig.name}</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
@@ -70,11 +73,11 @@ export function SiteHeader() {
 
       <div
         className={cn(
-          "border-t border-border bg-surface/95 backdrop-blur-md md:hidden",
+          "max-h-[min(70vh,calc(100dvh-4rem))] overflow-y-auto border-t border-border bg-surface/95 backdrop-blur-md md:hidden",
           open ? "block" : "hidden",
         )}
       >
-        <Container className="flex flex-col gap-1 py-4">
+        <Container className="flex flex-col gap-1 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           {siteConfig.nav.map((item) => (
             <Link
               key={item.href}

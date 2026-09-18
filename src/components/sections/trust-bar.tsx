@@ -16,10 +16,10 @@ export function TrustBar() {
           {siteConfig.stats.map((stat, i) => (
             <div
               key={stat.label}
-              className={`rounded-2xl border border-border bg-gradient-to-br p-5 ${accents[i % accents.length]}`}
+              className={`rounded-2xl border border-border bg-gradient-to-br p-4 sm:p-5 ${accents[i % accents.length]}`}
             >
-              <p className="font-display text-3xl font-bold">{stat.value}</p>
-              <p className="mt-1 text-sm font-medium text-muted">{stat.label}</p>
+              <p className="font-display text-2xl font-bold sm:text-3xl">{stat.value}</p>
+              <p className="mt-1 text-xs font-medium text-muted sm:text-sm">{stat.label}</p>
             </div>
           ))}
         </div>

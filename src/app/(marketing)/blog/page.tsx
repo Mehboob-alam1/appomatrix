@@ -42,15 +42,15 @@ export default async function BlogPage() {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <section className="relative overflow-hidden border-b border-border bg-surface-muted/30 py-16 sm:py-20">
+      <section className="relative overflow-hidden border-b border-border bg-surface-muted/30 py-10 sm:py-16 md:py-20">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--accent)_0%,transparent_55%)] opacity-[0.08]" />
         <Container className="relative">
           <FadeIn>
             <p className="text-sm font-medium text-accent">Insights for founders & product teams</p>
-            <h1 className="mt-2 max-w-3xl font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1 className="mt-2 max-w-3xl font-display text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
               Blog
             </h1>
-            <p className="mt-4 max-w-2xl text-lg text-muted">
+            <p className="mt-4 max-w-2xl text-base text-muted sm:text-lg">
               SEO-friendly articles on building software that performs in the real world—from Gilgit-Baltistan
               to global markets.
             </p>
@@ -59,9 +59,9 @@ export default async function BlogPage() {
             <FadeIn delay={0.1} className="mt-10">
               <Link
                 href={`/blog/${featured.slug}`}
-                className="group grid overflow-hidden rounded-3xl border border-border bg-surface shadow-sm transition hover:border-accent/30 hover:shadow-md md:grid-cols-2"
+                className="group grid overflow-hidden rounded-2xl border border-border bg-surface shadow-sm transition hover:border-accent/30 hover:shadow-md sm:rounded-3xl md:grid-cols-2"
               >
-                <div className="relative min-h-[220px] bg-surface-muted">
+                <div className="relative min-h-[180px] bg-surface-muted sm:min-h-[220px]">
                   {resolveImageUrl(featured.featuredImage, 900) ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -71,11 +71,11 @@ export default async function BlogPage() {
                     />
                   ) : null}
                 </div>
-                <div className="flex flex-col justify-center p-8">
+                <div className="flex flex-col justify-center p-5 sm:p-8">
                   <p className="text-xs font-semibold uppercase tracking-wide text-accent">
                     Featured · {featured.category}
                   </p>
-                  <h2 className="mt-2 font-display text-2xl font-semibold group-hover:text-accent">
+                  <h2 className="mt-2 font-display text-xl font-semibold group-hover:text-accent sm:text-2xl">
                     {featured.title}
                   </h2>
                   <p className="mt-3 text-muted line-clamp-3">{featured.excerpt}</p>
@@ -87,11 +87,11 @@ export default async function BlogPage() {
         </Container>
       </section>
 
-      <Container className="grid gap-10 py-14 lg:grid-cols-[minmax(0,1fr)_300px]">
-        <div>
+      <Container className="grid gap-10 py-10 sm:py-14 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="min-w-0">
           <BlogIndexClient posts={posts} categories={categories} skipFirstFeatured />
         </div>
-        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+        <aside className="min-w-0 space-y-6 lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-2xl border border-border bg-surface p-5">
             <h2 className="font-display text-lg font-semibold">Need a product team?</h2>
             <p className="mt-2 text-sm text-muted">

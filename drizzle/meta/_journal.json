@@ -22,6 +22,13 @@
       "when": 1789711925131,
       "tag": "0002_calendly_url",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1789712717072,
+      "tag": "0003_contact_details",
+      "breakpoints": true
     }
   ]
 }

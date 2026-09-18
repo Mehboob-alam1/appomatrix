@@ -26,24 +26,25 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative overflow-hidden border-b border-border py-16 sm:py-24">
+      <section className="relative overflow-hidden border-b border-border py-12 sm:py-20 md:py-24">
         <div className="pointer-events-none absolute -left-32 top-10 h-72 w-72 rounded-full bg-accent/25 blur-3xl" />
         <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-accent-tertiary/20 blur-3xl" />
         <div className="pointer-events-none absolute left-1/2 top-1/3 h-64 w-64 -translate-x-1/2 rounded-full bg-accent-pink/15 blur-3xl" />
         <Container className="relative grid items-center gap-12 lg:grid-cols-2">
           <FadeIn>
             <span className="pill">Gilgit-Baltistan → Global clients</span>
-            <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.35rem]">
+            <h1 className="mt-5 font-display text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl sm:leading-[1.08] md:text-5xl lg:text-[3.35rem]">
               Software that wins <span className="gradient-text">trust & revenue</span>
             </h1>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
               Appo Matrix partners with founders and enterprises to design, build, and ship web,
               mobile, and SaaS products—with clear communication every step.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Button
                 href="/contact"
                 size="lg"
+                className="w-full justify-center sm:w-auto"
                 analyticsLabel="Book a Free Consultation"
                 analyticsLocation="hero"
               >
@@ -53,6 +54,7 @@ export default async function HomePage() {
                 href="/work"
                 variant="secondary"
                 size="lg"
+                className="w-full justify-center sm:w-auto"
                 analyticsLabel="View Our Work"
                 analyticsLocation="hero"
               >
@@ -61,7 +63,7 @@ export default async function HomePage() {
             </div>
           </FadeIn>
           <FadeIn delay={0.08}>
-            <div className="card-interactive glass-panel rounded-3xl p-7 shadow-xl">
+            <div className="card-interactive glass-panel rounded-2xl p-5 shadow-xl sm:rounded-3xl sm:p-7">
               <p className="text-sm font-semibold text-accent">Why teams choose us</p>
               <ul className="mt-5 space-y-4">
                 {[

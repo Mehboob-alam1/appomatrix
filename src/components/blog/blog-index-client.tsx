@@ -43,14 +43,18 @@ export function BlogIndexClient({
           aria-label="Search blog posts"
           className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20 sm:max-w-md"
         />
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by category">
+        <div
+          className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0"
+          role="group"
+          aria-label="Filter by category"
+        >
           {["All", ...categories].map((cat) => (
             <button
               key={cat}
               type="button"
               onClick={() => setCategory(cat)}
               className={cn(
-                "rounded-full px-3.5 py-1.5 text-sm transition",
+                "shrink-0 rounded-full px-3.5 py-1.5 text-sm transition sm:shrink",
                 category === cat
                   ? "bg-accent text-white shadow-sm shadow-accent/25"
                   : "border border-border text-muted hover:border-accent/40 hover:text-foreground",

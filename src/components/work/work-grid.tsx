@@ -21,14 +21,14 @@ export function WorkGrid({
 
   return (
     <div>
-      <div className="flex flex-wrap gap-2">
+      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
         {["All", ...categories].map((cat) => (
           <button
             key={cat}
             type="button"
             onClick={() => setCategory(cat)}
             className={cn(
-              "rounded-full px-4 py-1.5 text-sm transition",
+              "shrink-0 rounded-full px-4 py-1.5 text-sm transition sm:shrink",
               category === cat
                 ? "bg-accent text-white"
                 : "border border-border text-muted hover:text-foreground",

@@ -2,8 +2,8 @@ import { Container } from "@/components/ui/container";
 import { PageHero } from "@/components/ui/page-hero";
 import { MultiStepContactForm } from "@/components/forms/multi-step-contact-form";
 import { CalendlyEmbed } from "@/components/contact/calendly-embed";
-import { siteConfig } from "@/lib/site-config";
 import { buildMetadata } from "@/lib/metadata";
+import { getSiteContact } from "@/lib/site-settings-db";
 
 export const metadata = buildMetadata({
   title: "Contact",
@@ -12,6 +12,8 @@ export const metadata = buildMetadata({
 });
 
 export default function ContactPage() {
+  const contact = getSiteContact();
+
   return (
     <>
       <PageHero
@@ -30,22 +32,25 @@ export default function ContactPage() {
                   <br />
                   <a
                     className="text-accent hover:underline"
-                    href={`mailto:${siteConfig.contact.email}`}
+                    href={`mailto:${contact.email}`}
                   >
-                    {siteConfig.contact.email}
+                    {contact.email}
                   </a>
                 </li>
                 <li>
                   <span className="font-medium text-foreground">Phone</span>
                   <br />
-                  <a className="text-accent hover:underline" href={`tel:${siteConfig.contact.phone}`}>
-                    {siteConfig.contact.phone}
+                  <a
+                    className="text-accent hover:underline"
+                    href={`tel:${contact.phone.replace(/\s/g, "")}`}
+                  >
+                    {contact.phone}
                   </a>
                 </li>
                 <li>
                   <span className="font-medium text-foreground">Office</span>
                   <br />
-                  <span className="text-muted">{siteConfig.contact.address}</span>
+                  <span className="text-muted">{contact.address}</span>
                 </li>
               </ul>
             </div>

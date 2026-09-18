@@ -84,12 +84,13 @@ export function MultiStepContactForm({
       onSubmit={onSubmit}
       className={cn("glass-panel rounded-2xl p-6 sm:p-8", className)}
     >
-      <div className="mb-6 flex flex-wrap gap-2">
+      <div className="-mx-1 mb-6 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]">
         {steps.map((label, i) => (
           <span
             key={label}
+            aria-label={`Step ${i + 1}: ${label}`}
             className={cn(
-              "rounded-full px-3 py-1 text-xs font-medium transition",
+              "shrink-0 rounded-full px-3 py-1 text-xs font-medium transition",
               i === step
                 ? "btn-gradient text-white shadow-sm"
                 : i < step
@@ -97,7 +98,10 @@ export function MultiStepContactForm({
                   : "bg-surface-muted text-muted",
             )}
           >
-            {i + 1}. {label}
+            <span className="sm:hidden">{i + 1}</span>
+            <span className="hidden sm:inline">
+              {i + 1}. {label}
+            </span>
           </span>
         ))}
       </div>

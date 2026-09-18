@@ -3,7 +3,7 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Button } from "@/components/ui/button";
 import { getTeam } from "@/lib/data";
 import { buildMetadata } from "@/lib/metadata";
-import { siteConfig } from "@/lib/site-config";
+import { getSiteContact } from "@/lib/site-settings-db";
 
 export const metadata = buildMetadata({
   title: "About",
@@ -21,6 +21,7 @@ const teamAccents = [
 
 export default async function AboutPage() {
   const team = await getTeam();
+  const contact = getSiteContact();
 
   return (
     <>
@@ -51,7 +52,7 @@ export default async function AboutPage() {
             </p>
             <h2 className="mt-6 font-display text-xl font-semibold">Global reach</h2>
             <p className="mt-3 text-sm text-muted">
-              Based in {siteConfig.contact.address}, collaborating across US, UK, EU, and MENA
+              Based in {contact.address}, collaborating across US, UK, EU, and MENA
               timezones with async-friendly rituals and weekly live checkpoints.
             </p>
           </div>

@@ -37,6 +37,10 @@ export function getDb() {
         blogInArticleHtml: "",
         globalSeoExtra: "",
         calendlyUrl: "",
+        contactEmail: "",
+        contactPhone: "",
+        contactWhatsapp: "",
+        contactAddress: "",
         updatedAt: new Date().toISOString(),
       })
       .run();

@@ -99,5 +99,9 @@ export const siteSettings = sqliteTable("site_settings", {
   blogInArticleHtml: text("blog_in_article_html"),
   globalSeoExtra: text("global_seo_extra"),
   calendlyUrl: text("calendly_url"),
+  contactEmail: text("contact_email"),
+  contactPhone: text("contact_phone"),
+  contactWhatsapp: text("contact_whatsapp"),
+  contactAddress: text("contact_address"),
   updatedAt: text("updated_at"),
 });

@@ -31,7 +31,7 @@ export function CalendlyEmbed() {
     <iframe
       title="Book a call with Appo Matrix"
       src={embedUrl}
-      className="h-[680px] w-full bg-white"
+      className="h-[min(680px,75dvh)] min-h-[420px] w-full bg-white sm:min-h-[520px]"
     />
   );
 }
