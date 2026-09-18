@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Appo Matrix — Marketing Website
 
-## Getting Started
+Lead-generation marketing site for **Appo Matrix**, a software development agency in Gilgit-Baltistan, Pakistan.
 
-First, run the development server:
+## Stack
+
+- Next.js (App Router), TypeScript, Tailwind CSS
+- **Custom admin** at `/admin` (no Sanity or third-party CMS)
+- **SQLite** database at `data/cms.sqlite` (local, on your server)
+- Framer Motion, Embla Carousel
+- Optional Resend for email notifications
+- Deploy-ready on Vercel (see hosting note below)
+
+## Getting started
+
+```bash
+npm install
+cp env.example .env.local
+```
+
+Set admin credentials in `.env.local`:
+
+```env
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=choose-a-strong-password
+ADMIN_SESSION_SECRET=at-least-16-random-characters
+```
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Site:** http://localhost:3000  
+- **Admin:** http://localhost:3000/admin  
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+On first run, the database is created and seeded with sample content.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Custom admin
 
-## Learn More
+Manage from `/admin`:
 
-To learn more about Next.js, take a look at the following resources:
+- Case studies (projects)
+- Blog posts
+- Services
+- Testimonials
+- Team
+- Form submissions (contact & newsletter)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Images: use full URLs or upload via `POST /api/admin/upload` while logged in (files go to `public/uploads/`).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Hosting note
 
-## Deploy on Vercel
+SQLite and uploaded files need a **persistent disk**. That works on a VPS, Docker, or similar. **Vercel serverless** has an ephemeral filesystem—use a VPS/Node host for this “no external CMS” setup, or we can add Postgres later if you deploy on Vercel.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` — development server
+- `npm run build` — production build
+- `npm run start` — production server
+- `npm run lint` — ESLint
+
+## Optional env
+
+See `env.example` for Resend, Calendly, and analytics variables.
