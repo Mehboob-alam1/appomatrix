@@ -52,3 +52,17 @@ Manage projects, blog posts, services, testimonials, team, form submissions, and
 
 - `data/`, `lib/`, `templates/`, and `drizzle/` are blocked by `.htaccess`
 - Do not commit `config.local.php` or `.env` with real secrets
+
+## Site not opening (ERR_CONNECTION_TIMED_OUT)
+
+The app can be deployed while the **domain still fails to connect**. That is almost always **Hostinger DNS / CDN**, not PHP code.
+
+1. **hPanel → Websites → Manage** — status must be **Active** (not suspended).
+2. **Domains → DNS zone** — use only the records hPanel shows for this website:
+   - **A** `@` → hosting IP from the site dashboard (avoid extra/old A records).
+   - **CNAME** `www` → Hostinger target (e.g. `www.appomatrix.com.cdn.hstgr.net`) *or* **A** `www` → same IP as `@`.
+3. **SSL** — issue certificate for both `appomatrix.com` and `www.appomatrix.com`.
+4. If timeouts continue, try **disabling CDN** temporarily (Hostinger → Performance / CDN), wait 15 minutes, test again.
+5. On your PC: flush DNS, try **mobile data** or DNS `1.1.1.1` / `8.8.8.8`.
+
+Canonical URL: **https://www.appomatrix.com** (`.htaccess` redirects bare domain when the server is reachable).

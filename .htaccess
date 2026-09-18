@@ -5,6 +5,14 @@ Options -Indexes
   RewriteEngine On
   RewriteBase /
 
+  # Canonical host (works once DNS points to this server).
+  RewriteCond %{HTTP_HOST} ^appomatrix\.com$ [NC]
+  RewriteRule ^ https://www.appomatrix.com%{REQUEST_URI} [L,R=301]
+
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
   RewriteRule ^data/ - [F,L]
   RewriteRule ^lib/ - [F,L]
   RewriteRule ^templates/ - [F,L]
