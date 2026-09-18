@@ -1,3 +1,7 @@
+# Appo Matrix
+
+PHP marketing site + SQLite CMS. Entry: `index.php`. Templates in `templates/`, styles in `assets/site.css`. Migrations: `drizzle/*.sql` via `lib/Migrator.php`.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

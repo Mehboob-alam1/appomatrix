@@ -1,64 +1,52 @@
 # Appo Matrix — Marketing Website
 
-Lead-generation marketing site for **Appo Matrix**, a software development agency in Gilgit-Baltistan, Pakistan.
+Lead-generation site for **Appo Matrix** (Gilgit-Baltistan). PHP + SQLite for Apache shared hosting (e.g. Hostinger).
 
-## Stack
+## Requirements
 
-- Next.js (App Router), TypeScript, Tailwind CSS
-- **Custom admin** at `/admin` (no Sanity or third-party CMS)
-- **SQLite** database at `data/cms.sqlite` (local, on your server)
-- Framer Motion, Embla Carousel
-- Optional Resend for email notifications
-- Deploy-ready on Vercel (see hosting note below)
+- PHP **8.1+** with **PDO SQLite**
+- Apache `mod_rewrite` (`.htaccess` included)
 
-## Getting started
+## Setup
+
+1. Deploy the repo root as your web root (`public_html`).
+2. Configure:
+   ```bash
+   cp config.example.php config.local.php
+   ```
+   Set `admin_password`, `site_url` (`https://appomatrix.com`), etc.
+
+   Or use `.env` (see `env.example`) for `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `NEXT_PUBLIC_SITE_URL`, Calendly, etc.
+
+3. Writable directories:
+   - `data/` — SQLite (`cms.sqlite`, auto-created on first visit)
+   - `uploads/` — logos and media paths from admin
+
+4. Open the site — migrations in `drizzle/*.sql` run automatically; empty DB is seeded with sample content.
+
+5. Admin: `/admin/login`
+
+## Local dev
 
 ```bash
-npm install
-cp env.example .env.local
+php -S localhost:8080 index.php
 ```
 
-Set admin credentials in `.env.local`:
+Visit http://localhost:8080
 
-```env
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=choose-a-strong-password
-ADMIN_SESSION_SECRET=at-least-16-random-characters
-```
+## URLs
 
-```bash
-npm run dev
-```
+| Path | Purpose |
+|------|---------|
+| `/` | Marketing pages |
+| `/admin` | Content admin |
+| `/contact` | Inquiry form + Calendly |
 
-- **Site:** http://localhost:3000  
-- **Admin:** http://localhost:3000/admin  
+## Admin
 
-On first run, the database is created and seeded with sample content.
+Manage projects, blog posts, services, testimonials, team, form submissions, and site settings (contact info, logo, Calendly, HTML injections).
 
-## Custom admin
+## Security
 
-Manage from `/admin`:
-
-- Case studies (projects)
-- Blog posts
-- Services
-- Testimonials
-- Team
-- Form submissions (contact & newsletter)
-
-Images: use full URLs or upload via `POST /api/admin/upload` while logged in (files go to `public/uploads/`).
-
-## Hosting note
-
-SQLite and uploaded files need a **persistent disk**. That works on a VPS, Docker, or similar. **Vercel serverless** has an ephemeral filesystem—use a VPS/Node host for this “no external CMS” setup, or we can add Postgres later if you deploy on Vercel.
-
-## Scripts
-
-- `npm run dev` — development server
-- `npm run build` — production build
-- `npm run start` — production server
-- `npm run lint` — ESLint
-
-## Optional env
-
-See `env.example` for Resend, Calendly, and analytics variables.
+- `data/`, `lib/`, `templates/`, and `drizzle/` are blocked by `.htaccess`
+- Do not commit `config.local.php` or `.env` with real secrets
