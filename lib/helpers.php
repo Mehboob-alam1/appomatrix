@@ -24,7 +24,13 @@ function site_url(string $path = ''): string
 
 function asset(string $path): string
 {
-    return site_url('/assets/' . ltrim($path, '/'));
+    $rel = ltrim($path, '/');
+    $url = site_url('/assets/' . $rel);
+    $file = dirname(__DIR__) . '/assets/' . $rel;
+    if (is_file($file)) {
+        $url .= '?v=' . filemtime($file);
+    }
+    return $url;
 }
 
 function redirect(string $path): never

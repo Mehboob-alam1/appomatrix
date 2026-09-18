@@ -36,7 +36,7 @@ if ($method === 'POST' && $path === '/contact') {
             'budget' => $_POST['budget'] ?? '',
             'timeline' => $_POST['timeline'] ?? '',
             'details' => trim($_POST['details'] ?? ''),
-            'source' => 'contact-page',
+            'source' => trim($_POST['source'] ?? '') ?: 'contact-page',
         ]);
         render('pages/contact', [
             'pageTitle' => 'Contact | ' . config('site_name'),
@@ -51,6 +51,8 @@ match (true) {
         'pageTitle' => config('site_name') . ' — Software that ships',
         'services' => $repo->services(),
         'projects' => $repo->projects(true),
+        'testimonials' => $repo->testimonials(),
+        'posts' => $repo->posts(),
     ]),
     $path === '/about' => render('pages/about', [
         'pageTitle' => 'About | ' . config('site_name'),
