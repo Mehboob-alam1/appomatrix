@@ -1,0 +1,157 @@
+export type GalleryImage = {
+  url: string;
+  alt: string;
+  caption: string;
+};
+
+export type Service = {
+  id: string;
+  slug: string;
+  title: string;
+  parentId: string | null;
+  shortDescription: string;
+  fullDescription: string;
+  icon: string;
+  image: string;
+  imageAlt: string;
+  processText: string;
+  techStack: string;
+  sortOrder: number;
+  published: boolean;
+};
+
+export type ServiceNode = Service & {
+  children: Service[];
+};
+
+export type Project = {
+  id: string;
+  slug: string;
+  title: string;
+  clientName: string;
+  category: string;
+  excerpt: string;
+  coverImage: string;
+  coverImageAlt: string;
+  gallery: GalleryImage[];
+  problem: string;
+  solution: string;
+  result: string;
+  metricsText: string;
+  techStack: string;
+  externalLink: string;
+  featured: boolean;
+  sortOrder: number;
+  published: boolean;
+  createdAt: string;
+};
+
+export type Post = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  featuredImage: string;
+  featuredImageAlt: string;
+  author: string;
+  category: string;
+  publishedAt: string;
+  readingTimeMinutes: number;
+  published: boolean;
+};
+
+export type TeamMember = {
+  id: string;
+  name: string;
+  role: string;
+  photo: string;
+  photoAlt: string;
+  bio: string;
+  linkedin: string;
+  sortOrder: number;
+  published: boolean;
+};
+
+export type Testimonial = {
+  id: string;
+  clientName: string;
+  role: string;
+  company: string;
+  quote: string;
+  rating: number;
+  sortOrder: number;
+  published: boolean;
+};
+
+export type Career = {
+  id: string;
+  slug: string;
+  title: string;
+  kind: string;
+  location: string;
+  department: string;
+  summary: string;
+  description: string;
+  requirements: string;
+  deadline: string;
+  sortOrder: number;
+  published: boolean;
+};
+
+export type Scholarship = {
+  id: string;
+  slug: string;
+  title: string;
+  award: string;
+  eligibility: string;
+  deadline: string;
+  summary: string;
+  description: string;
+  coverImage: string;
+  applicationUrl: string;
+  sortOrder: number;
+  published: boolean;
+};
+
+export type Inquiry = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  topic: string;
+  budget: string;
+  message: string;
+  status: string;
+  submittedAt: string;
+};
+
+export type Settings = {
+  siteName: string;
+  tagline: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  heroKicker: string;
+  heroTitle: string;
+  heroHighlight: string;
+  heroLead: string;
+  aboutHeadline: string;
+  aboutBody: string;
+  aboutSecondary: string;
+  statsText: string;
+  processText: string;
+  industriesText: string;
+  principlesText: string;
+  calendlyUrl: string;
+  linkedinUrl: string;
+  whatsappNumber: string;
+  whatsappMessage: string;
+};
+
+export type Pair = { title: string; body: string };
+export type Stat = { value: string; label: string };
+
+export type ActionResult = { ok: true } | { ok: false; error: string };
