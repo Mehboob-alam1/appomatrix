@@ -3,19 +3,26 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logout } from "@/lib/actions";
+import { csrfTokenFromDocument } from "@/lib/csrf-client";
 import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/admin", label: "Overview" },
+  { href: "/admin/settings", label: "Settings" },
+  { href: "/admin/navigation", label: "Navigation" },
+  { href: "/admin/social", label: "Social links" },
+  { href: "/admin/sections", label: "Homepage" },
+  { href: "/admin/pages", label: "Pages" },
   { href: "/admin/services", label: "Services" },
   { href: "/admin/portfolio", label: "Portfolio" },
+  { href: "/admin/categories", label: "Blog categories" },
   { href: "/admin/blog", label: "Blog" },
   { href: "/admin/team", label: "Team" },
   { href: "/admin/testimonials", label: "Testimonials" },
   { href: "/admin/careers", label: "Career development" },
   { href: "/admin/scholarships", label: "Scholarships" },
+  { href: "/admin/media", label: "Media" },
   { href: "/admin/inquiries", label: "CRM inquiries" },
-  { href: "/admin/settings", label: "Settings" },
 ];
 
 export function AdminShell({
@@ -54,11 +61,9 @@ export function AdminShell({
             );
           })}
         </nav>
-        <form action={logout} className="hidden px-3 pb-4 md:block">
-          <button type="submit" className="text-sm text-muted-foreground hover:text-foreground">
-            Sign out
-          </button>
-        </form>
+        <button type="button" className="hidden px-5 pb-4 text-sm text-muted-foreground hover:text-foreground md:block" onClick={() => logout(csrfTokenFromDocument())}>
+          Sign out
+        </button>
       </aside>
       <div>
         <header className="flex flex-col gap-3 border-b border-border bg-card px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
@@ -70,11 +75,9 @@ export function AdminShell({
             <Link href="/" className="text-sm font-medium text-primary">
               View site
             </Link>
-            <form action={logout} className="md:hidden">
-              <button type="submit" className="text-sm text-muted-foreground">
-                Sign out
-              </button>
-            </form>
+            <button type="button" className="text-sm text-muted-foreground md:hidden" onClick={() => logout(csrfTokenFromDocument())}>
+              Sign out
+            </button>
           </div>
         </header>
         <div className="p-5">{children}</div>

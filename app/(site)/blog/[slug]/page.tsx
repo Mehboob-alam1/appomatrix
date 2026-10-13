@@ -4,15 +4,15 @@ import { Breadcrumbs, Container, Prose } from "@/components/site/chrome";
 import { JsonLd } from "@/components/site/json-ld";
 import { formatDate } from "@/lib/format";
 import { getPost } from "@/lib/queries";
-import { absoluteUrl, breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, contentMetadata } from "@/lib/seo";
 
 type Params = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = await getPost(slug);
   if (!post) return { title: "Blog" };
-  return pageMetadata({
+  return contentMetadata({
     title: post.title,
     description: post.excerpt,
     path: `/blog/${post.slug}`,
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function PostPage({ params }: Params) {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = await getPost(slug);
   if (!post) notFound();
 
   const crumbs = [

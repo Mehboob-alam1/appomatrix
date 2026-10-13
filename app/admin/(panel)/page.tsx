@@ -11,12 +11,16 @@ const CARDS = [
   ["testimonials", "Testimonials", "/admin/testimonials"],
   ["careers", "Careers", "/admin/careers"],
   ["scholarships", "Scholarships", "/admin/scholarships"],
+  ["categories", "Categories", "/admin/categories"],
+  ["navigation", "Navigation", "/admin/navigation"],
+  ["sections", "Homepage", "/admin/sections"],
+  ["media", "Media", "/admin/media"],
   ["inquiries", "CRM inquiries", "/admin/inquiries"],
 ] as const;
 
-export default function DashboardPage() {
-  const counts = dashboardCounts();
-  const recent = listInquiries().slice(0, 5);
+export default async function DashboardPage() {
+  const counts = await dashboardCounts();
+  const recent = (await listInquiries()).slice(0, 5);
   return (
     <AdminShell
       title="Overview"

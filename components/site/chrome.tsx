@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { JsonLd } from "@/components/site/json-ld";
+import { SafeImage } from "@/components/site/safe-image";
 import { paragraphs } from "@/lib/format";
 import { breadcrumbJsonLd, type Crumb } from "@/lib/seo";
 import { cn } from "@/lib/utils";
@@ -71,12 +72,16 @@ export function PageHero({
   lead,
   path,
   ancestors = [],
+  image,
+  imageAlt,
 }: {
   kicker: string;
   title: string;
   lead?: string;
   path?: string;
   ancestors?: Crumb[];
+  image?: string;
+  imageAlt?: string;
 }) {
   const section = SECTION_PATHS[kicker];
   const here = path ?? section ?? "/";
@@ -95,6 +100,11 @@ export function PageHero({
         </div>
         <h1 className="font-display mt-4 max-w-4xl text-5xl leading-[0.95] text-balance md:text-7xl">{title}</h1>
         {lead ? <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">{lead}</p> : null}
+        {image ? (
+          <div className="media-card mt-10 max-w-4xl">
+            <SafeImage src={image} alt={imageAlt || title} className="aspect-[16/8] w-full object-cover" />
+          </div>
+        ) : null}
       </Container>
     </section>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { submitInquiry } from "@/lib/actions";
+import { csrfTokenFromDocument } from "@/lib/csrf-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,10 +32,15 @@ export function ContactForm({ topics, defaultTopic }: { topics: string[]; defaul
         event.preventDefault();
         setPending(true);
         setError("");
-        const result = await submitInquiry(new FormData(event.currentTarget));
+        const response = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "x-csrf-token": csrfTokenFromDocument() },
+          body: new FormData(event.currentTarget),
+        });
+        const result = (await response.json()) as { ok?: boolean; error?: string };
         setPending(false);
-        if (!result.ok) {
-          setError(result.error);
+        if (!response.ok || !result.ok) {
+          setError(result.error || "Could not send the message.");
           return;
         }
         setDone(true);
@@ -80,7 +85,7 @@ export function ContactForm({ topics, defaultTopic }: { topics: string[]; defaul
         <Label htmlFor="message">What are you building?</Label>
         <Textarea id="message" name="message" required rows={6} className="min-h-32" placeholder="Goals, timeline, and anything we should know." />
       </label>
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {error ? <p className="text-sm text-destructive" role="alert">{error}</p> : null}
       <Button type="submit" className="h-10 px-4" disabled={pending}>
         {pending ? "Sending…" : "Send message"}
       </Button>

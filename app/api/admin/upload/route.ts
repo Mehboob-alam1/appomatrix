@@ -1,30 +1,36 @@
-import { randomBytes } from "crypto";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
-import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { deleteUpload } from "@/lib/media";
+import { saveUpload } from "@/lib/media";
+import { fail, ok, publicError, readJson, requireAdmin } from "@/lib/http";
+import { revalidatePath } from "next/cache";
 
-const TYPES: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-  "image/gif": "gif",
-};
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+  const auth = await requireAdmin(request);
+  if (auth.error) return auth.error;
+  try {
+    const form = await request.formData();
+    const file = form.get("file");
+    if (!(file instanceof File)) return fail("Choose an image.", 400);
+    const saved = await saveUpload(file);
+    return ok(saved, 201);
+  } catch (error) {
+    if (error instanceof Error && /Images must|Use a JPG/.test(error.message)) return fail(error.message, 400);
+    return publicError(error);
+  }
+}
 
-  const form = await request.formData();
-  const file = form.get("file");
-  if (!(file instanceof File)) return NextResponse.json({ error: "Choose an image." }, { status: 400 });
-  const ext = TYPES[file.type];
-  if (!ext) return NextResponse.json({ error: "Use a JPG, PNG, WEBP, or GIF." }, { status: 400 });
-  if (file.size > 5 * 1024 * 1024) return NextResponse.json({ error: "Images must be under 5 MB." }, { status: 400 });
-
-  const name = `${Date.now()}-${randomBytes(4).toString("hex")}.${ext}`;
-  const dir = path.join(process.cwd(), "public", "uploads");
-  await mkdir(dir, { recursive: true });
-  await writeFile(path.join(dir, name), Buffer.from(await file.arrayBuffer()));
-  return NextResponse.json({ url: `/uploads/${name}` });
+export async function DELETE(request: Request) {
+  const auth = await requireAdmin(request);
+  if (auth.error) return auth.error;
+  const body = await readJson(request);
+  const url = body && typeof body.url === "string" ? body.url : "";
+  if (!url.startsWith("/uploads/")) return fail("Only uploaded files can be removed.", 400);
+  try {
+    await deleteUpload(url);
+    revalidatePath("/", "layout");
+    return ok({ deleted: true });
+  } catch (error) {
+    return publicError(error);
+  }
 }

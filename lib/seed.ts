@@ -1,15 +1,17 @@
-import type { DatabaseSync } from "node:sqlite";
+import { seedStructure, type SqlExec } from "@/lib/seed-structure";
 
 const img = (id: string) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1600&q=80`;
 
-type Db = DatabaseSync;
-
-function insert(db: Db, sql: string, params: unknown[]) {
-  db.prepare(sql).run(...params);
+async function insert(db: SqlExec, sql: string, params: unknown[]) {
+  await db(sql, params);
 }
 
-export function seedContent(db: Db) {
+export async function seedContent(db: SqlExec, options?: { structureOnly?: boolean }) {
+  if (options?.structureOnly) {
+    await seedStructure(db);
+    return;
+  }
   const services: unknown[][] = [
     [
       "svc-engineering",
@@ -252,9 +254,9 @@ export function seedContent(db: Db) {
   ];
 
   for (const row of services) {
-    insert(
+    await insert(
       db,
-      `INSERT INTO services (
+      `INSERT IGNORE INTO services (
         id, slug, title, parent_id, short_description, full_description, icon, image, image_alt,
         process_text, tech_stack, sort_order, published
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
@@ -386,9 +388,9 @@ export function seedContent(db: Db) {
   ];
 
   for (const row of projects) {
-    insert(
+    await insert(
       db,
-      `INSERT INTO projects (
+      `INSERT IGNORE INTO projects (
         id, slug, title, client_name, category, excerpt, cover_image, cover_image_alt, gallery,
         problem, solution, result, metrics_text, tech_stack, external_link, featured, sort_order,
         published, created_at
@@ -453,9 +455,9 @@ export function seedContent(db: Db) {
   ];
 
   for (const row of posts) {
-    insert(
+    await insert(
       db,
-      `INSERT INTO posts (
+      `INSERT IGNORE INTO posts (
         id, slug, title, excerpt, content, featured_image, featured_image_alt, author, category,
         published_at, reading_time_minutes, published
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
@@ -471,9 +473,9 @@ export function seedContent(db: Db) {
   ];
 
   for (const row of team) {
-    insert(
+    await insert(
       db,
-      `INSERT INTO team_members (id, name, role, photo, photo_alt, bio, linkedin, sort_order, published)
+      `INSERT IGNORE INTO team_members (id, name, role, photo, photo_alt, bio, linkedin, sort_order, published)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)`,
       row,
     );
@@ -487,9 +489,9 @@ export function seedContent(db: Db) {
   ];
 
   for (const row of quotes) {
-    insert(
+    await insert(
       db,
-      `INSERT INTO testimonials (id, client_name, role, company, quote, rating, sort_order, published)
+      `INSERT IGNORE INTO testimonials (id, client_name, role, company, quote, rating, sort_order, published)
        VALUES (?, ?, ?, ?, ?, ?, ?, 1)`,
       row,
     );
@@ -538,9 +540,9 @@ export function seedContent(db: Db) {
   ];
 
   for (const row of careers) {
-    insert(
+    await insert(
       db,
-      `INSERT INTO careers (
+      `INSERT IGNORE INTO careers (
         id, slug, title, kind, location, department, summary, description, requirements, deadline, sort_order, published
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
       row,
@@ -590,12 +592,26 @@ export function seedContent(db: Db) {
   ];
 
   for (const row of scholarships) {
-    insert(
+    await insert(
       db,
-      `INSERT INTO scholarships (
+      `INSERT IGNORE INTO scholarships (
         id, slug, title, award, eligibility, deadline, summary, description, cover_image, application_url, sort_order, published
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
       row,
+    );
+  }
+
+  await seedStructure(db);
+  const links: [string, string][] = [
+    ["cat-product", "Product"],
+    ["cat-engineering", "Engineering"],
+    ["cat-process", "Process"],
+    ["cat-studio", "Studio"],
+  ];
+  for (const [id, name] of links) {
+    await db(
+      "UPDATE posts SET category_id = ? WHERE category = ? AND (category_id IS NULL OR category_id = '')",
+      [id, name],
     );
   }
 }

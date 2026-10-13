@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { defaultSettings } from "@/lib/defaults";
+import { getSettings } from "@/lib/queries";
 import { siteUrl } from "@/lib/seo";
 import "./globals.css";
+
+export const dynamic = "force-dynamic";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,30 +17,40 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const description =
-  "Appo Matrix is a software studio in Gilgit-Baltistan. Web, mobile, and SaaS for teams worldwide, plus careers, scholarships, and a public portfolio.";
-
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl()),
-  title: {
-    default: "Appo Matrix — Software studio in Gilgit-Baltistan",
-    template: "%s · Appo Matrix",
-  },
-  description,
-  applicationName: "Appo Matrix",
-  authors: [{ name: "Appo Matrix", url: siteUrl() }],
-  creator: "Appo Matrix",
-  category: "technology",
-  robots: { index: true, follow: true },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    siteName: "Appo Matrix",
-    title: "Appo Matrix — Software studio in Gilgit-Baltistan",
-    description,
-  },
-  twitter: { card: "summary_large_image" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  let settings = defaultSettings;
+  try {
+    settings = await getSettings();
+  } catch {
+    settings = defaultSettings;
+  }
+  return {
+    metadataBase: new URL(siteUrl()),
+    title: {
+      default: settings.seoTitle || settings.siteName,
+      template: `%s · ${settings.siteName}`,
+    },
+    description: settings.seoDescription || settings.tagline,
+    applicationName: settings.siteName,
+    authors: [{ name: settings.siteName, url: siteUrl() }],
+    creator: settings.siteName,
+    category: "technology",
+    robots: { index: true, follow: true },
+    icons: {
+      icon: settings.faviconUrl || "/brand/appo-matrix-favicon.png",
+      apple: "/brand/apple-touch-icon.png",
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      siteName: settings.siteName,
+      title: settings.seoTitle || settings.siteName,
+      description: settings.seoDescription || settings.tagline,
+      images: settings.seoImage ? [{ url: settings.seoImage, alt: settings.seoImageAlt || settings.siteName }] : undefined,
+    },
+    twitter: { card: settings.seoImage ? "summary_large_image" : "summary" },
+  };
+}
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

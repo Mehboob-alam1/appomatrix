@@ -4,15 +4,15 @@ import { notFound } from "next/navigation";
 import { Container, Kicker, PageHero, Prose } from "@/components/site/chrome";
 import { formatDate } from "@/lib/format";
 import { getScholarship } from "@/lib/queries";
-import { pageMetadata } from "@/lib/seo";
+import { contentMetadata } from "@/lib/seo";
 
 type Params = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const item = getScholarship(slug);
+  const item = await getScholarship(slug);
   if (!item) return { title: "Scholarship" };
-  return pageMetadata({
+  return contentMetadata({
     title: item.title,
     description: item.summary,
     path: `/scholarships/${item.slug}`,
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function ScholarshipPage({ params }: Params) {
   const { slug } = await params;
-  const item = getScholarship(slug);
+  const item = await getScholarship(slug);
   if (!item) notFound();
   const applyHref = item.applicationUrl || `/contact?topic=${encodeURIComponent(`Scholarship: ${item.title}`)}`;
   const external = Boolean(item.applicationUrl);

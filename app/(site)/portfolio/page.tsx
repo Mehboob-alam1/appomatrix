@@ -1,25 +1,31 @@
 import type { Metadata } from "next";
-import { Container, PageHero } from "@/components/site/chrome";
+import { Container, PageHero, Prose } from "@/components/site/chrome";
 import { PortfolioBrowser } from "@/components/site/portfolio-browser";
-import { listProjects } from "@/lib/queries";
-import { pageMetadata } from "@/lib/seo";
+import { pageIntro, pageSeed } from "@/lib/page-copy";
+import { getPageMeta, listProjects } from "@/lib/queries";
+import { metadataFor } from "@/lib/seo";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Portfolio",
-  description: "Products and client work shipped by Appo Matrix, with galleries and links to the live products.",
-  path: "/portfolio",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return metadataFor("/portfolio", {
+    title: "Portfolio",
+    description: "Products and client work shipped by Appo Matrix, with galleries and links to the live products.",
+  });
+}
 
-export default function PortfolioPage() {
-  const projects = listProjects(true);
+export default async function PortfolioPage() {
+  const projects = await listProjects(true);
+  const seed = pageSeed("/portfolio");
+  const copy = pageIntro(await getPageMeta("/portfolio"), {
+    kicker: seed?.kicker || "Portfolio",
+    heading: seed?.heading || "Proof over promises",
+    lead: seed?.lead || "",
+    body: seed?.body || "",
+  });
   return (
     <>
-      <PageHero
-        kicker="Portfolio"
-        title="Proof over promises"
-        lead="Products we have designed and shipped. Open a record for the problem, the build, the gallery, and a link back to the live product."
-      />
+      <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
       <Container className="py-14">
+        {copy.body ? <Prose text={copy.body} className="mb-10 max-w-2xl" /> : null}
         <PortfolioBrowser projects={projects} />
       </Container>
     </>

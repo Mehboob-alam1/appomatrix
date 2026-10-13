@@ -4,7 +4,7 @@ import { absoluteUrl } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const staticRoutes = [
     ["/", 1],
@@ -25,7 +25,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority,
   }));
 
-  for (const service of listServices(true)) {
+  try {
+  for (const service of await listServices(true)) {
     pages.push({
       url: absoluteUrl(`/services/${service.slug}`),
       lastModified: now,
@@ -33,7 +34,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: service.parentId ? 0.6 : 0.7,
     });
   }
-  for (const project of listProjects(true)) {
+  for (const project of await listProjects(true)) {
     pages.push({
       url: absoluteUrl(`/portfolio/${project.slug}`),
       lastModified: project.createdAt ? new Date(project.createdAt) : now,
@@ -41,7 +42,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     });
   }
-  for (const post of listPosts(true)) {
+  for (const post of await listPosts(true)) {
     pages.push({
       url: absoluteUrl(`/blog/${post.slug}`),
       lastModified: post.publishedAt ? new Date(post.publishedAt) : now,
@@ -49,7 +50,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     });
   }
-  for (const career of listCareers(true)) {
+  for (const career of await listCareers(true)) {
     pages.push({
       url: absoluteUrl(`/career-development/${career.slug}`),
       lastModified: now,
@@ -57,13 +58,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     });
   }
-  for (const item of listScholarships(true)) {
+  for (const item of await listScholarships(true)) {
     pages.push({
       url: absoluteUrl(`/scholarships/${item.slug}`),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.5,
     });
+  }
+  } catch {
+    return pages;
   }
 
   return pages;

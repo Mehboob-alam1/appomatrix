@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { deleteContent } from "@/lib/actions";
+import { csrfTokenFromDocument } from "@/lib/csrf-client";
 import { Button } from "@/components/ui/button";
 
 export function DeleteButton({ section, id, label }: { section: string; id: string; label: string }) {
@@ -13,7 +14,7 @@ export function DeleteButton({ section, id, label }: { section: string; id: stri
       size="sm"
       onClick={async () => {
         if (!confirm(`Delete “${label}”?`)) return;
-        const result = await deleteContent(section, id);
+        const result = await deleteContent(section, id, csrfTokenFromDocument());
         if (!result.ok) {
           alert(result.error);
           return;

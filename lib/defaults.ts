@@ -37,6 +37,24 @@ Built for real networks|Performance and offline patterns that hold up when bandw
   linkedinUrl: "https://www.linkedin.com/company/appomatrix",
   whatsappNumber: "923000000000",
   whatsappMessage: "Hello Appo Matrix, I would like to talk with the team.",
+  logoUrl: "/brand/appo-matrix-mark.png",
+  logoAlt: "Appo Matrix",
+  faviconUrl: "/brand/appo-matrix-favicon.png",
+  footerNote: "",
+  copyrightText: "",
+  seoTitle: "Appo Matrix — Software studio in Gilgit-Baltistan",
+  seoDescription:
+    "Appo Matrix is a software studio in Gilgit-Baltistan. Web, mobile, and SaaS for teams worldwide, plus careers, scholarships, and a public portfolio.",
+  seoImage: "",
+  seoImageAlt: "Appo Matrix",
+  heroImage:
+    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=80",
+  heroImageAlt: "High mountain ridge above the clouds",
+  heroCaption: "Shipping worldwide",
+  ctaPrimaryLabel: "Plan a project",
+  ctaPrimaryHref: "/contact",
+  ctaSecondaryLabel: "See the work",
+  ctaSecondaryHref: "/portfolio",
 };
 
 export const STARTER_USERNAME = process.env.ADMIN_USERNAME || "admin";

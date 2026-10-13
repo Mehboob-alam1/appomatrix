@@ -1,27 +1,33 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { Container, PageHero } from "@/components/site/chrome";
+import { Container, PageHero, Prose } from "@/components/site/chrome";
 import { formatDate } from "@/lib/format";
-import { listScholarships } from "@/lib/queries";
-import { pageMetadata } from "@/lib/seo";
+import { pageIntro, pageSeed } from "@/lib/page-copy";
+import { getPageMeta, listScholarships } from "@/lib/queries";
+import { metadataFor } from "@/lib/seo";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Scholarships",
-  description: "Scholarships and fellowships from Appo Matrix for students in Gilgit-Baltistan and beyond.",
-  path: "/scholarships",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return metadataFor("/scholarships", {
+    title: "Scholarships",
+    description: "Scholarships and fellowships from Appo Matrix for students in Gilgit-Baltistan and beyond.",
+  });
+}
 
-export default function ScholarshipsPage() {
-  const items = listScholarships(true);
+export default async function ScholarshipsPage() {
+  const items = await listScholarships(true);
+  const seed = pageSeed("/scholarships");
+  const copy = pageIntro(await getPageMeta("/scholarships"), {
+    kicker: seed?.kicker || "Scholarships",
+    heading: seed?.heading || "Time and tuition for people already making things",
+    lead: seed?.lead || "",
+    body: seed?.body || "",
+  });
   return (
     <>
-      <PageHero
-        kicker="Scholarships"
-        title="Time and tuition for people already making things"
-        lead="Awards, fellowships, and summer grants. Each one is published from the admin studio, with a deadline and a way to apply."
-      />
+      <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
       <Container className="py-8">
+        {copy.body ? <Prose text={copy.body} className="mb-10 max-w-2xl" /> : null}
         {items.length === 0 ? (
           <p className="text-muted-foreground">No scholarships are open right now. Check back, or write to us.</p>
         ) : (

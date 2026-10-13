@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getPageMeta, getSettings } from "@/lib/queries";
 import type { Settings } from "@/lib/types";
 
 export function siteUrl() {
@@ -17,15 +18,17 @@ export function pageMetadata({
   path,
   image,
   type = "website",
+  siteName = "Appo Matrix",
 }: {
   title: string;
   description: string;
   path: string;
   image?: string;
   type?: "website" | "article";
+  siteName?: string;
 }): Metadata {
   const url = absoluteUrl(path);
-  const branded = title.includes("Appo Matrix") ? title : `${title} · Appo Matrix`;
+  const branded = title.includes(siteName) ? title : `${title} · ${siteName}`;
   const images = image ? [{ url: image, alt: title }] : undefined;
   return {
     title,
@@ -36,16 +39,52 @@ export function pageMetadata({
       description,
       url,
       type,
-      siteName: "Appo Matrix",
+      siteName,
       images,
     },
     twitter: {
       card: images ? "summary_large_image" : "summary",
-      title,
+      title: branded,
       description,
       images: image ? [image] : undefined,
     },
   };
+}
+
+export async function metadataFor(
+  path: string,
+  fallback: { title: string; description: string },
+  extra?: { image?: string; type?: "website" | "article" },
+) {
+  try {
+    const settings = await getSettings();
+    const custom = await getPageMeta(path);
+    return pageMetadata({
+      title: custom?.title || fallback.title,
+      description: custom?.description || fallback.description,
+      path,
+      siteName: settings.siteName,
+      image: extra?.image || settings.seoImage || undefined,
+      type: extra?.type,
+    });
+  } catch {
+    return pageMetadata({ ...fallback, path, image: extra?.image, type: extra?.type });
+  }
+}
+
+export async function contentMetadata(input: {
+  title: string;
+  description: string;
+  path: string;
+  image?: string;
+  type?: "website" | "article";
+}) {
+  try {
+    const settings = await getSettings();
+    return pageMetadata({ ...input, siteName: settings.siteName, image: input.image || settings.seoImage || undefined });
+  } catch {
+    return pageMetadata(input);
+  }
 }
 
 export type Crumb = { href: string; label: string };
@@ -63,7 +102,10 @@ export function breadcrumbJsonLd(items: Crumb[]) {
   };
 }
 
-export function organizationJsonLd(settings: Settings) {
+export function organizationJsonLd(settings: Settings, sameAs: string[] = []) {
+  const profiles = [...sameAs];
+  if (settings.linkedinUrl && !profiles.includes(settings.linkedinUrl)) profiles.push(settings.linkedinUrl);
+  const image = settings.seoImage || settings.logoUrl;
   return {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
@@ -72,11 +114,12 @@ export function organizationJsonLd(settings: Settings) {
     url: siteUrl(),
     email: settings.email,
     telephone: settings.phone,
-    image: absoluteUrl("/opengraph-image"),
+    image: image ? absoluteUrl(image) : absoluteUrl("/opengraph-image"),
+    logo: settings.logoUrl ? absoluteUrl(settings.logoUrl) : undefined,
     address: {
       "@type": "PostalAddress",
       streetAddress: settings.address,
-      addressLocality: "Gilgit",
+      addressLocality: settings.city || "Gilgit",
       addressRegion: "Gilgit-Baltistan",
       addressCountry: "PK",
     },
@@ -89,7 +132,7 @@ export function organizationJsonLd(settings: Settings) {
       areaServed: "Worldwide",
       availableLanguage: ["English"],
     },
-    ...(settings.linkedinUrl ? { sameAs: [settings.linkedinUrl] } : {}),
+    ...(profiles.length ? { sameAs: profiles } : {}),
   };
 }
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Container, Kicker, Prose } from "@/components/site/chrome";
+import { SafeImage } from "@/components/site/safe-image";
 import { parsePairs, parseStats, formatDate } from "@/lib/format";
 import {
   getSettings,
@@ -9,28 +10,58 @@ import {
   listPosts,
   listProjects,
   listScholarships,
+  listSections,
   listTestimonials,
   serviceTree,
 } from "@/lib/queries";
-import { pageMetadata } from "@/lib/seo";
+import { metadataFor } from "@/lib/seo";
+import type { HomeSection } from "@/lib/types";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Software studio in Gilgit-Baltistan",
-  description:
-    "Appo Matrix designs and ships web, mobile, and SaaS products from Gilgit-Baltistan for teams worldwide. See the work, services, careers, and scholarships.",
-  path: "/",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return metadataFor("/", {
+    title: "Software studio in Gilgit-Baltistan",
+    description:
+      "Appo Matrix designs and ships web, mobile, and SaaS products from Gilgit-Baltistan for teams worldwide. See the work, services, careers, and scholarships.",
+  });
+}
 
-export default function HomePage() {
-  const settings = getSettings();
-  const services = serviceTree(true);
-  const projects = listProjects(true);
+function sectionOf(sections: HomeSection[], key: string) {
+  const empty = { show: true, kicker: "", title: "", body: "", image: "", imageAlt: "", ctaLabel: "", ctaHref: "" };
+  if (sections.length === 0) return empty;
+  const found = sections.find((item) => item.sectionKey === key);
+  if (!found || !found.published) return { ...empty, show: false };
+  return {
+    show: true,
+    kicker: found.kicker,
+    title: found.title,
+    body: found.body,
+    image: found.image,
+    imageAlt: found.imageAlt,
+    ctaLabel: found.ctaLabel,
+    ctaHref: found.ctaHref,
+  };
+}
+
+export default async function HomePage() {
+  const settings = await getSettings();
+  const sections = await listSections(false);
+  const servicesBlock = sectionOf(sections, "services");
+  const portfolioBlock = sectionOf(sections, "portfolio");
+  const industriesBlock = sectionOf(sections, "industries");
+  const aboutBlock = sectionOf(sections, "about");
+  const clientsBlock = sectionOf(sections, "clients");
+  const careersBlock = sectionOf(sections, "careers");
+  const scholarshipsBlock = sectionOf(sections, "scholarships");
+  const notesBlock = sectionOf(sections, "notes");
+  const closingBlock = sectionOf(sections, "closing");
+  const services = await serviceTree(true);
+  const projects = await listProjects(true);
   const featured = projects.filter((project) => project.featured);
   const shown = (featured.length > 0 ? featured : projects).slice(0, 3);
-  const posts = listPosts(true).slice(0, 3);
-  const quotes = listTestimonials(true);
-  const careers = listCareers(true).slice(0, 3);
-  const scholarships = listScholarships(true).slice(0, 3);
+  const posts = (await listPosts(true)).slice(0, 3);
+  const quotes = await listTestimonials(true);
+  const careers = (await listCareers(true)).slice(0, 3);
+  const scholarships = (await listScholarships(true)).slice(0, 3);
   const stats = parseStats(settings.statsText);
   const process = parsePairs(settings.processText);
   const industries = parsePairs(settings.industriesText);
@@ -54,11 +85,11 @@ export default function HomePage() {
           <div className="md:col-span-4 md:pb-2">
             <p className="text-lg leading-relaxed text-black/65">{settings.heroLead}</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/contact" className="inline-flex h-12 items-center gap-2 bg-brand px-5 text-sm font-medium text-white">
-                Plan a project <ArrowUpRight className="size-4" />
+              <Link href={settings.ctaPrimaryHref || "/contact"} className="inline-flex h-12 items-center gap-2 bg-brand px-5 text-sm font-medium text-white">
+                {settings.ctaPrimaryLabel || "Plan a project"} <ArrowUpRight className="size-4" />
               </Link>
-              <Link href="/portfolio" className="inline-flex h-12 items-center border border-black px-5 text-sm">
-                See the work
+              <Link href={settings.ctaSecondaryHref || "/portfolio"} className="inline-flex h-12 items-center border border-black px-5 text-sm">
+                {settings.ctaSecondaryLabel || "See the work"}
               </Link>
             </div>
           </div>
@@ -73,14 +104,10 @@ export default function HomePage() {
           </div>
         </div>
         <figure className="relative">
-          <img
-            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2000&q=80"
-            alt="High mountain ridge above the clouds"
-            className="h-[62vh] min-h-[380px] w-full object-cover"
-          />
+          <SafeImage src={settings.heroImage} alt={settings.heroImageAlt || settings.siteName} className="h-[62vh] min-h-[380px] w-full object-cover" />
           <figcaption className="absolute inset-x-0 bottom-0 flex justify-between bg-gradient-to-t from-black/70 to-transparent px-5 py-6 font-mono text-[11px] uppercase tracking-[0.18em] text-white md:px-10">
             <span>{settings.city}</span>
-            <span>Shipping worldwide</span>
+            <span>{settings.heroCaption}</span>
           </figcaption>
         </figure>
       </section>
@@ -96,12 +123,13 @@ export default function HomePage() {
         </Container>
       </section>
 
-      <section className="py-16 md:py-24">
+      {servicesBlock.show ? <section className="py-16 md:py-24">
         <Container>
           <div className="flex items-end justify-between gap-6">
             <div>
-              <Kicker>Services</Kicker>
-              <h2 className="font-display mt-3 max-w-xl text-4xl md:text-6xl">What we actually ship</h2>
+              <Kicker>{servicesBlock.kicker || "Services"}</Kicker>
+              <h2 className="font-display mt-3 max-w-xl text-4xl md:text-6xl">{servicesBlock.title || "What we actually ship"}</h2>
+              {servicesBlock.body ? <p className="mt-4 max-w-xl text-sm leading-relaxed text-black/60">{servicesBlock.body}</p> : null}
             </div>
             <Link href="/services" className="hidden items-center gap-1 text-sm md:inline-flex">
               All services <ArrowUpRight className="size-4" />
@@ -131,14 +159,15 @@ export default function HomePage() {
             ))}
           </div>
         </Container>
-      </section>
+      </section> : null}
 
-      <section className="bg-white py-16 md:py-24">
+      {portfolioBlock.show ? <section className="bg-white py-16 md:py-24">
         <Container>
           <div className="mb-8 flex items-end justify-between">
             <div>
-              <Kicker>Portfolio</Kicker>
-              <h2 className="font-display mt-3 text-4xl md:text-6xl">Selected products</h2>
+              <Kicker>{portfolioBlock.kicker || "Portfolio"}</Kicker>
+              <h2 className="font-display mt-3 text-4xl md:text-6xl">{portfolioBlock.title || "Selected products"}</h2>
+              {portfolioBlock.body ? <p className="mt-4 max-w-xl text-sm leading-relaxed text-black/60">{portfolioBlock.body}</p> : null}
             </div>
             <Link href="/portfolio" className="inline-flex items-center gap-1 text-sm">
               Complete portfolio <ArrowUpRight className="size-4" />
@@ -150,7 +179,7 @@ export default function HomePage() {
                 <div className={index % 2 === 0 ? "md:col-span-7" : "md:order-2 md:col-span-7"}>
                   <div className="media-card">
                     {project.coverImage ? (
-                      <img src={project.coverImage} alt={project.coverImageAlt || project.title} className="aspect-[16/10] w-full object-cover" />
+                      <SafeImage src={project.coverImage} alt={project.coverImageAlt || project.title} className="aspect-[16/10] w-full object-cover" />
                     ) : null}
                   </div>
                 </div>
@@ -164,7 +193,7 @@ export default function HomePage() {
             ))}
           </div>
         </Container>
-      </section>
+      </section> : null}
 
       <section className="border-y border-black/10 py-8">
         <Container className="grid gap-6 md:grid-cols-4">
@@ -178,11 +207,15 @@ export default function HomePage() {
         </Container>
       </section>
 
-      <section className="py-16 md:py-24">
+      {industriesBlock.show ? <section className="py-16 md:py-24">
         <Container className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <Kicker>Industries</Kicker>
-            <h2 className="font-display mt-3 text-4xl">Different controls for different work</h2>
+            <Kicker>{industriesBlock.kicker || "Industries"}</Kicker>
+            <h2 className="font-display mt-3 text-4xl">{industriesBlock.title || "Different controls for different work"}</h2>
+            {industriesBlock.body ? <p className="mt-4 text-sm leading-relaxed text-black/60">{industriesBlock.body}</p> : null}
+            {industriesBlock.image ? (
+              <SafeImage src={industriesBlock.image} alt={industriesBlock.imageAlt || industriesBlock.title} className="mt-6 aspect-[16/9] w-full object-cover" />
+            ) : null}
           </div>
           <div className="divide-y divide-black/10 border-y border-black/10 lg:col-span-8">
             {industries.map((industry) => (
@@ -193,16 +226,16 @@ export default function HomePage() {
             ))}
           </div>
         </Container>
-      </section>
+      </section> : null}
 
-      <section className="ink py-16 md:py-24">
+      {aboutBlock.show ? <section className="ink py-16 md:py-24">
         <Container className="grid gap-12 lg:grid-cols-2">
           <div>
-            <Kicker light>About</Kicker>
+            <Kicker light>{aboutBlock.kicker || "About"}</Kicker>
             <h2 className="font-display mt-3 text-4xl text-white md:text-6xl">{settings.aboutHeadline}</h2>
             <Prose text={settings.aboutBody} className="mt-6 text-white/70" />
-            <Link href="/about" className="mt-8 inline-flex h-11 items-center bg-white px-5 text-sm text-black">
-              About Us
+            <Link href={aboutBlock.ctaHref || "/about"} className="mt-8 inline-flex h-11 items-center bg-white px-5 text-sm text-black">
+              {aboutBlock.ctaLabel || "About Us"}
             </Link>
           </div>
           <div className="divide-y divide-white/15 border-y border-white/15">
@@ -214,11 +247,11 @@ export default function HomePage() {
             ))}
           </div>
         </Container>
-      </section>
+      </section> : null}
 
-      <section className="py-16 md:py-24">
+      {clientsBlock.show ? <section className="py-16 md:py-24">
         <Container>
-          <Kicker>Clients</Kicker>
+          <Kicker>{clientsBlock.kicker || "Clients"}</Kicker>
           <div className="mt-8 grid gap-10 md:grid-cols-2">
             {quotes.map((quote) => (
               <figure key={quote.id} className="border-t border-black/10 pt-6">
@@ -230,12 +263,12 @@ export default function HomePage() {
             ))}
           </div>
         </Container>
-      </section>
+      </section> : null}
 
       <section className="border-t border-black/10 bg-white">
         <Container className="grid md:grid-cols-2">
-          <div className="border-black/10 py-12 md:border-r md:pr-10">
-            <Kicker>Career Development</Kicker>
+          {careersBlock.show ? <div className="border-black/10 py-12 md:border-r md:pr-10">
+            <Kicker>{careersBlock.kicker || "Career Development"}</Kicker>
             <ul className="mt-6 divide-y divide-black/10 border-y border-black/10">
               {careers.map((career) => (
                 <li key={career.id}>
@@ -249,9 +282,9 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
-          </div>
-          <div className="py-12 md:pl-10">
-            <Kicker>Scholarships</Kicker>
+          </div> : null}
+          {scholarshipsBlock.show ? <div className="py-12 md:pl-10">
+            <Kicker>{scholarshipsBlock.kicker || "Scholarships"}</Kicker>
             <ul className="mt-6 divide-y divide-black/10 border-y border-black/10">
               {scholarships.map((item) => (
                 <li key={item.id}>
@@ -265,22 +298,25 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> : null}
         </Container>
       </section>
 
-      <section className="py-16 md:py-24">
+      {notesBlock.show ? <section className="py-16 md:py-24">
         <Container>
           <div className="flex items-end justify-between">
-            <h2 className="font-display text-4xl md:text-6xl">Notes</h2>
-            <Link href="/blog" className="text-sm">All posts</Link>
+            <div>
+              <h2 className="font-display text-4xl md:text-6xl">{notesBlock.title || "Notes"}</h2>
+              {notesBlock.body ? <p className="mt-3 max-w-xl text-sm leading-relaxed text-black/60">{notesBlock.body}</p> : null}
+            </div>
+            <Link href={notesBlock.ctaHref || "/blog"} className="text-sm">{notesBlock.ctaLabel || "All posts"}</Link>
           </div>
           <div className="mt-8 grid gap-8 md:grid-cols-3">
             {posts.map((post) => (
               <Link key={post.id} href={`/blog/${post.slug}`} className="group">
                 {post.featuredImage ? (
                   <div className="media-card">
-                    <img src={post.featuredImage} alt={post.featuredImageAlt || post.title} className="aspect-[4/3] w-full object-cover" />
+                    <SafeImage src={post.featuredImage} alt={post.featuredImageAlt || post.title} className="aspect-[4/3] w-full object-cover" />
                   </div>
                 ) : null}
                 <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-black/45">{post.category} · {formatDate(post.publishedAt)}</p>
@@ -289,16 +325,19 @@ export default function HomePage() {
             ))}
           </div>
         </Container>
-      </section>
+      </section> : null}
 
-      <section className="bg-brand">
+      {closingBlock.show ? <section className="bg-brand">
         <Container className="flex flex-col justify-between gap-8 py-20 md:flex-row md:items-end">
-          <h2 className="font-display max-w-xl text-5xl text-white md:text-7xl">Start with a written brief.</h2>
-          <Link href="/contact" className="inline-flex h-12 items-center gap-2 bg-white px-6 text-sm font-medium text-brand">
-            Contact Us <ArrowUpRight className="size-4" />
+          <div>
+            <h2 className="font-display max-w-xl text-5xl text-white md:text-7xl">{closingBlock.title || "Start with a written brief."}</h2>
+            {closingBlock.body ? <p className="mt-4 max-w-xl text-white/80">{closingBlock.body}</p> : null}
+          </div>
+          <Link href={closingBlock.ctaHref || "/contact"} className="inline-flex h-12 items-center gap-2 bg-white px-6 text-sm font-medium text-brand">
+            {closingBlock.ctaLabel || "Contact Us"} <ArrowUpRight className="size-4" />
           </Link>
         </Container>
-      </section>
+      </section> : null}
     </>
   );
 }

@@ -1,16 +1,21 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminShell } from "@/components/admin/shell";
-import { DeleteButton } from "@/components/admin/delete-button";
 import { InquiryTable } from "@/components/admin/inquiry-table";
+import { RecordActions } from "@/components/admin/record-actions";
 import {
   isSection,
   listCareers,
+  listCategories,
   listInquiries,
+  listNavigation,
+  listPageMeta,
   listPosts,
   listProjects,
   listScholarships,
+  listSections,
   listServices,
+  listSocial,
   listTeam,
   listTestimonials,
   type SectionKey,
@@ -57,48 +62,96 @@ const META: Record<SectionKey, { title: string; description: string; columns: st
     description: "Messages from Contact Us, career applications, and scholarship notes.",
     columns: [],
   },
+  categories: {
+    title: "Blog categories",
+    description: "Categories used by posts and the public blog filter.",
+    columns: ["Name", "Slug", "Status"],
+  },
+  navigation: {
+    title: "Navigation",
+    description: "Header links, the header button, and footer links. The Services menu still comes from published services.",
+    columns: ["Label", "Placement", "Status"],
+  },
+  social: {
+    title: "Social links",
+    description: "Profiles shown in the footer and structured data.",
+    columns: ["Label", "URL", "Status"],
+  },
+  sections: {
+    title: "Homepage sections",
+    description: "Headings, extra copy, images, buttons, and visibility for the homepage blocks. Unpublish a section to hide it.",
+    columns: ["Section", "Title", "Status"],
+  },
+  pages: {
+    title: "Pages",
+    description: "Edit the heading, introduction, extra copy, and image for each public page. Individual services, projects, posts, people, careers, and scholarships are edited in their own sections.",
+    columns: ["Path", "Heading", "Status"],
+  },
 };
 
-function rows(section: SectionKey) {
+async function rows(section: SectionKey) {
   const state = (published: boolean) => (published ? "Published" : "Draft");
   if (section === "services") {
-    const services = listServices(false);
+    const services = await listServices(false);
     const name = (id: string | null) => services.find((item) => item.id === id)?.title || "Top level";
-    return services.map((item) => ({ id: item.id, label: item.title, cells: [item.title, name(item.parentId), state(item.published)] }));
+    return services.map((item) => ({ id: item.id, label: item.title, published: item.published, cells: [item.title, name(item.parentId), state(item.published)] }));
   }
   if (section === "portfolio") {
-    return listProjects(false).map((item) => ({ id: item.id, label: item.title, cells: [item.title, item.clientName, state(item.published)] }));
+    return (await listProjects(false)).map((item) => ({ id: item.id, label: item.title, published: item.published, cells: [item.title, item.clientName, state(item.published)] }));
   }
   if (section === "blog") {
-    return listPosts(false).map((item) => ({ id: item.id, label: item.title, cells: [item.title, item.category, state(item.published)] }));
+    return (await listPosts(false)).map((item) => ({ id: item.id, label: item.title, published: item.published, cells: [item.title, item.category, state(item.published)] }));
+  }
+  if (section === "categories") {
+    return (await listCategories(false)).map((item) => ({ id: item.id, label: item.name, published: item.published, cells: [item.name, item.slug, state(item.published)] }));
   }
   if (section === "team") {
-    return listTeam(false).map((item) => ({ id: item.id, label: item.name, cells: [item.name, item.role, state(item.published)] }));
+    return (await listTeam(false)).map((item) => ({ id: item.id, label: item.name, published: item.published, cells: [item.name, item.role, state(item.published)] }));
   }
   if (section === "testimonials") {
-    return listTestimonials(false).map((item) => ({ id: item.id, label: item.clientName, cells: [item.clientName, item.company, state(item.published)] }));
+    return (await listTestimonials(false)).map((item) => ({ id: item.id, label: item.clientName, published: item.published, cells: [item.clientName, item.company, state(item.published)] }));
   }
   if (section === "careers") {
-    return listCareers(false).map((item) => ({ id: item.id, label: item.title, cells: [item.title, item.kind, state(item.published)] }));
+    return (await listCareers(false)).map((item) => ({ id: item.id, label: item.title, published: item.published, cells: [item.title, item.kind, state(item.published)] }));
   }
   if (section === "scholarships") {
-    return listScholarships(false).map((item) => ({ id: item.id, label: item.title, cells: [item.title, item.award, state(item.published)] }));
+    return (await listScholarships(false)).map((item) => ({ id: item.id, label: item.title, published: item.published, cells: [item.title, item.award, state(item.published)] }));
+  }
+  if (section === "navigation") {
+    return (await listNavigation(false)).map((item) => ({ id: item.id, label: item.label, published: item.published, cells: [item.label, item.location, state(item.published)] }));
+  }
+  if (section === "social") {
+    return (await listSocial(false)).map((item) => ({ id: item.id, label: item.label, published: item.published, cells: [item.label, item.url, state(item.published)] }));
+  }
+  if (section === "sections") {
+    return (await listSections(false)).map((item) => ({ id: item.id, label: item.title || item.sectionKey, published: item.published, cells: [item.sectionKey, item.title, state(item.published)] }));
+  }
+  if (section === "pages") {
+    return (await listPageMeta(false)).map((item) => ({ id: item.id, label: item.path, published: item.published, cells: [item.path, item.heading || item.title, state(item.published)] }));
   }
   return [];
 }
 
-export default async function SectionPage({ params }: { params: Promise<{ section: string }> }) {
+export default async function SectionPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ section: string }>;
+  searchParams: Promise<{ saved?: string }>;
+}) {
   const { section } = await params;
+  const { saved } = await searchParams;
   if (!isSection(section)) notFound();
   const meta = META[section];
-  const items = section === "inquiries" ? [] : rows(section);
+  const items = section === "inquiries" ? [] : await rows(section);
 
   return (
     <AdminShell title={meta.title} description={meta.description}>
       {section === "inquiries" ? (
-        <InquiryTable inquiries={listInquiries()} />
+        <InquiryTable inquiries={await listInquiries()} />
       ) : (
         <>
+          {saved ? <p className="mb-4 text-sm text-primary" role="status">Saved.</p> : null}
           <div className="mb-4">
             <Link href={`/admin/${section}/new`} className="inline-flex h-9 items-center rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground">
               Add new
@@ -121,12 +174,7 @@ export default async function SectionPage({ params }: { params: Promise<{ sectio
                       <td key={`${row.id}-${index}`} className="px-4 py-3">{cell}</td>
                     ))}
                     <td className="px-4 py-3">
-                      <div className="flex gap-2">
-                        <Link href={`/admin/${section}/${row.id}`} className="inline-flex h-7 items-center rounded-lg border border-border px-2 text-xs">
-                          Edit
-                        </Link>
-                        <DeleteButton section={section} id={row.id} label={row.label} />
-                      </div>
+                      <RecordActions section={section} id={row.id} label={row.label} published={row.published} />
                     </td>
                   </tr>
                 ))}

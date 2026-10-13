@@ -4,7 +4,12 @@ import { cookies } from "next/headers";
 const COOKIE = "am_session";
 
 function secret() {
-  return process.env.AUTH_SECRET || "appomatrix-local-auth-secret";
+  const value = process.env.AUTH_SECRET;
+  if (value) return value;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Set AUTH_SECRET in the environment before running in production.");
+  }
+  return "appomatrix-local-auth-secret";
 }
 
 export function hashPassword(password: string) {

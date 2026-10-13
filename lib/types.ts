@@ -109,9 +109,77 @@ export type Scholarship = {
   summary: string;
   description: string;
   coverImage: string;
+  coverImageAlt: string;
   applicationUrl: string;
   sortOrder: number;
   published: boolean;
+};
+
+export type PostCategory = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  sortOrder: number;
+  published: boolean;
+};
+
+export type NavItem = {
+  id: string;
+  location: string;
+  label: string;
+  href: string;
+  sortOrder: number;
+  published: boolean;
+};
+
+export type SocialLink = {
+  id: string;
+  label: string;
+  url: string;
+  sortOrder: number;
+  published: boolean;
+};
+
+export type HomeSection = {
+  id: string;
+  sectionKey: string;
+  kicker: string;
+  title: string;
+  body: string;
+  image: string;
+  imageAlt: string;
+  ctaLabel: string;
+  ctaHref: string;
+  sortOrder: number;
+  published: boolean;
+};
+
+export type PageMeta = {
+  id: string;
+  path: string;
+  title: string;
+  description: string;
+  kicker: string;
+  heading: string;
+  lead: string;
+  body: string;
+  secondaryTitle: string;
+  image: string;
+  imageAlt: string;
+  sortOrder: number;
+  published: boolean;
+};
+
+export type MediaAsset = {
+  id: string;
+  filename: string;
+  originalName: string;
+  mime: string;
+  sizeBytes: number;
+  alt: string;
+  url: string;
+  createdAt: string;
 };
 
 export type Inquiry = {
@@ -149,6 +217,22 @@ export type Settings = {
   linkedinUrl: string;
   whatsappNumber: string;
   whatsappMessage: string;
+  logoUrl: string;
+  logoAlt: string;
+  faviconUrl: string;
+  footerNote: string;
+  copyrightText: string;
+  seoTitle: string;
+  seoDescription: string;
+  seoImage: string;
+  seoImageAlt: string;
+  heroImage: string;
+  heroImageAlt: string;
+  heroCaption: string;
+  ctaPrimaryLabel: string;
+  ctaPrimaryHref: string;
+  ctaSecondaryLabel: string;
+  ctaSecondaryHref: string;
 };
 
 export type Pair = { title: string; body: string };
