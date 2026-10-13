@@ -1,34 +1,34 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { Container, PageHero } from "@/components/site/chrome";
+import { Container, PageHero, Prose } from "@/components/site/chrome";
 import { formatDate } from "@/lib/format";
-import { listCareers } from "@/lib/queries";
-import { pageMetadata } from "@/lib/seo";
+import { pageIntro, pageSeed } from "@/lib/page-copy";
+import { getPageMeta, listCareers } from "@/lib/queries";
+import { metadataFor } from "@/lib/seo";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Career Development",
-  description: "Roles, internships, and apprenticeship programs at Appo Matrix in Gilgit-Baltistan.",
-  path: "/career-development",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return metadataFor("/career-development", {
+    title: "Career Development",
+    description: "Roles, internships, and apprenticeship programs at Appo Matrix in Gilgit-Baltistan.",
+  });
+}
 
-export default function CareersPage() {
-  const careers = listCareers(true);
+export default async function CareersPage() {
+  const careers = await listCareers(true);
+  const seed = pageSeed("/career-development");
+  const copy = pageIntro(await getPageMeta("/career-development"), {
+    kicker: seed?.kicker || "Career Development",
+    heading: seed?.heading || "Serious work, without leaving the mountains",
+    lead: seed?.lead || "",
+    body: seed?.body || "",
+  });
   return (
     <>
-      <PageHero
-        kicker="Career Development"
-        title="Serious work, without leaving the mountains"
-        lead="Full-time roles, internships, and a delivery apprenticeship for people who want product engineering in Gilgit-Baltistan."
-      />
+      <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
       <Container className="grid gap-10 py-16 lg:grid-cols-12">
-        <div className="space-y-4 text-black/70 lg:col-span-4">
-          <p>
-            Training here is attached to client work. You will write, review, and ship with the same definition of done as the rest of the squad.
-          </p>
-          <p>
-            Openings are edited from the admin studio. If nothing listed fits, write to us anyway — we keep a short list for the next cohort.
-          </p>
+        <div className="lg:col-span-4">
+          {copy.body ? <Prose text={copy.body} /> : null}
         </div>
         <div className="border-t border-black/10 lg:col-span-8">
           {careers.length === 0 ? (

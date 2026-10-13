@@ -35,7 +35,7 @@ export function PortfolioBrowser({ projects }: { projects: Project[] }) {
             <Link key={project.id} href={`/portfolio/${project.slug}`} className="group grid items-center gap-6 border-b border-black/10 py-6 md:grid-cols-12">
               <div className="media-card md:col-span-5">
                 {project.coverImage ? (
-                  <img src={project.coverImage} alt={project.coverImageAlt || project.title} className="aspect-[16/10] w-full object-cover" />
+                  <img src={project.coverImage} alt={project.coverImageAlt || project.title} className="aspect-[16/10] w-full object-cover" onError={(event) => { event.currentTarget.style.display = "none"; }} />
                 ) : (
                   <div className="grid aspect-[16/10] place-items-center bg-black text-4xl text-white">{project.title.slice(0, 1)}</div>
                 )}

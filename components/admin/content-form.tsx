@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { saveContent } from "@/lib/actions";
+import { csrfTokenFromDocument } from "@/lib/csrf-client";
 import { SERVICE_ICONS } from "@/components/site/service-icon";
 import { GalleryField, ImageField } from "@/components/admin/media";
 import { Button } from "@/components/ui/button";
@@ -14,10 +15,12 @@ export function ContentForm({
   section,
   values,
   parents,
+  categories = [],
 }: {
   section: string;
   values: Record<string, string>;
   parents: { id: string; title: string }[];
+  categories?: { id: string; name: string }[];
 }) {
   const router = useRouter();
   const [error, setError] = useState("");
@@ -31,13 +34,15 @@ export function ContentForm({
         event.preventDefault();
         setPending(true);
         setError("");
-        const result = await saveContent(section, new FormData(event.currentTarget));
+        const form = new FormData(event.currentTarget);
+        form.set("csrf", csrfTokenFromDocument());
+        const result = await saveContent(section, form);
         setPending(false);
         if (!result.ok) {
           setError(result.error);
           return;
         }
-        router.push(`/admin/${section}`);
+        router.push(`/admin/${section}?saved=1`);
         router.refresh();
       }}
     >
@@ -100,7 +105,16 @@ export function ContentForm({
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Title" name="title" defaultValue={values.title} required />
             <Field label="Slug" name="slug" defaultValue={values.slug} />
-            <Field label="Category" name="category" defaultValue={values.category} required />
+            {categories.length > 0 ? (
+              <SelectField label="Category" name="categoryId" defaultValue={values.categoryId || ""}>
+                <option value="">Select a category</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>{category.name}</option>
+                ))}
+              </SelectField>
+            ) : (
+              <Field label="Category" name="category" defaultValue={values.category} required />
+            )}
             <Field label="Author" name="author" defaultValue={values.author} />
             <Field label="Published date" name="publishedAt" defaultValue={values.publishedAt?.slice(0, 10)} type="date" />
           </div>
@@ -168,7 +182,75 @@ export function ContentForm({
           <Area label="Summary" name="summary" defaultValue={values.summary} required />
           <Area label="Description" name="description" defaultValue={values.description} rows={8} />
           <ImageField name="coverImage" label="Cover image" defaultValue={values.coverImage} />
+          <Field label="Cover alt text" name="coverImageAlt" defaultValue={values.coverImageAlt} />
           <Field label="Application URL" name="applicationUrl" defaultValue={values.applicationUrl} placeholder="Leave blank to use the contact form" />
+        </>
+      ) : null}
+
+      {section === "categories" ? (
+        <>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Field label="Name" name="name" defaultValue={values.name} required />
+            <Field label="Slug" name="slug" defaultValue={values.slug} placeholder="Leave blank to generate" />
+          </div>
+          <Area label="Description" name="description" defaultValue={values.description} />
+        </>
+      ) : null}
+
+      {section === "navigation" ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field label="Label" name="label" defaultValue={values.label} required />
+          <Field label="Link" name="href" defaultValue={values.href} required placeholder="/about or https://" />
+          <SelectField label="Placement" name="location" defaultValue={values.location || "header"}>
+            <option value="header">Header</option>
+            <option value="header_cta">Header button</option>
+            <option value="footer">Footer</option>
+          </SelectField>
+        </div>
+      ) : null}
+
+      {section === "social" ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field label="Label" name="label" defaultValue={values.label} required />
+          <Field label="URL" name="url" defaultValue={values.url} required placeholder="https://" />
+        </div>
+      ) : null}
+
+      {section === "sections" ? (
+        <>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Field label="Section key" name="sectionKey" defaultValue={values.sectionKey} placeholder="services, portfolio, closing…" />
+            <Field label="Kicker" name="kicker" defaultValue={values.kicker} />
+          </div>
+          <Field label="Title" name="title" defaultValue={values.title} />
+          <Area label="Body" name="body" defaultValue={values.body} rows={5} />
+          <ImageField name="image" label="Image" defaultValue={values.image} />
+          <Field label="Image alt text" name="imageAlt" defaultValue={values.imageAlt} />
+          <div className="grid gap-4 md:grid-cols-2">
+            <Field label="Button label" name="ctaLabel" defaultValue={values.ctaLabel} />
+            <Field label="Button link" name="ctaHref" defaultValue={values.ctaHref} placeholder="/contact" />
+          </div>
+        </>
+      ) : null}
+
+      {section === "pages" ? (
+        <>
+          <Field label="Path" name="path" defaultValue={values.path} required placeholder="/about" />
+          <p className="text-sm text-muted-foreground">
+            This is the visible page. Kicker, heading, introduction, extra copy, and image appear on that URL. The browser title and description are the SEO fields.
+            Homepage hero text and the hero photo are edited in Settings. Homepage block headings are edited in Homepage.
+          </p>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Field label="Kicker" name="kicker" defaultValue={values.kicker} placeholder="About Us" />
+            <Field label="Second heading" name="secondaryTitle" defaultValue={values.secondaryTitle} placeholder="Used on About for the team block" />
+          </div>
+          <Field label="Page heading" name="heading" defaultValue={values.heading} placeholder="The large title on the page" />
+          <Area label="Introduction" name="lead" defaultValue={values.lead} rows={3} />
+          <Area label="Page content" name="body" defaultValue={values.body} rows={8} hint="Extra paragraphs. Separate paragraphs with a blank line." />
+          <ImageField name="image" label="Page image" defaultValue={values.image} />
+          <Field label="Image alt text" name="imageAlt" defaultValue={values.imageAlt} />
+          <Field label="Browser title" name="title" defaultValue={values.title} required />
+          <Area label="Browser description" name="description" defaultValue={values.description} required />
         </>
       ) : null}
 
@@ -179,7 +261,7 @@ export function ContentForm({
           Published on the site
         </label>
       </div>
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {error ? <p className="text-sm text-destructive" role="alert">{error}</p> : null}
       <div className="flex gap-3">
         <Button type="submit" className="h-10 px-4" disabled={pending}>{pending ? "Saving…" : "Save"}</Button>
         <Button type="button" variant="outline" className="h-10" onClick={() => router.push(`/admin/${section}`)}>

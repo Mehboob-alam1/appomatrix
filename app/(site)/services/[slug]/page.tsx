@@ -6,15 +6,15 @@ import { Container, Kicker, PageHero, Prose } from "@/components/site/chrome";
 import { parseList, parsePairs } from "@/lib/format";
 import { JsonLd } from "@/components/site/json-ld";
 import { getService, listProjects, listServices } from "@/lib/queries";
-import { absoluteUrl, pageMetadata } from "@/lib/seo";
+import { absoluteUrl, contentMetadata } from "@/lib/seo";
 
 type Params = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const service = getService(slug);
+  const service = await getService(slug);
   if (!service) return { title: "Service" };
-  return pageMetadata({
+  return contentMetadata({
     title: service.title,
     description: service.shortDescription,
     path: `/services/${service.slug}`,
@@ -24,15 +24,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function ServicePage({ params }: Params) {
   const { slug } = await params;
-  const service = getService(slug);
+  const service = await getService(slug);
   if (!service) notFound();
-  const all = listServices(true);
+  const all = await listServices(true);
   const children = all.filter((item) => item.parentId === service.id);
   const parent = service.parentId ? all.find((item) => item.id === service.parentId) : undefined;
   const siblings = parent ? all.filter((item) => item.parentId === parent.id && item.id !== service.id) : [];
   const steps = parsePairs(service.processText);
   const stack = parseList(service.techStack);
-  const projects = listProjects(true).slice(0, 2);
+  const projects = (await listProjects(true)).slice(0, 2);
 
   return (
     <>

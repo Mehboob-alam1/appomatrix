@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { setInquiryStatus } from "@/lib/actions";
+import { deleteInquiryAction, setInquiryStatusAction } from "@/lib/actions";
+import { csrfTokenFromDocument } from "@/lib/csrf-client";
 import type { Inquiry } from "@/lib/types";
 import { formatDate } from "@/lib/format";
 
@@ -21,6 +22,7 @@ export function InquiryTable({ inquiries }: { inquiries: Inquiry[] }) {
 function InquiryCard({ inquiry }: { inquiry: Inquiry }) {
   const [status, setStatus] = useState(inquiry.status);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
 
   return (
     <article className="rounded-2xl border border-border bg-card p-4">
@@ -41,12 +43,16 @@ function InquiryCard({ inquiry }: { inquiry: Inquiry }) {
             onChange={async (event) => {
               const next = event.target.value;
               setStatus(next);
-              const result = await setInquiryStatus(inquiry.id, next);
+              setNotice("");
+              setError("");
+              const result = await setInquiryStatusAction(inquiry.id, next, csrfTokenFromDocument());
               if (!result.ok) setError(result.error);
+              else setNotice("Status saved.");
             }}
           >
             <option value="new">New</option>
             <option value="reviewed">Reviewed</option>
+            <option value="replied">Replied</option>
             <option value="archived">Archived</option>
           </select>
         </label>
@@ -58,7 +64,20 @@ function InquiryCard({ inquiry }: { inquiry: Inquiry }) {
         {formatDate(inquiry.submittedAt)}
       </p>
       <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{inquiry.message}</p>
-      {error ? <p className="mt-2 text-sm text-destructive">{error}</p> : null}
+      {notice ? <p className="mt-2 text-sm text-primary" role="status">{notice}</p> : null}
+      {error ? <p className="mt-2 text-sm text-destructive" role="alert">{error}</p> : null}
+      <button
+        type="button"
+        className="mt-3 text-sm text-destructive"
+        onClick={async () => {
+          if (!confirm(`Delete the message from ${inquiry.name}?`)) return;
+          const result = await deleteInquiryAction(inquiry.id, csrfTokenFromDocument());
+          if (!result.ok) setError(result.error);
+          else window.location.reload();
+        }}
+      >
+        Delete
+      </button>
     </article>
   );
 }

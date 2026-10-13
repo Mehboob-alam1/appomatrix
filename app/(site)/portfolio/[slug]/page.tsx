@@ -7,15 +7,15 @@ import { Breadcrumbs, Container, Kicker, Prose } from "@/components/site/chrome"
 import { JsonLd } from "@/components/site/json-ld";
 import { parseList, parseStats } from "@/lib/format";
 import { getProject, listProjects } from "@/lib/queries";
-import { absoluteUrl, breadcrumbJsonLd, pageMetadata } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, contentMetadata } from "@/lib/seo";
 
 type Params = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = await getProject(slug);
   if (!project) return { title: "Portfolio" };
-  return pageMetadata({
+  return contentMetadata({
     title: project.title,
     description: project.excerpt,
     path: `/portfolio/${project.slug}`,
@@ -25,11 +25,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function ProjectPage({ params }: Params) {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = await getProject(slug);
   if (!project) notFound();
   const metrics = parseStats(project.metricsText);
   const stack = parseList(project.techStack);
-  const more = listProjects(true).filter((item) => item.id !== project.id).slice(0, 3);
+  const more = (await listProjects(true)).filter((item) => item.id !== project.id).slice(0, 3);
 
   const crumbs = [
     { href: "/", label: "Home" },

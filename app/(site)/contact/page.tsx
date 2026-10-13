@@ -2,14 +2,16 @@ import type { Metadata } from "next";
 import { Container, PageHero } from "@/components/site/chrome";
 import { ContactForm } from "@/components/site/contact-form";
 import { whatsappHref } from "@/lib/contact";
-import { getSettings, listServices } from "@/lib/queries";
-import { pageMetadata } from "@/lib/seo";
+import { pageIntro, pageSeed } from "@/lib/page-copy";
+import { getPageMeta, getSettings, listServices } from "@/lib/queries";
+import { metadataFor } from "@/lib/seo";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Contact Us",
-  description: "Start a project, a career application, or a scholarship inquiry with Appo Matrix. We reply within one business day.",
-  path: "/contact",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return metadataFor("/contact", {
+    title: "Contact Us",
+    description: "Start a project, a career application, or a scholarship inquiry with Appo Matrix. We reply within one business day.",
+  });
+}
 
 export default async function ContactPage({
   searchParams,
@@ -17,8 +19,15 @@ export default async function ContactPage({
   searchParams: Promise<{ topic?: string }>;
 }) {
   const { topic } = await searchParams;
-  const settings = getSettings();
-  const services = listServices(true);
+  const settings = await getSettings();
+  const seed = pageSeed("/contact");
+  const copy = pageIntro(await getPageMeta("/contact"), {
+    kicker: seed?.kicker || "Contact Us",
+    heading: seed?.heading || "Tell us what you are building",
+    lead: seed?.lead || "",
+    body: seed?.body || "",
+  });
+  const services = await listServices(true);
   const topics = [
     "General inquiry",
     ...services.map((service) => service.title),
@@ -29,11 +38,7 @@ export default async function ContactPage({
 
   return (
     <>
-      <PageHero
-        kicker="Contact Us"
-        title="Tell us what you are building"
-        lead="A project, a role, or a scholarship. We reply within one business day with a clear next step."
-      />
+      <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
       <Container className="grid gap-12 py-16 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <ContactForm topics={topics} defaultTopic={defaultTopic} />
@@ -66,9 +71,7 @@ export default async function ContactPage({
               </a>
             ) : null}
           </div>
-          <p className="max-w-sm text-sm leading-relaxed text-black/55">
-            Inquiries land in the studio CRM. Nothing is scheduled or billed until you confirm the scope in writing.
-          </p>
+          {copy.body ? <p className="max-w-sm text-sm leading-relaxed text-black/55">{copy.body}</p> : null}
         </aside>
       </Container>
     </>

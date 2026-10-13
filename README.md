@@ -5,9 +5,12 @@ Company site for **Appo Matrix**, a software studio in Gilgit-Baltistan. The pub
 ## Run locally
 
 ```bash
+cp .env.example .env
 npm install
 npm run dev
 ```
+
+Put your MySQL settings in `.env`. The database must already exist. On first request the app creates any missing tables and, if the database is empty, loads sample content. It does not drop or overwrite existing rows.
 
 Open [http://127.0.0.1:3847](http://127.0.0.1:3847).
 
@@ -15,20 +18,17 @@ Open [http://127.0.0.1:3847](http://127.0.0.1:3847).
 
 [http://127.0.0.1:3847/admin](http://127.0.0.1:3847/admin)
 
-Starter login (change it in Settings after you sign in):
+The first admin user is created only when the users table is empty. Set `ADMIN_USERNAME` and `ADMIN_PASSWORD` before that first boot, then change the password in Settings. Set `AUTH_SECRET` in production. Set `NEXT_PUBLIC_SITE_URL` to the public domain so canonical URLs, Open Graph cards, and `sitemap.xml` point at the live site. See `.env.example`.
 
-- Username: `admin`
-- Password: `admin`
+Hostinger deployment, backups, and uploads: [docs/HOSTINGER.md](docs/HOSTINGER.md).
 
-Override those with `ADMIN_USERNAME` and `ADMIN_PASSWORD` before the database is created. Set `AUTH_SECRET` in production. Set `NEXT_PUBLIC_SITE_URL` to the public domain so canonical URLs, Open Graph cards, and `sitemap.xml` point at the live site. See `.env.example`.
+HTTP API: [docs/API.md](docs/API.md).
 
 ## Technical SEO
 
 Each public page has a unique title, description, and canonical URL. `/sitemap.xml` lists published services, portfolio, posts, careers, and scholarships. `/robots.txt` allows the public site and blocks `/admin` and `/api`. Pages include Organization, WebSite, and breadcrumb structured data. Posts, services, and portfolio records add their own schema. The admin studio is `noindex`.
 
-The database is created at `data/cms.sqlite` on first launch and seeded with sample services, projects, posts, team, careers, and scholarships. Uploaded images are stored in `public/uploads`.
-
-Delete `data/cms.sqlite` to reseed from scratch.
+MySQL tables are described in `db/schema.sql`. Uploaded images are stored in `UPLOAD_DIR`, or in `data/uploads` when that variable is empty, and served from `/uploads`.
 
 ## What you can edit
 
@@ -42,7 +42,13 @@ Delete `data/cms.sqlite` to reseed from scratch.
 | Career development | Roles, internships, and programs. |
 | Scholarships | Awards, deadlines, and application links. |
 | CRM inquiries | Messages from Contact Us, including career and scholarship applications. |
-| Settings | Homepage copy, stats, industries, contact details, WhatsApp number, booking link, and the admin password. |
+| Blog categories | Names used by posts and the blog filter. |
+| Navigation | Header links, the header button, and footer links. |
+| Social links | Profiles in the footer. |
+| Homepage | Section headings, buttons, and whether a homepage block is published. |
+| Pages | Heading, introduction, extra copy, image, and SEO title for each public page. |
+| Media | Uploaded images and alt text. |
+| Settings | Branding, logo, favicon, contact details, hero and calls to action, stats, SEO defaults, WhatsApp, booking, and the admin password. |
 
 ## Pages
 

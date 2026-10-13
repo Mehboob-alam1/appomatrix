@@ -12,3 +12,8 @@ coverage/
 
 data/*.sqlite
 data/*.sqlite-*
+data/uploads/
+public/uploads/
+backups/
+*.sql.gz
+*.dump

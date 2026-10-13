@@ -6,10 +6,10 @@ import { useState } from "react";
 import { ArrowUpRight, ChevronDown, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Logo } from "@/components/site/logo";
-import type { ServiceNode } from "@/lib/types";
+import type { NavItem, ServiceNode } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const LINKS = [
+const FALLBACK = [
   { href: "/", label: "Home" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/career-development", label: "Career Development" },
@@ -24,8 +24,27 @@ function active(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function Header({ siteName, services }: { siteName: string; services: ServiceNode[] }) {
+export function Header({
+  siteName,
+  logoUrl,
+  logoAlt,
+  services,
+  links,
+  cta,
+}: {
+  siteName: string;
+  logoUrl: string;
+  logoAlt: string;
+  services: ServiceNode[];
+  links: NavItem[];
+  cta: { href: string; label: string };
+}) {
   const pathname = usePathname();
+  const source: { href: string; label: string }[] = links.length ? links : FALLBACK;
+  const items = source.filter((link) => link.href !== "/contact");
+  const homeIndex = items.findIndex((link) => link.href === "/");
+  const before = homeIndex >= 0 ? items.slice(0, homeIndex + 1) : [];
+  const after = homeIndex >= 0 ? items.slice(homeIndex + 1) : items;
   const [open, setOpen] = useState(false);
   const [servicesPinned, setServicesPinned] = useState(false);
   const [mobileGroup, setMobileGroup] = useState<string | null>(null);
@@ -40,11 +59,13 @@ export function Header({ siteName, services }: { siteName: string; services: Ser
         Skip to content
       </a>
       <div className="mx-auto flex h-16 max-w-[92rem] items-center gap-3 px-5">
-        <Logo name={siteName} />
+        <Logo name={siteName} logoUrl={logoUrl} logoAlt={logoAlt} />
         <nav className="ml-4 hidden items-center gap-0.5 xl:flex" aria-label="Main">
-          <Link href="/" className={cn("px-2.5 py-2 text-[13px] text-black/70 hover:text-brand", pathname === "/" && "font-medium text-brand")}>
-            Home
-          </Link>
+          {before.map((link) => (
+            <Link key={link.href} href={link.href} className={cn("px-2.5 py-2 text-[13px] text-black/70 hover:text-brand", active(pathname, link.href) && "font-medium text-brand")}>
+              {link.label}
+            </Link>
+          ))}
           <div
             className="group relative"
             data-open={servicesPinned ? "true" : "false"}
@@ -94,7 +115,7 @@ export function Header({ siteName, services }: { siteName: string; services: Ser
               </div>
             </div>
           </div>
-          {LINKS.slice(1).map((link) => (
+          {after.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -104,8 +125,8 @@ export function Header({ siteName, services }: { siteName: string; services: Ser
             </Link>
           ))}
         </nav>
-        <Link href="/contact" className="ml-auto hidden h-10 items-center gap-1 bg-brand px-4 text-[13px] font-medium text-white xl:inline-flex">
-          Contact Us <ArrowUpRight className="size-3.5" />
+        <Link href={cta.href || "/contact"} className="ml-auto hidden h-10 items-center gap-1 bg-brand px-4 text-[13px] font-medium text-white xl:inline-flex">
+          {cta.label || "Contact Us"} <ArrowUpRight className="size-3.5" />
         </Link>
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger className="ml-auto inline-flex size-9 items-center justify-center border border-black/15 xl:hidden" aria-label="Open menu">
@@ -116,7 +137,11 @@ export function Header({ siteName, services }: { siteName: string; services: Ser
               <SheetTitle className="text-xl tracking-tight">{siteName}</SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col gap-1 px-4 pb-8" aria-label="Mobile">
-              <Link href="/" onClick={() => setOpen(false)} className={cn("px-2 py-2.5 text-lg", pathname === "/" && "font-medium text-brand")}>Home</Link>
+              {before.map((link) => (
+                <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className={cn("px-2 py-2.5 text-lg", active(pathname, link.href) && "font-medium text-brand")}>
+                  {link.label}
+                </Link>
+              ))}
               <button
                 type="button"
                 className="flex items-center justify-between px-2 py-2 text-left text-lg"
@@ -141,13 +166,13 @@ export function Header({ siteName, services }: { siteName: string; services: Ser
                   ))}
                 </div>
               ) : null}
-              {LINKS.slice(1).map((link) => (
+              {after.map((link) => (
                 <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className={cn("px-2 py-2.5 text-lg", active(pathname, link.href) && "font-medium text-brand")}>
                   {link.label}
                 </Link>
               ))}
-              <Link href="/contact" onClick={() => setOpen(false)} className="mt-3 inline-flex h-12 items-center justify-center bg-brand px-4 text-sm font-medium text-white">
-                Contact Us
+              <Link href={cta.href || "/contact"} onClick={() => setOpen(false)} className="mt-3 inline-flex h-12 items-center justify-center bg-brand px-4 text-sm font-medium text-white">
+                {cta.label || "Contact Us"}
               </Link>
             </nav>
           </SheetContent>

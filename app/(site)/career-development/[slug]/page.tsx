@@ -4,15 +4,15 @@ import { notFound } from "next/navigation";
 import { Container, Kicker, PageHero, Prose } from "@/components/site/chrome";
 import { formatDate } from "@/lib/format";
 import { getCareer } from "@/lib/queries";
-import { pageMetadata } from "@/lib/seo";
+import { contentMetadata } from "@/lib/seo";
 
 type Params = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const career = getCareer(slug);
+  const career = await getCareer(slug);
   if (!career) return { title: "Career" };
-  return pageMetadata({
+  return contentMetadata({
     title: career.title,
     description: career.summary,
     path: `/career-development/${career.slug}`,
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function CareerPage({ params }: Params) {
   const { slug } = await params;
-  const career = getCareer(slug);
+  const career = await getCareer(slug);
   if (!career) notFound();
   const requirements = career.requirements.split("\n").map((line) => line.trim()).filter(Boolean);
 

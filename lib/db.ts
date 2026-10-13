@@ -1,183 +1,81 @@
-import fs from "fs";
-import path from "path";
-import { DatabaseSync } from "node:sqlite";
-import { hashPassword } from "@/lib/auth";
-import { defaultSettings, STARTER_PASSWORD, STARTER_USERNAME } from "@/lib/defaults";
-import { seedContent } from "@/lib/seed";
+import mysql, { type Pool, type ResultSetHeader, type RowDataPacket } from "mysql2/promise";
+import { migrate } from "@/lib/migrate";
 
-const globalForDb = globalThis as unknown as { cms?: DatabaseSync };
+export type Row = RowDataPacket & Record<string, unknown>;
 
-function migrate(db: DatabaseSync) {
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS services (
-      id TEXT PRIMARY KEY,
-      slug TEXT NOT NULL UNIQUE,
-      title TEXT NOT NULL,
-      parent_id TEXT,
-      short_description TEXT NOT NULL,
-      full_description TEXT NOT NULL DEFAULT '',
-      icon TEXT NOT NULL DEFAULT 'globe',
-      image TEXT NOT NULL DEFAULT '',
-      image_alt TEXT NOT NULL DEFAULT '',
-      process_text TEXT NOT NULL DEFAULT '',
-      tech_stack TEXT NOT NULL DEFAULT '',
-      sort_order INTEGER NOT NULL DEFAULT 0,
-      published INTEGER NOT NULL DEFAULT 1
-    );
-    CREATE TABLE IF NOT EXISTS projects (
-      id TEXT PRIMARY KEY,
-      slug TEXT NOT NULL UNIQUE,
-      title TEXT NOT NULL,
-      client_name TEXT NOT NULL,
-      category TEXT NOT NULL,
-      excerpt TEXT NOT NULL DEFAULT '',
-      cover_image TEXT NOT NULL DEFAULT '',
-      cover_image_alt TEXT NOT NULL DEFAULT '',
-      gallery TEXT NOT NULL DEFAULT '[]',
-      problem TEXT NOT NULL DEFAULT '',
-      solution TEXT NOT NULL DEFAULT '',
-      result TEXT NOT NULL DEFAULT '',
-      metrics_text TEXT NOT NULL DEFAULT '',
-      tech_stack TEXT NOT NULL DEFAULT '',
-      external_link TEXT NOT NULL DEFAULT '',
-      featured INTEGER NOT NULL DEFAULT 0,
-      sort_order INTEGER NOT NULL DEFAULT 0,
-      published INTEGER NOT NULL DEFAULT 1,
-      created_at TEXT NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS posts (
-      id TEXT PRIMARY KEY,
-      slug TEXT NOT NULL UNIQUE,
-      title TEXT NOT NULL,
-      excerpt TEXT NOT NULL,
-      content TEXT NOT NULL DEFAULT '',
-      featured_image TEXT NOT NULL DEFAULT '',
-      featured_image_alt TEXT NOT NULL DEFAULT '',
-      author TEXT NOT NULL DEFAULT '',
-      category TEXT NOT NULL DEFAULT 'Notes',
-      published_at TEXT NOT NULL,
-      reading_time_minutes INTEGER NOT NULL DEFAULT 1,
-      published INTEGER NOT NULL DEFAULT 1
-    );
-    CREATE TABLE IF NOT EXISTS team_members (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      role TEXT NOT NULL,
-      photo TEXT NOT NULL DEFAULT '',
-      photo_alt TEXT NOT NULL DEFAULT '',
-      bio TEXT NOT NULL DEFAULT '',
-      linkedin TEXT NOT NULL DEFAULT '',
-      sort_order INTEGER NOT NULL DEFAULT 0,
-      published INTEGER NOT NULL DEFAULT 1
-    );
-    CREATE TABLE IF NOT EXISTS testimonials (
-      id TEXT PRIMARY KEY,
-      client_name TEXT NOT NULL,
-      role TEXT NOT NULL,
-      company TEXT NOT NULL,
-      quote TEXT NOT NULL,
-      rating INTEGER NOT NULL DEFAULT 5,
-      sort_order INTEGER NOT NULL DEFAULT 0,
-      published INTEGER NOT NULL DEFAULT 1
-    );
-    CREATE TABLE IF NOT EXISTS careers (
-      id TEXT PRIMARY KEY,
-      slug TEXT NOT NULL UNIQUE,
-      title TEXT NOT NULL,
-      kind TEXT NOT NULL DEFAULT 'Role',
-      location TEXT NOT NULL DEFAULT '',
-      department TEXT NOT NULL DEFAULT '',
-      summary TEXT NOT NULL,
-      description TEXT NOT NULL DEFAULT '',
-      requirements TEXT NOT NULL DEFAULT '',
-      deadline TEXT NOT NULL DEFAULT '',
-      sort_order INTEGER NOT NULL DEFAULT 0,
-      published INTEGER NOT NULL DEFAULT 1
-    );
-    CREATE TABLE IF NOT EXISTS scholarships (
-      id TEXT PRIMARY KEY,
-      slug TEXT NOT NULL UNIQUE,
-      title TEXT NOT NULL,
-      award TEXT NOT NULL DEFAULT '',
-      eligibility TEXT NOT NULL DEFAULT '',
-      deadline TEXT NOT NULL DEFAULT '',
-      summary TEXT NOT NULL,
-      description TEXT NOT NULL DEFAULT '',
-      cover_image TEXT NOT NULL DEFAULT '',
-      application_url TEXT NOT NULL DEFAULT '',
-      sort_order INTEGER NOT NULL DEFAULT 0,
-      published INTEGER NOT NULL DEFAULT 1
-    );
-    CREATE TABLE IF NOT EXISTS inquiries (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      email TEXT NOT NULL,
-      phone TEXT NOT NULL DEFAULT '',
-      company TEXT NOT NULL DEFAULT '',
-      topic TEXT NOT NULL DEFAULT '',
-      budget TEXT NOT NULL DEFAULT '',
-      message TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'new',
-      submitted_at TEXT NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY,
-      username TEXT NOT NULL UNIQUE,
-      password_hash TEXT NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS settings (
-      key TEXT PRIMARY KEY,
-      value TEXT NOT NULL
-    );
-  `);
+type SqlValue = string | number | null;
 
-  const seeded = db.prepare("SELECT value FROM settings WHERE key = 'seeded'").get() as
-    | { value: string }
-    | undefined;
-  if (seeded) return;
+const globalForDb = globalThis as unknown as {
+  cmsPool?: Pool;
+  cmsReady?: Promise<void>;
+};
 
-  db.exec("BEGIN");
-  try {
-    seedContent(db);
-    db.prepare("INSERT INTO settings (key, value) VALUES (?, ?)").run(
-      "site",
-      JSON.stringify(defaultSettings),
+function required(name: string) {
+  const value = process.env[name];
+  if (value === undefined || value === "") {
+    throw new Error(
+      `Missing ${name}. Copy .env.example to .env and set your Hostinger MySQL credentials. The database must already exist; migrations do not create it and never drop tables.`,
     );
-    db.prepare("INSERT INTO users (id, username, password_hash) VALUES (?, ?, ?)").run(
-      "user_admin",
-      STARTER_USERNAME,
-      hashPassword(STARTER_PASSWORD),
-    );
-    db.prepare("INSERT INTO settings (key, value) VALUES (?, ?)").run("seeded", "1");
-    db.exec("COMMIT");
-  } catch (error) {
-    db.exec("ROLLBACK");
-    throw error;
   }
+  return value;
 }
 
-export function getDb() {
-  if (!globalForDb.cms) {
-    const file = path.join(process.cwd(), "data", "cms.sqlite");
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    const db = new DatabaseSync(file);
-    db.exec("PRAGMA journal_mode = WAL");
-    migrate(db);
-    globalForDb.cms = db;
+function password() {
+  if (process.env.DB_PASSWORD === undefined) {
+    throw new Error(
+      "Missing DB_PASSWORD. Set it in .env even when the password is empty. Never commit the real value.",
+    );
   }
-  return globalForDb.cms;
+  return process.env.DB_PASSWORD;
 }
 
-export type Row = Record<string, unknown>;
-
-export function all(sql: string, ...params: unknown[]) {
-  return getDb().prepare(sql).all(...params) as Row[];
+export function getPool() {
+  if (!globalForDb.cmsPool) {
+    const ssl = process.env.DB_SSL === "true";
+    globalForDb.cmsPool = mysql.createPool({
+      host: required("DB_HOST"),
+      port: Number(process.env.DB_PORT || 3306),
+      user: required("DB_USER"),
+      password: password(),
+      database: required("DB_NAME"),
+      waitForConnections: true,
+      connectionLimit: 10,
+      maxIdle: 10,
+      idleTimeout: 60_000,
+      enableKeepAlive: true,
+      timezone: "Z",
+      dateStrings: true,
+      multipleStatements: false,
+      charset: "utf8mb4",
+      ssl: ssl ? { rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== "false" } : undefined,
+    });
+  }
+  return globalForDb.cmsPool;
 }
 
-export function get(sql: string, ...params: unknown[]) {
-  return getDb().prepare(sql).get(...params) as Row | undefined;
+export function ensureReady() {
+  if (!globalForDb.cmsReady) {
+    globalForDb.cmsReady = migrate(getPool()).catch((error: unknown) => {
+      globalForDb.cmsReady = undefined;
+      throw error;
+    });
+  }
+  return globalForDb.cmsReady;
 }
 
-export function run(sql: string, ...params: unknown[]) {
-  return getDb().prepare(sql).run(...params);
+export async function all(sql: string, params: SqlValue[] = []) {
+  await ensureReady();
+  const [rows] = await getPool().execute<Row[]>(sql, params);
+  return rows;
+}
+
+export async function get(sql: string, params: SqlValue[] = []) {
+  const rows = await all(sql, params);
+  return rows[0];
+}
+
+export async function run(sql: string, params: SqlValue[] = []) {
+  await ensureReady();
+  const [result] = await getPool().execute<ResultSetHeader>(sql, params);
+  return result;
 }

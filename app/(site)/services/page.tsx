@@ -1,26 +1,32 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { Container, PageHero } from "@/components/site/chrome";
-import { serviceTree } from "@/lib/queries";
-import { pageMetadata } from "@/lib/seo";
+import { Container, PageHero, Prose } from "@/components/site/chrome";
+import { pageIntro, pageSeed } from "@/lib/page-copy";
+import { getPageMeta, serviceTree } from "@/lib/queries";
+import { metadataFor } from "@/lib/seo";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Services",
-  description: "Web, mobile, SaaS, design, cloud, and applied AI from Appo Matrix in Gilgit-Baltistan.",
-  path: "/services",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return metadataFor("/services", {
+    title: "Services",
+    description: "Web, mobile, SaaS, design, cloud, and applied AI from Appo Matrix in Gilgit-Baltistan.",
+  });
+}
 
-export default function ServicesPage() {
-  const groups = serviceTree(true);
+export default async function ServicesPage() {
+  const groups = await serviceTree(true);
+  const seed = pageSeed("/services");
+  const copy = pageIntro(await getPageMeta("/services"), {
+    kicker: seed?.kicker || "Services",
+    heading: seed?.heading || "Everything required to ship",
+    lead: seed?.lead || "",
+    body: seed?.body || "",
+  });
   return (
     <>
-      <PageHero
-        kicker="Services"
-        title="Everything required to ship"
-        lead="Open a practice, or go straight to the service. Each one can stand alone or sit inside a longer squad."
-      />
+      <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
       <Container className="py-10">
+        {copy.body ? <Prose text={copy.body} className="mb-10 max-w-2xl" /> : null}
         {groups.map((group) => (
           <section key={group.id} className="border-t border-black/10 py-10">
             <div className="grid gap-4 md:grid-cols-12">

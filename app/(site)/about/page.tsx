@@ -2,27 +2,38 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Container, Kicker, PageHero, Prose } from "@/components/site/chrome";
+import { SafeImage } from "@/components/site/safe-image";
 import { parsePairs, parseStats } from "@/lib/format";
-import { getSettings, listTeam } from "@/lib/queries";
-import { pageMetadata } from "@/lib/seo";
+import { pageIntro, pageSeed } from "@/lib/page-copy";
+import { getPageMeta, getSettings, listTeam } from "@/lib/queries";
+import { metadataFor } from "@/lib/seo";
 
-export const metadata: Metadata = pageMetadata({
-  title: "About Us",
-  description: "Appo Matrix is a software studio in Gilgit-Baltistan working with clients worldwide.",
-  path: "/about",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  return metadataFor("/about", {
+    title: "About Us",
+    description: "Appo Matrix is a software studio in Gilgit-Baltistan working with clients worldwide.",
+  });
+}
 
-export default function AboutPage() {
-  const settings = getSettings();
+export default async function AboutPage() {
+  const settings = await getSettings();
+  const seed = pageSeed("/about");
+  const copy = pageIntro(await getPageMeta("/about"), {
+    kicker: seed?.kicker || "About Us",
+    heading: settings.aboutHeadline,
+    lead: settings.aboutSecondary,
+    body: settings.aboutBody,
+    secondaryTitle: seed?.secondaryTitle || "Who you will meet",
+  });
   const stats = parseStats(settings.statsText);
   const principles = parsePairs(settings.principlesText);
-  const team = listTeam(true);
+  const team = await listTeam(true);
 
   return (
     <>
-      <PageHero kicker="About Us" title={settings.aboutHeadline} lead={settings.aboutSecondary} />
+      <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
       <Container className="grid gap-12 py-16 lg:grid-cols-12">
-        <Prose text={settings.aboutBody} className="lg:col-span-7" />
+        <Prose text={copy.body} className="lg:col-span-7" />
         <div className="grid grid-cols-2 border-t border-black/10 lg:col-span-5">
           {stats.map((stat) => (
             <div key={stat.label} className="border-b border-black/10 py-5 pr-4">
@@ -47,7 +58,7 @@ export default function AboutPage() {
         <div className="flex items-end justify-between">
           <div>
             <Kicker>Team</Kicker>
-            <h2 className="font-display mt-3 text-4xl">Who you will meet</h2>
+            <h2 className="font-display mt-3 text-4xl">{copy.secondaryTitle}</h2>
           </div>
           <Link href="/team" className="inline-flex items-center gap-1 text-sm">
             Full team <ArrowUpRight className="size-4" />
@@ -58,7 +69,7 @@ export default function AboutPage() {
             <article key={person.id}>
               {person.photo ? (
                 <div className="media-card">
-                  <img src={person.photo} alt={person.photoAlt || person.name} className="aspect-[4/5] w-full object-cover" />
+                  <SafeImage src={person.photo} alt={person.photoAlt || person.name} className="aspect-[4/5] w-full object-cover" />
                 </div>
               ) : null}
               <h3 className="mt-4 text-lg">{person.name}</h3>
