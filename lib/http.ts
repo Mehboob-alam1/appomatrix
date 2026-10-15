@@ -6,8 +6,8 @@ export function ok(data: unknown, status = 200) {
   return NextResponse.json({ ok: true, data }, { status });
 }
 
-export function fail(error: string, status = 400) {
-  return NextResponse.json({ ok: false, error }, { status });
+export function fail(error: string, status = 400, data?: unknown) {
+  return NextResponse.json(data === undefined ? { ok: false, error } : { ok: false, error, data }, { status });
 }
 
 export function publicError(error: unknown) {
