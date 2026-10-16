@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getPageMeta, getSettings } from "@/lib/queries";
+import { richTextPlain } from "@/lib/rich-text";
 import type { Settings } from "@/lib/types";
 
 export function siteUrl() {
@@ -30,13 +31,14 @@ export function pageMetadata({
   const url = absoluteUrl(path);
   const branded = title.includes(siteName) ? title : `${title} · ${siteName}`;
   const images = image ? [{ url: image, alt: title }] : undefined;
+  const plainDescription = richTextPlain(description) || description;
   return {
     title,
-    description,
+    description: plainDescription,
     alternates: { canonical: url },
     openGraph: {
       title: branded,
-      description,
+      description: plainDescription,
       url,
       type,
       siteName,
@@ -45,7 +47,7 @@ export function pageMetadata({
     twitter: {
       card: images ? "summary_large_image" : "summary",
       title: branded,
-      description,
+      description: plainDescription,
       images: image ? [image] : undefined,
     },
   };
@@ -110,7 +112,7 @@ export function organizationJsonLd(settings: Settings, sameAs: string[] = []) {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     name: settings.siteName,
-    description: settings.tagline,
+    description: richTextPlain(settings.tagline) || settings.tagline,
     url: siteUrl(),
     email: settings.email,
     telephone: settings.phone,
@@ -142,7 +144,7 @@ export function websiteJsonLd(settings: Settings) {
     "@type": "WebSite",
     name: settings.siteName,
     url: siteUrl(),
-    description: settings.tagline,
+    description: richTextPlain(settings.tagline) || settings.tagline,
     publisher: { "@type": "Organization", name: settings.siteName, url: siteUrl() },
   };
 }

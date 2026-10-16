@@ -228,6 +228,127 @@ button:focus-visible {
   opacity: 0;
 }
 
+.prose-editor p {
+  margin: 0 0 0.75rem;
+}
+
+.prose-editor h2,
+.prose-editor h3,
+.prose-editor h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin: 1rem 0 0.5rem;
+}
+
+.prose-editor h2 {
+  font-size: 1.5rem;
+}
+
+.prose-editor h3 {
+  font-size: 1.25rem;
+}
+
+.prose-editor ul,
+.prose-editor ol {
+  margin: 0 0 0.75rem;
+  padding-left: 1.25rem;
+}
+
+.prose-editor ul {
+  list-style: disc;
+}
+
+.prose-editor ol {
+  list-style: decimal;
+}
+
+.prose-editor blockquote {
+  border-left: 3px solid var(--color-brand);
+  margin: 0 0 0.75rem;
+  padding-left: 0.85rem;
+  color: color-mix(in oklab, var(--foreground) 70%, transparent);
+}
+
+.prose-editor mark {
+  background: #fff3a3;
+  border-radius: 0.15rem;
+  padding: 0 0.15rem;
+}
+
+.prose-editor a {
+  color: var(--color-brand);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-editor p.is-editor-empty:first-child::before {
+  color: color-mix(in oklab, var(--foreground) 40%, transparent);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.rich-prose > * + * {
+  margin-top: 1rem;
+}
+
+.rich-prose h2,
+.rich-prose h3,
+.rich-prose h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+.rich-prose h2 {
+  font-size: 1.85rem;
+  line-height: 1.15;
+}
+
+.rich-prose h3 {
+  font-size: 1.4rem;
+  line-height: 1.2;
+}
+
+.rich-prose ul,
+.rich-prose ol {
+  padding-left: 1.25rem;
+}
+
+.rich-prose ul {
+  list-style: disc;
+}
+
+.rich-prose ol {
+  list-style: decimal;
+}
+
+.rich-prose blockquote {
+  border-left: 3px solid var(--color-brand);
+  padding-left: 0.9rem;
+  color: color-mix(in oklab, var(--foreground) 70%, transparent);
+}
+
+.rich-prose mark {
+  background: #fff3a3;
+  border-radius: 0.15rem;
+  padding: 0 0.15rem;
+}
+
+.rich-prose a {
+  color: var(--color-brand);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.rich-prose strong {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marquee-track,
   .dock-in,

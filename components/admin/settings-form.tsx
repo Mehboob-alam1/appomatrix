@@ -4,20 +4,21 @@ import { useState } from "react";
 import { saveSettingsAction } from "@/lib/actions";
 import { csrfTokenFromDocument } from "@/lib/csrf-client";
 import { ImageField } from "@/components/admin/media";
+import { RichTextField } from "@/components/admin/rich-text";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { Settings } from "@/lib/types";
 
-const GROUPS: { title: string; fields: { key: keyof Settings; label: string; area?: boolean; hint?: string }[] }[] = [
+const GROUPS: { title: string; fields: { key: keyof Settings; label: string; area?: boolean; rich?: boolean; hint?: string }[] }[] = [
   {
     title: "Branding and contact",
     fields: [
       { key: "siteName", label: "Site name" },
-      { key: "tagline", label: "Tagline", area: true },
+      { key: "tagline", label: "Tagline", rich: true, hint: "Used in the footer when the footer note is blank." },
       { key: "logoAlt", label: "Logo alt text" },
-      { key: "footerNote", label: "Footer note", area: true, hint: "Shown under the site name. Leave blank to use the tagline." },
+      { key: "footerNote", label: "Footer note", rich: true, hint: "Shown under the site name. Leave blank to use the tagline." },
       { key: "copyrightText", label: "Copyright line", hint: "Leave blank for “© year Site name”." },
       { key: "email", label: "Email" },
       { key: "phone", label: "Phone" },
@@ -31,7 +32,7 @@ const GROUPS: { title: string; fields: { key: keyof Settings; label: string; are
       { key: "heroKicker", label: "Hero kicker" },
       { key: "heroTitle", label: "Hero title" },
       { key: "heroHighlight", label: "Hero highlight" },
-      { key: "heroLead", label: "Hero lead", area: true },
+      { key: "heroLead", label: "Hero lead", rich: true },
       { key: "heroImageAlt", label: "Hero image alt text" },
       { key: "heroCaption", label: "Hero caption" },
       { key: "ctaPrimaryLabel", label: "Primary button label" },
@@ -44,8 +45,8 @@ const GROUPS: { title: string; fields: { key: keyof Settings; label: string; are
     title: "About, stats, and homepage copy",
     fields: [
       { key: "aboutHeadline", label: "About headline" },
-      { key: "aboutBody", label: "About body", area: true, hint: "Blank line between paragraphs." },
-      { key: "aboutSecondary", label: "About supporting line", area: true },
+      { key: "aboutBody", label: "About body", rich: true, hint: "Use headings, lists, highlight, and alignment." },
+      { key: "aboutSecondary", label: "About supporting line", rich: true },
       { key: "statsText", label: "Stats", area: true, hint: "One per line: 120+ | Projects delivered" },
       { key: "processText", label: "Process", area: true, hint: "One per line: Discover | Problem, users, and constraints" },
       { key: "industriesText", label: "Industries", area: true, hint: "One per line: Title | Description" },
@@ -97,25 +98,36 @@ export function SettingsForm({ settings }: { settings: Settings }) {
     >
       <section className="space-y-4">
         <h2 className="font-display text-2xl">Logo, favicon, and images</h2>
-        <ImageField name="logoUrl" label="Logo" defaultValue={settings.logoUrl} />
-        <ImageField name="faviconUrl" label="Favicon" defaultValue={settings.faviconUrl} />
-        <ImageField name="heroImage" label="Homepage hero image" defaultValue={settings.heroImage} />
-        <ImageField name="seoImage" label="Default social image" defaultValue={settings.seoImage} />
+        <ImageField name="logoUrl" label="Logo" defaultValue={settings.logoUrl} hint="Transparent PNG works best in the header" aspect="wide" />
+        <ImageField name="faviconUrl" label="Favicon" defaultValue={settings.faviconUrl} hint="Square mark for the browser tab" aspect="square" />
+        <ImageField name="heroImage" label="Homepage hero image" defaultValue={settings.heroImage} hint="Full-width photo under the homepage headline" aspect="wide" />
+        <ImageField name="seoImage" label="Default social image" defaultValue={settings.seoImage} hint="Shown when the site is shared on social apps" aspect="wide" />
       </section>
       {GROUPS.map((group) => (
         <section key={group.title} className="space-y-4">
           <h2 className="font-display text-2xl">{group.title}</h2>
-          {group.fields.map((field) => (
-            <label key={field.key} className="block space-y-1.5">
-              <Label htmlFor={field.key}>{field.label}</Label>
-              {field.area ? (
-                <Textarea id={field.key} name={field.key} defaultValue={settings[field.key]} rows={4} />
-              ) : (
-                <Input id={field.key} name={field.key} defaultValue={settings[field.key]} className="h-10" />
-              )}
-              {field.hint ? <span className="block text-xs text-muted-foreground">{field.hint}</span> : null}
-            </label>
-          ))}
+          {group.fields.map((field) =>
+            field.rich ? (
+              <RichTextField
+                key={field.key}
+                label={field.label}
+                name={field.key}
+                defaultValue={settings[field.key]}
+                hint={field.hint}
+                minHeight="240px"
+              />
+            ) : (
+              <label key={field.key} className="block space-y-1.5">
+                <Label htmlFor={field.key}>{field.label}</Label>
+                {field.area ? (
+                  <Textarea id={field.key} name={field.key} defaultValue={settings[field.key]} rows={4} />
+                ) : (
+                  <Input id={field.key} name={field.key} defaultValue={settings[field.key]} className="h-10" />
+                )}
+                {field.hint ? <span className="block text-xs text-muted-foreground">{field.hint}</span> : null}
+              </label>
+            ),
+          )}
         </section>
       ))}
       <p className="text-sm text-muted-foreground">

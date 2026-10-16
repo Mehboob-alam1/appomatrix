@@ -34,14 +34,14 @@ export default async function ServicesPage() {
                 <h2 className="font-display text-3xl">
                   <Link href={`/services/${group.slug}`}>{group.title}</Link>
                 </h2>
-                <p className="mt-2 text-sm text-black/60">{group.shortDescription}</p>
+                <Prose text={group.shortDescription} className="mt-2 text-sm text-black/60" />
               </div>
               <div className="divide-y divide-black/10 border-y border-black/10 md:col-span-8">
                 {(group.children.length > 0 ? group.children : [group]).map((service) => (
                   <Link key={service.id} href={`/services/${service.slug}`} className="group flex items-start justify-between gap-4 py-4">
                     <span>
                       <span className="block text-lg">{service.title}</span>
-                      <span className="mt-1 block text-sm text-black/55">{service.shortDescription}</span>
+                      <Prose text={service.shortDescription} className="mt-1 text-sm text-black/55" />
                     </span>
                     <ArrowUpRight className="mt-1 size-4 shrink-0 group-hover:text-brand" />
                   </Link>

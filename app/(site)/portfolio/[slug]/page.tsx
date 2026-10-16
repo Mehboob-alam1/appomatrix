@@ -57,7 +57,7 @@ export default async function ProjectPage({ params }: Params) {
           {project.category} · {project.clientName}
         </p>
         <h1 className="font-display mt-3 max-w-4xl text-5xl md:text-7xl">{project.title}</h1>
-        <p className="mt-5 max-w-2xl text-lg text-black/65">{project.excerpt}</p>
+        <Prose text={project.excerpt} className="mt-5 max-w-2xl text-lg text-black/65" />
         {project.externalLink ? (
           <a
             href={project.externalLink}

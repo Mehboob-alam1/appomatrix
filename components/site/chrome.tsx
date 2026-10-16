@@ -2,6 +2,7 @@ import Link from "next/link";
 import { JsonLd } from "@/components/site/json-ld";
 import { SafeImage } from "@/components/site/safe-image";
 import { paragraphs } from "@/lib/format";
+import { looksLikeHtml, sanitizeRichText } from "@/lib/rich-text";
 import { breadcrumbJsonLd, type Crumb } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
@@ -57,6 +58,14 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
 }
 
 export function Prose({ text, className }: { text: string; className?: string }) {
+  if (looksLikeHtml(text)) {
+    return (
+      <div
+        className={cn("rich-prose text-[1.05rem] leading-relaxed text-foreground/80", className)}
+        dangerouslySetInnerHTML={{ __html: sanitizeRichText(text) }}
+      />
+    );
+  }
   return (
     <div className={cn("space-y-4 text-[1.05rem] leading-relaxed text-foreground/80", className)}>
       {paragraphs(text).map((block) => (
@@ -99,7 +108,7 @@ export function PageHero({
           <Kicker>{kicker}</Kicker>
         </div>
         <h1 className="font-display mt-4 max-w-4xl text-5xl leading-[0.95] text-balance md:text-7xl">{title}</h1>
-        {lead ? <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">{lead}</p> : null}
+        {lead ? <Prose text={lead} className="mt-6 max-w-xl text-lg text-muted-foreground" /> : null}
         {image ? (
           <div className="media-card mt-10 max-w-4xl">
             <SafeImage src={image} alt={imageAlt || title} className="aspect-[16/8] w-full object-cover" />

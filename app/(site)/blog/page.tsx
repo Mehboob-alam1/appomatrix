@@ -55,7 +55,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
               {post.category} · {formatDate(post.publishedAt)} · {post.readingTimeMinutes} min
             </p>
             <h2 className="font-display mt-2 text-3xl group-hover:text-brand">{post.title}</h2>
-            <p className="mt-2 text-sm leading-relaxed text-black/60">{post.excerpt}</p>
+            <Prose text={post.excerpt} className="mt-2 text-sm text-black/60" />
           </Link>
         ))}
       </Container>

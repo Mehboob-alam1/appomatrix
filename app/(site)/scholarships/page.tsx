@@ -47,7 +47,7 @@ export default async function ScholarshipsPage() {
                   </p>
                   <h2 className="font-display mt-2 text-3xl md:text-4xl">{item.title}</h2>
                   <p className="mt-2 text-sm text-black">{item.award}</p>
-                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-black/60">{item.summary}</p>
+                  <Prose text={item.summary} className="mt-2 max-w-xl text-sm text-black/60" />
                 </div>
                 <ArrowUpRight className="hidden size-5 md:col-span-1 md:block md:justify-self-end group-hover:text-brand" />
               </Link>

@@ -80,6 +80,15 @@ curl -sS https://your-domain/api/health
 
 `{"ok":true,"data":{"database":"up"}}` means MySQL is reachable.
 
+If the response is `database":"down"`, read the `error` field. The usual causes are:
+
+1. `DB_PASSWORD` is still the placeholder `PASTE_THE_MYSQL_PASSWORD_HERE`, or does not match the MySQL user password in hPanel.
+2. `DB_USER` or `DB_NAME` is wrong. Both should be `u276950232_appomatrix`.
+3. `DB_HOST` is wrong. Use the hostname from **Databases → MySQL Databases** (often `localhost` on the same Hostinger account).
+4. Environment variables were edited but the Node.js app was not restarted / redeployed.
+
+Also confirm the password was never left as the placeholder from `.env.example` when you used **Import .env**.
+
 ## 5. Persistent uploads
 
 Set `UPLOAD_DIR` to a directory that redeploys do not delete, then create it and make it writable by the Node user:

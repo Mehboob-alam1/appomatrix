@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { defaultSettings } from "@/lib/defaults";
 import { getSettings } from "@/lib/queries";
+import { richTextPlain } from "@/lib/rich-text";
 import { siteUrl } from "@/lib/seo";
 import "./globals.css";
 
@@ -30,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
       default: settings.seoTitle || settings.siteName,
       template: `%s · ${settings.siteName}`,
     },
-    description: settings.seoDescription || settings.tagline,
+    description: settings.seoDescription || richTextPlain(settings.tagline) || settings.tagline,
     applicationName: settings.siteName,
     authors: [{ name: settings.siteName, url: siteUrl() }],
     creator: settings.siteName,
@@ -45,7 +46,7 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "en_US",
       siteName: settings.siteName,
       title: settings.seoTitle || settings.siteName,
-      description: settings.seoDescription || settings.tagline,
+      description: settings.seoDescription || richTextPlain(settings.tagline) || settings.tagline,
       images: settings.seoImage ? [{ url: settings.seoImage, alt: settings.seoImageAlt || settings.siteName }] : undefined,
     },
     twitter: { card: settings.seoImage ? "summary_large_image" : "summary" },
