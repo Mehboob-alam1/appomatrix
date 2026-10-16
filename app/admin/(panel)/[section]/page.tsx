@@ -59,7 +59,7 @@ const META: Record<SectionKey, { title: string; description: string; columns: st
   },
   inquiries: {
     title: "CRM inquiries",
-    description: "Messages from Contact Us, career applications, and scholarship notes.",
+    description: "Messages from Contact Us, career applications, and scholarship notes. Use Reply by email to answer in your mail app, then track status here.",
     columns: [],
   },
   categories: {
