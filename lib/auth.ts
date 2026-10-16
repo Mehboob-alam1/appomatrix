@@ -1,5 +1,7 @@
-import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
+
+export { hashPassword, verifyPassword } from "@/lib/password";
 
 const COOKIE = "am_session";
 
@@ -10,21 +12,6 @@ function secret() {
     throw new Error("Set AUTH_SECRET in the environment before running in production.");
   }
   return "appomatrix-local-auth-secret";
-}
-
-export function hashPassword(password: string) {
-  const salt = randomBytes(16).toString("hex");
-  const hash = scryptSync(password, salt, 32).toString("hex");
-  return `${salt}:${hash}`;
-}
-
-export function verifyPassword(password: string, stored: string) {
-  const [salt, hash] = stored.split(":");
-  if (!salt || !hash) return false;
-  const next = scryptSync(password, salt, 32);
-  const prev = Buffer.from(hash, "hex");
-  if (next.length !== prev.length) return false;
-  return timingSafeEqual(next, prev);
 }
 
 function sign(body: string) {
