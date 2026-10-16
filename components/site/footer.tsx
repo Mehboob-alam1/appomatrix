@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Prose } from "@/components/site/chrome";
+import { Prose } from "@/components/site/prose";
 import { SafeImage } from "@/components/site/safe-image";
 import { whatsappHref } from "@/lib/contact";
 import type { NavItem, ServiceNode, Settings, SocialLink } from "@/lib/types";

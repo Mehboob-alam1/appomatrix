@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import { hashPassword, verifyPassword } from "@/lib/auth";
+import { hashPassword, verifyPassword } from "@/lib/password";
 import { all, get, run } from "@/lib/db";
 import { defaultSettings } from "@/lib/defaults";
 import { readingMinutes, slugify } from "@/lib/format";

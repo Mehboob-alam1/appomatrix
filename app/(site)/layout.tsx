@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { JsonLd } from "@/components/site/json-ld";
@@ -5,7 +6,7 @@ import { SupportDock } from "@/components/site/support-dock";
 import { databaseHint } from "@/lib/db-status";
 import { defaultSettings } from "@/lib/defaults";
 import { getSettings, listNavigation, listSocial, serviceTree } from "@/lib/queries";
-import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
+import { organizationJsonLd, websiteJsonLd } from "@/lib/seo-core";
 
 export const dynamic = "force-dynamic";
 
@@ -57,9 +58,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           <p className="mt-4 text-sm text-black/55">
             Open Hostinger → Environment variables and confirm <code>DB_HOST</code>, <code>DB_USER</code>,{" "}
             <code>DB_PASSWORD</code>, and <code>DB_NAME</code>. Then restart the Node.js app and check{" "}
-            <a className="underline" href="/api/health">
+            <Link className="underline" href="/api/health">
               /api/health
-            </a>
+            </Link>
             .
           </p>
         </div>

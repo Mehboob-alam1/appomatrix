@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { listCareers, listPosts, listProjects, listScholarships, listServices } from "@/lib/queries";
-import { absoluteUrl } from "@/lib/seo";
+import { absoluteUrl } from "@/lib/seo-core";
 
 export const dynamic = "force-dynamic";
 

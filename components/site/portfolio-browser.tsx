@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { Prose } from "@/components/site/chrome";
+import { Prose } from "@/components/site/prose";
 import type { Project } from "@/lib/types";
 
 export function PortfolioBrowser({ projects }: { projects: Project[] }) {

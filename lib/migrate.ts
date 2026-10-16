@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
 import path from "path";
 import type { Pool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { hashPassword } from "@/lib/auth";
+import { hashPassword } from "@/lib/password";
 import { defaultSettings, STARTER_PASSWORD, STARTER_USERNAME } from "@/lib/defaults";
 import { fillPageCopy } from "@/lib/page-copy";
 import { seedContent } from "@/lib/seed";

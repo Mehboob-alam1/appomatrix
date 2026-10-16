@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { JsonLd } from "@/components/site/json-ld";
+import { Prose } from "@/components/site/prose";
 import { SafeImage } from "@/components/site/safe-image";
-import { paragraphs } from "@/lib/format";
-import { looksLikeHtml, sanitizeRichText } from "@/lib/rich-text";
-import { breadcrumbJsonLd, type Crumb } from "@/lib/seo";
+import { breadcrumbJsonLd, type Crumb } from "@/lib/seo-core";
 import { cn } from "@/lib/utils";
+
+export { Prose } from "@/components/site/prose";
 
 const SECTION_PATHS: Record<string, string> = {
   Services: "/services",
@@ -54,24 +55,6 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
         })}
       </ol>
     </nav>
-  );
-}
-
-export function Prose({ text, className }: { text: string; className?: string }) {
-  if (looksLikeHtml(text)) {
-    return (
-      <div
-        className={cn("rich-prose text-[1.05rem] leading-relaxed text-foreground/80", className)}
-        dangerouslySetInnerHTML={{ __html: sanitizeRichText(text) }}
-      />
-    );
-  }
-  return (
-    <div className={cn("space-y-4 text-[1.05rem] leading-relaxed text-foreground/80", className)}>
-      {paragraphs(text).map((block) => (
-        <p key={block.slice(0, 48)}>{block}</p>
-      ))}
-    </div>
   );
 }
 

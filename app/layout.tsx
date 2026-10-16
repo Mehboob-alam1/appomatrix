@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { defaultSettings } from "@/lib/defaults";
 import { getSettings } from "@/lib/queries";
 import { richTextPlain } from "@/lib/rich-text";
-import { siteUrl } from "@/lib/seo";
+import { siteUrl } from "@/lib/seo-core";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
