@@ -270,6 +270,7 @@ export async function getSettings(): Promise<Settings> {
     if (!settings.logoUrl.trim()) settings.logoUrl = defaultSettings.logoUrl;
     if (!settings.logoAlt.trim()) settings.logoAlt = defaultSettings.logoAlt;
     if (!settings.faviconUrl.trim()) settings.faviconUrl = defaultSettings.faviconUrl;
+    if (!settings.email.trim()) settings.email = defaultSettings.email;
     return settings;
   } catch {
     return defaultSettings;
