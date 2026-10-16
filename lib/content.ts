@@ -4,7 +4,7 @@ import { all, get, run } from "@/lib/db";
 import { defaultSettings } from "@/lib/defaults";
 import { readingMinutes, slugify } from "@/lib/format";
 import { getSettings, getUser, isSection, SECTION_TABLE, type SectionKey } from "@/lib/queries";
-import { sanitizeRichText } from "@/lib/rich-text";
+import { richTextPlain, sanitizeRichText } from "@/lib/rich-text";
 import type { ActionResult, GalleryImage, Settings } from "@/lib/types";
 
 const DUMMY_HASH = `${"0".repeat(32)}:${"0".repeat(64)}`;
@@ -22,6 +22,12 @@ function checked(formData: FormData, key: string) {
 function integer(formData: FormData, key: string) {
   const value = Number(text(formData, key));
   return Number.isFinite(value) ? Math.round(value) : 0;
+}
+
+function requiredRich(value: string, label: string) {
+  const html = sanitizeRichText(value);
+  if (!richTextPlain(html)) throw new Error(`${label} is required.`);
+  return html;
 }
 
 function clip(value: string, max: number) {
@@ -227,7 +233,7 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
       slug: await claimSlug("services", text(formData, "slug") || title, id),
       title,
       parent_id: parentId || null,
-      short_description: required(clip(text(formData, "shortDescription"), 2000), "Short description"),
+      short_description: requiredRich(text(formData, "shortDescription"), "Short description"),
       full_description: sanitizeRichText(text(formData, "fullDescription")),
       icon: text(formData, "icon") || "globe",
       image: clip(text(formData, "image"), 1000),
@@ -247,7 +253,7 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
       title,
       client_name: required(clip(text(formData, "clientName"), 255), "Client"),
       category: required(clip(text(formData, "category"), 191), "Category"),
-      excerpt: clip(text(formData, "excerpt"), 2000),
+      excerpt: sanitizeRichText(text(formData, "excerpt")),
       cover_image: clip(text(formData, "coverImage"), 1000),
       cover_image_alt: clip(text(formData, "coverImageAlt"), 500),
       gallery: JSON.stringify(parseGallery(text(formData, "gallery"))),
@@ -277,7 +283,7 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
     return {
       slug: await claimSlug("posts", text(formData, "slug") || title, id),
       title,
-      excerpt: required(clip(text(formData, "excerpt"), 2000), "Excerpt"),
+      excerpt: requiredRich(text(formData, "excerpt"), "Excerpt"),
       content,
       featured_image: clip(text(formData, "featuredImage"), 1000),
       featured_image_alt: clip(text(formData, "featuredImageAlt"), 500),
@@ -295,7 +301,7 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
     return {
       slug: await claimSlug("post_categories", text(formData, "slug") || name, id),
       name,
-      description: clip(text(formData, "description"), 2000),
+      description: sanitizeRichText(text(formData, "description")),
       sort_order: sortOrder,
       published,
     };
@@ -320,7 +326,7 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
       client_name: required(clip(text(formData, "clientName"), 255), "Client name"),
       role: required(clip(text(formData, "role"), 255), "Role"),
       company: required(clip(text(formData, "company"), 255), "Company"),
-      quote: required(text(formData, "quote"), "Quote"),
+      quote: requiredRich(text(formData, "quote"), "Quote"),
       rating: Math.min(5, Math.max(1, integer(formData, "rating") || 5)),
       sort_order: sortOrder,
       published,
@@ -337,9 +343,9 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
       kind,
       location: clip(text(formData, "location"), 255),
       department: clip(text(formData, "department"), 255),
-      summary: required(clip(text(formData, "summary"), 2000), "Summary"),
+      summary: requiredRich(text(formData, "summary"), "Summary"),
       description: sanitizeRichText(text(formData, "description")),
-      requirements: text(formData, "requirements"),
+      requirements: sanitizeRichText(text(formData, "requirements")),
       deadline: clip(text(formData, "deadline"), 40),
       sort_order: sortOrder,
       published,
@@ -353,9 +359,9 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
       slug: await claimSlug("scholarships", text(formData, "slug") || title, id),
       title,
       award: clip(text(formData, "award"), 500),
-      eligibility: clip(text(formData, "eligibility"), 2000),
+      eligibility: sanitizeRichText(text(formData, "eligibility")),
       deadline: clip(text(formData, "deadline"), 40),
-      summary: required(clip(text(formData, "summary"), 2000), "Summary"),
+      summary: requiredRich(text(formData, "summary"), "Summary"),
       description: sanitizeRichText(text(formData, "description")),
       cover_image: clip(text(formData, "coverImage"), 1000),
       cover_image_alt: clip(text(formData, "coverImageAlt"), 500),
@@ -415,7 +421,7 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
     description: required(clip(text(formData, "description"), 500), "Description"),
     kicker: clip(text(formData, "kicker"), 255),
     heading: clip(text(formData, "heading"), 500),
-    lead: clip(text(formData, "lead"), 2000),
+    lead: sanitizeRichText(text(formData, "lead")),
     body: sanitizeRichText(text(formData, "body")),
     secondary_title: clip(text(formData, "secondaryTitle"), 255),
     image: clip(text(formData, "image"), 1000),
@@ -437,7 +443,9 @@ export async function saveSettings(username: string, formData: FormData): Promis
   (Object.keys(defaultSettings) as (keyof Settings)[]).forEach((key) => {
     if (formData.has(key)) next[key] = text(formData, key);
   });
-  if (formData.has("aboutBody")) next.aboutBody = sanitizeRichText(next.aboutBody);
+  for (const key of ["aboutBody", "tagline", "footerNote", "heroLead", "aboutSecondary"] as const) {
+    if (formData.has(key)) next[key] = sanitizeRichText(next[key]);
+  }
   if (!next.siteName) return { ok: false, error: "Site name is required." };
   if (next.linkedinUrl) {
     try {

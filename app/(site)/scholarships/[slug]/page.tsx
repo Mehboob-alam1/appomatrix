@@ -49,7 +49,7 @@ export default async function ScholarshipPage({ params }: Params) {
           <Kicker>Award</Kicker>
           <p className="font-display text-4xl text-white">{item.award || "See description"}</p>
           {item.eligibility ? (
-            <p className="text-sm leading-relaxed text-white/65">{item.eligibility}</p>
+            <Prose text={item.eligibility} className="text-sm text-white/65" />
           ) : null}
           {item.deadline ? <p className="text-sm text-white/80">Deadline {formatDate(item.deadline)}</p> : null}
           {external ? (

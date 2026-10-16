@@ -44,7 +44,7 @@ export default async function CareersPage() {
                 </p>
                 <div className="md:col-span-8">
                   <h2 className="font-display text-3xl group-hover:text-brand">{career.title}</h2>
-                  <p className="mt-2 text-sm leading-relaxed text-black/60">{career.summary}</p>
+                  <Prose text={career.summary} className="mt-2 text-sm text-black/60" />
                   {career.deadline ? (
                     <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-black/40">Apply by {formatDate(career.deadline)}</p>
                   ) : null}

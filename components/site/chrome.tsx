@@ -108,7 +108,7 @@ export function PageHero({
           <Kicker>{kicker}</Kicker>
         </div>
         <h1 className="font-display mt-4 max-w-4xl text-5xl leading-[0.95] text-balance md:text-7xl">{title}</h1>
-        {lead ? <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">{lead}</p> : null}
+        {lead ? <Prose text={lead} className="mt-6 max-w-xl text-lg text-muted-foreground" /> : null}
         {image ? (
           <div className="media-card mt-10 max-w-4xl">
             <SafeImage src={image} alt={imageAlt || title} className="aspect-[16/8] w-full object-cover" />

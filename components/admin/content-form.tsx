@@ -67,7 +67,7 @@ export function ContentForm({
               ))}
             </SelectField>
           </div>
-          <Area label="Short description" name="shortDescription" defaultValue={values.shortDescription} required />
+          <RichTextField label="Short description" name="shortDescription" defaultValue={values.shortDescription} required minHeight="160px" hint="Shown on listings and under the service title." />
           <RichTextField label="Full description" name="fullDescription" defaultValue={values.fullDescription} minHeight="260px" hint="Use headings, lists, highlight, and alignment." />
           <ImageField name="image" label="Service image" defaultValue={values.image} hint="Wide cover for the service page" aspect="wide" />
           <Field label="Image alt text" name="imageAlt" defaultValue={values.imageAlt} />
@@ -84,7 +84,7 @@ export function ContentForm({
             <Field label="Client" name="clientName" defaultValue={values.clientName} required />
             <Field label="Category" name="category" defaultValue={values.category} required placeholder="SaaS, Web, Mobile…" />
           </div>
-          <Area label="Excerpt" name="excerpt" defaultValue={values.excerpt} />
+          <RichTextField label="Excerpt" name="excerpt" defaultValue={values.excerpt} minHeight="160px" hint="Short summary on portfolio cards and the project page." />
           <ImageField name="coverImage" label="Cover image" defaultValue={values.coverImage} hint="Main project photo shown on listings" aspect="wide" />
           <Field label="Cover alt text" name="coverImageAlt" defaultValue={values.coverImageAlt} />
           <GalleryField defaultValue={values.gallery} />
@@ -119,7 +119,7 @@ export function ContentForm({
             <Field label="Author" name="author" defaultValue={values.author} />
             <Field label="Published date" name="publishedAt" defaultValue={values.publishedAt?.slice(0, 10)} type="date" />
           </div>
-          <Area label="Excerpt" name="excerpt" defaultValue={values.excerpt} required />
+          <RichTextField label="Excerpt" name="excerpt" defaultValue={values.excerpt} required minHeight="160px" hint="Shown on the blog index and under the post title." />
           <RichTextField label="Content" name="content" defaultValue={values.content} required minHeight="360px" hint="Headings, lists, highlight, links, and alignment are available in the toolbar." />
           <ImageField name="featuredImage" label="Featured image" defaultValue={values.featuredImage} hint="Cover photo for the post" aspect="wide" />
           <Field label="Image alt text" name="featuredImageAlt" defaultValue={values.featuredImageAlt} />
@@ -147,7 +147,7 @@ export function ContentForm({
             <Field label="Company" name="company" defaultValue={values.company} required />
             <Field label="Rating" name="rating" type="number" defaultValue={values.rating || "5"} />
           </div>
-          <Area label="Quote" name="quote" defaultValue={values.quote} required rows={4} />
+          <RichTextField label="Quote" name="quote" defaultValue={values.quote} required minHeight="160px" />
         </>
       ) : null}
 
@@ -165,9 +165,9 @@ export function ContentForm({
             <Field label="Department" name="department" defaultValue={values.department} />
             <Field label="Deadline" name="deadline" type="date" defaultValue={values.deadline} />
           </div>
-          <Area label="Summary" name="summary" defaultValue={values.summary} required />
+          <RichTextField label="Summary" name="summary" defaultValue={values.summary} required minHeight="160px" />
           <RichTextField label="Description" name="description" defaultValue={values.description} minHeight="280px" />
-          <Area label="Requirements" name="requirements" defaultValue={values.requirements} hint="One requirement per line." />
+          <RichTextField label="Requirements" name="requirements" defaultValue={values.requirements} minHeight="200px" hint="Use a list for each requirement." />
         </>
       ) : null}
 
@@ -179,8 +179,8 @@ export function ContentForm({
             <Field label="Award" name="award" defaultValue={values.award} />
             <Field label="Deadline" name="deadline" type="date" defaultValue={values.deadline} />
           </div>
-          <Area label="Eligibility" name="eligibility" defaultValue={values.eligibility} />
-          <Area label="Summary" name="summary" defaultValue={values.summary} required />
+          <RichTextField label="Eligibility" name="eligibility" defaultValue={values.eligibility} minHeight="160px" />
+          <RichTextField label="Summary" name="summary" defaultValue={values.summary} required minHeight="160px" />
           <RichTextField label="Description" name="description" defaultValue={values.description} minHeight="280px" />
           <ImageField name="coverImage" label="Cover image" defaultValue={values.coverImage} hint="Scholarship listing photo" aspect="wide" />
           <Field label="Cover alt text" name="coverImageAlt" defaultValue={values.coverImageAlt} />
@@ -194,7 +194,7 @@ export function ContentForm({
             <Field label="Name" name="name" defaultValue={values.name} required />
             <Field label="Slug" name="slug" defaultValue={values.slug} placeholder="Leave blank to generate" />
           </div>
-          <Area label="Description" name="description" defaultValue={values.description} />
+          <RichTextField label="Description" name="description" defaultValue={values.description} minHeight="160px" />
         </>
       ) : null}
 
@@ -246,12 +246,12 @@ export function ContentForm({
             <Field label="Second heading" name="secondaryTitle" defaultValue={values.secondaryTitle} placeholder="Used on About for the team block" />
           </div>
           <Field label="Page heading" name="heading" defaultValue={values.heading} placeholder="The large title on the page" />
-          <Area label="Introduction" name="lead" defaultValue={values.lead} rows={3} />
+          <RichTextField label="Introduction" name="lead" defaultValue={values.lead} minHeight="160px" hint="Shown under the page heading." />
           <RichTextField label="Page content" name="body" defaultValue={values.body} minHeight="280px" hint="Add headings, lists, highlighted text, and alignment." />
           <ImageField name="image" label="Page image" defaultValue={values.image} hint="Optional banner under the page title" aspect="wide" />
           <Field label="Image alt text" name="imageAlt" defaultValue={values.imageAlt} />
           <Field label="Browser title" name="title" defaultValue={values.title} required />
-          <Area label="Browser description" name="description" defaultValue={values.description} required />
+          <Area label="Browser description" name="description" defaultValue={values.description} required hint="Plain text for search results and social previews." />
         </>
       ) : null}
 

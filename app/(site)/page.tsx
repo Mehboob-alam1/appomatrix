@@ -83,7 +83,7 @@ export default async function HomePage() {
             </h1>
           </div>
           <div className="md:col-span-4 md:pb-2">
-            <p className="text-lg leading-relaxed text-black/65">{settings.heroLead}</p>
+            <Prose text={settings.heroLead} className="text-lg text-black/65" />
             <div className="mt-6 flex flex-wrap gap-3">
               <Link href={settings.ctaPrimaryHref || "/contact"} className="inline-flex h-12 items-center gap-2 bg-brand px-5 text-sm font-medium text-white">
                 {settings.ctaPrimaryLabel || "Plan a project"} <ArrowUpRight className="size-4" />
@@ -129,7 +129,7 @@ export default async function HomePage() {
             <div>
               <Kicker>{servicesBlock.kicker || "Services"}</Kicker>
               <h2 className="font-display mt-3 max-w-xl text-4xl md:text-6xl">{servicesBlock.title || "What we actually ship"}</h2>
-              {servicesBlock.body ? <p className="mt-4 max-w-xl text-sm leading-relaxed text-black/60">{servicesBlock.body}</p> : null}
+              {servicesBlock.body ? <Prose text={servicesBlock.body} className="mt-4 max-w-xl text-sm text-black/60" /> : null}
             </div>
             <Link href="/services" className="hidden items-center gap-1 text-sm md:inline-flex">
               All services <ArrowUpRight className="size-4" />
@@ -143,7 +143,7 @@ export default async function HomePage() {
                   <h3 className="font-display text-3xl">
                     <Link href={`/services/${service.slug}`} className="hover:text-brand">{service.title}</Link>
                   </h3>
-                  <p className="mt-2 text-sm text-black/60">{service.shortDescription}</p>
+                  <Prose text={service.shortDescription} className="mt-2 text-sm text-black/60" />
                 </div>
                 <ul className="grid gap-1 md:col-span-7 md:grid-cols-2">
                   {service.children.map((child) => (
@@ -167,7 +167,7 @@ export default async function HomePage() {
             <div>
               <Kicker>{portfolioBlock.kicker || "Portfolio"}</Kicker>
               <h2 className="font-display mt-3 text-4xl md:text-6xl">{portfolioBlock.title || "Selected products"}</h2>
-              {portfolioBlock.body ? <p className="mt-4 max-w-xl text-sm leading-relaxed text-black/60">{portfolioBlock.body}</p> : null}
+              {portfolioBlock.body ? <Prose text={portfolioBlock.body} className="mt-4 max-w-xl text-sm text-black/60" /> : null}
             </div>
             <Link href="/portfolio" className="inline-flex items-center gap-1 text-sm">
               Complete portfolio <ArrowUpRight className="size-4" />
@@ -186,7 +186,7 @@ export default async function HomePage() {
                 <div className="md:col-span-5">
                   <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">{project.category}</p>
                   <h3 className="font-display mt-2 text-4xl">{project.title}</h3>
-                  <p className="mt-3 text-black/60">{project.excerpt}</p>
+                  <Prose text={project.excerpt} className="mt-3 text-black/60" />
                   <p className="mt-4 text-sm">{project.clientName}</p>
                 </div>
               </Link>
@@ -212,7 +212,7 @@ export default async function HomePage() {
           <div className="lg:col-span-4">
             <Kicker>{industriesBlock.kicker || "Industries"}</Kicker>
             <h2 className="font-display mt-3 text-4xl">{industriesBlock.title || "Different controls for different work"}</h2>
-            {industriesBlock.body ? <p className="mt-4 text-sm leading-relaxed text-black/60">{industriesBlock.body}</p> : null}
+            {industriesBlock.body ? <Prose text={industriesBlock.body} className="mt-4 text-sm text-black/60" /> : null}
             {industriesBlock.image ? (
               <SafeImage src={industriesBlock.image} alt={industriesBlock.imageAlt || industriesBlock.title} className="mt-6 aspect-[16/9] w-full object-cover" />
             ) : null}
@@ -255,7 +255,9 @@ export default async function HomePage() {
           <div className="mt-8 grid gap-10 md:grid-cols-2">
             {quotes.map((quote) => (
               <figure key={quote.id} className="border-t border-black/10 pt-6">
-                <blockquote className="font-display text-3xl leading-tight">“{quote.quote}”</blockquote>
+                <blockquote className="font-display text-3xl leading-tight">
+                  <Prose text={quote.quote} className="font-display text-3xl leading-tight text-foreground" />
+                </blockquote>
                 <figcaption className="mt-5 text-sm text-black/55">
                   {quote.clientName} · {quote.role}, {quote.company}
                 </figcaption>
@@ -307,7 +309,7 @@ export default async function HomePage() {
           <div className="flex items-end justify-between">
             <div>
               <h2 className="font-display text-4xl md:text-6xl">{notesBlock.title || "Notes"}</h2>
-              {notesBlock.body ? <p className="mt-3 max-w-xl text-sm leading-relaxed text-black/60">{notesBlock.body}</p> : null}
+              {notesBlock.body ? <Prose text={notesBlock.body} className="mt-3 max-w-xl text-sm text-black/60" /> : null}
             </div>
             <Link href={notesBlock.ctaHref || "/blog"} className="text-sm">{notesBlock.ctaLabel || "All posts"}</Link>
           </div>
@@ -331,7 +333,7 @@ export default async function HomePage() {
         <Container className="flex flex-col justify-between gap-8 py-20 md:flex-row md:items-end">
           <div>
             <h2 className="font-display max-w-xl text-5xl text-white md:text-7xl">{closingBlock.title || "Start with a written brief."}</h2>
-            {closingBlock.body ? <p className="mt-4 max-w-xl text-white/80">{closingBlock.body}</p> : null}
+            {closingBlock.body ? <Prose text={closingBlock.body} className="mt-4 max-w-xl text-white/80" /> : null}
           </div>
           <Link href={closingBlock.ctaHref || "/contact"} className="inline-flex h-12 items-center gap-2 bg-white px-6 text-sm font-medium text-brand">
             {closingBlock.ctaLabel || "Contact Us"} <ArrowUpRight className="size-4" />

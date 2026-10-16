@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Prose } from "@/components/site/chrome";
 import { SafeImage } from "@/components/site/safe-image";
 import { whatsappHref } from "@/lib/contact";
 import type { NavItem, ServiceNode, Settings, SocialLink } from "@/lib/types";
@@ -29,7 +30,7 @@ export function Footer({
             alt={settings.logoAlt || settings.siteName}
             className="h-auto w-44 max-w-full object-contain"
           />
-          <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/60">{settings.footerNote || settings.tagline}</p>
+          <Prose text={settings.footerNote || settings.tagline} className="mt-5 max-w-sm text-sm text-white/60" />
         </div>
         <div className="md:col-span-3">
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-brand">Company</p>

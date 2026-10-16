@@ -55,7 +55,7 @@ export default async function PostPage({ params }: Params) {
           {post.author ? ` · ${post.author}` : ""}
         </p>
         <h1 className="font-display mt-3 text-5xl md:text-6xl">{post.title}</h1>
-        <p className="mt-4 text-lg text-black/65">{post.excerpt}</p>
+        <Prose text={post.excerpt} className="mt-4 text-lg text-black/65" />
       </Container>
       {post.featuredImage ? (
         <Container className="max-w-3xl">

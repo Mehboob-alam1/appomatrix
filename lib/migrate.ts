@@ -15,7 +15,7 @@ const ADD_COLUMNS: { table: string; column: string; ddl: string }[] = [
   },
   { table: "page_meta", column: "kicker", ddl: "ALTER TABLE page_meta ADD COLUMN kicker VARCHAR(255) NOT NULL DEFAULT ''" },
   { table: "page_meta", column: "heading", ddl: "ALTER TABLE page_meta ADD COLUMN heading VARCHAR(500) NOT NULL DEFAULT ''" },
-  { table: "page_meta", column: "lead", ddl: "ALTER TABLE page_meta ADD COLUMN lead VARCHAR(2000) NOT NULL DEFAULT ''" },
+  { table: "page_meta", column: "lead", ddl: "ALTER TABLE page_meta ADD COLUMN lead LONGTEXT NOT NULL" },
   { table: "page_meta", column: "body", ddl: "ALTER TABLE page_meta ADD COLUMN body LONGTEXT NULL" },
   {
     table: "page_meta",
@@ -28,6 +28,34 @@ const ADD_COLUMNS: { table: string; column: string; ddl: string }[] = [
     column: "image_alt",
     ddl: "ALTER TABLE page_meta ADD COLUMN image_alt VARCHAR(500) NOT NULL DEFAULT ''",
   },
+];
+
+/** Expand short VARCHAR content fields so TipTap HTML can save without truncation. */
+const EXPAND_COLUMNS: { table: string; column: string; ddl: string }[] = [
+  {
+    table: "services",
+    column: "short_description",
+    ddl: "ALTER TABLE services MODIFY COLUMN short_description LONGTEXT NOT NULL",
+  },
+  { table: "projects", column: "excerpt", ddl: "ALTER TABLE projects MODIFY COLUMN excerpt LONGTEXT NOT NULL" },
+  { table: "posts", column: "excerpt", ddl: "ALTER TABLE posts MODIFY COLUMN excerpt LONGTEXT NOT NULL" },
+  {
+    table: "post_categories",
+    column: "description",
+    ddl: "ALTER TABLE post_categories MODIFY COLUMN description LONGTEXT NOT NULL",
+  },
+  { table: "careers", column: "summary", ddl: "ALTER TABLE careers MODIFY COLUMN summary LONGTEXT NOT NULL" },
+  {
+    table: "scholarships",
+    column: "eligibility",
+    ddl: "ALTER TABLE scholarships MODIFY COLUMN eligibility LONGTEXT NOT NULL",
+  },
+  {
+    table: "scholarships",
+    column: "summary",
+    ddl: "ALTER TABLE scholarships MODIFY COLUMN summary LONGTEXT NOT NULL",
+  },
+  { table: "page_meta", column: "lead", ddl: "ALTER TABLE page_meta MODIFY COLUMN lead LONGTEXT NOT NULL" },
 ];
 
 function statements(sql: string) {
@@ -48,6 +76,15 @@ async function columnExists(pool: Pool, table: string, column: string) {
   return rows.length > 0;
 }
 
+async function columnDataType(pool: Pool, table: string, column: string) {
+  const [rows] = await pool.execute<RowDataPacket[]>(
+    `SELECT DATA_TYPE AS t FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?`,
+    [table, column],
+  );
+  return String(rows[0]?.t || "");
+}
+
 export async function migrate(pool: Pool) {
   const file = await readFile(path.join(process.cwd(), "db", "schema.sql"), "utf8");
   for (const statement of statements(file)) {
@@ -55,6 +92,12 @@ export async function migrate(pool: Pool) {
   }
   for (const column of ADD_COLUMNS) {
     if (!(await columnExists(pool, column.table, column.column))) {
+      await pool.query(column.ddl);
+    }
+  }
+  for (const column of EXPAND_COLUMNS) {
+    const type = await columnDataType(pool, column.table, column.column);
+    if (type && !["longtext", "mediumtext", "text"].includes(type)) {
       await pool.query(column.ddl);
     }
   }

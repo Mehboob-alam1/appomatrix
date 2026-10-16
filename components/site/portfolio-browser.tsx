@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { Prose } from "@/components/site/chrome";
 import type { Project } from "@/lib/types";
 
 export function PortfolioBrowser({ projects }: { projects: Project[] }) {
@@ -43,7 +44,7 @@ export function PortfolioBrowser({ projects }: { projects: Project[] }) {
               <div className="md:col-span-6">
                 <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-brand">{project.category} · {project.clientName}</p>
                 <h2 className="font-display mt-2 text-3xl md:text-4xl">{project.title}</h2>
-                <p className="mt-2 max-w-lg text-sm text-black/60">{project.excerpt}</p>
+                <Prose text={project.excerpt} className="mt-2 max-w-lg text-sm text-black/60" />
               </div>
               <ArrowUpRight className="hidden size-5 md:col-span-1 md:block md:justify-self-end group-hover:text-brand" />
             </Link>

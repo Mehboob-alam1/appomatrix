@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, PageHero } from "@/components/site/chrome";
+import { Container, PageHero, Prose } from "@/components/site/chrome";
 import { ContactForm } from "@/components/site/contact-form";
 import { whatsappHref } from "@/lib/contact";
 import { pageIntro, pageSeed } from "@/lib/page-copy";
@@ -71,7 +71,7 @@ export default async function ContactPage({
               </a>
             ) : null}
           </div>
-          {copy.body ? <p className="max-w-sm text-sm leading-relaxed text-black/55">{copy.body}</p> : null}
+          {copy.body ? <Prose text={copy.body} className="max-w-sm text-sm text-black/55" /> : null}
         </aside>
       </Container>
     </>

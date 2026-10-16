@@ -23,7 +23,6 @@ export default async function CareerPage({ params }: Params) {
   const { slug } = await params;
   const career = await getCareer(slug);
   if (!career) notFound();
-  const requirements = career.requirements.split("\n").map((line) => line.trim()).filter(Boolean);
 
   return (
     <>
@@ -37,14 +36,10 @@ export default async function CareerPage({ params }: Params) {
       <Container className="grid gap-10 py-14 lg:grid-cols-12">
         <div className="space-y-8 lg:col-span-7">
           <Prose text={career.description} />
-          {requirements.length > 0 ? (
+          {career.requirements ? (
             <div>
               <Kicker>What we look for</Kicker>
-              <ul className="mt-4 space-y-2">
-                {requirements.map((item) => (
-                  <li key={item} className="text-foreground/85">{item}</li>
-                ))}
-              </ul>
+              <Prose text={career.requirements} className="mt-4" />
             </div>
           ) : null}
         </div>

@@ -135,7 +135,7 @@ export default async function ServicePage({ params }: Params) {
               <Link key={project.id} href={`/portfolio/${project.slug}`} className="border-t border-black/10 py-4">
                 <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">{project.category}</p>
                 <p className="font-display mt-1 text-2xl">{project.title}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{project.excerpt}</p>
+                <Prose text={project.excerpt} className="mt-1 text-sm text-muted-foreground" />
               </Link>
             ))}
           </div>
