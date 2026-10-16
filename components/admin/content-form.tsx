@@ -6,6 +6,7 @@ import { saveContent } from "@/lib/actions";
 import { csrfTokenFromDocument } from "@/lib/csrf-client";
 import { SERVICE_ICONS } from "@/components/site/service-icon";
 import { GalleryField, ImageField } from "@/components/admin/media";
+import { RichTextField } from "@/components/admin/rich-text";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -67,8 +68,8 @@ export function ContentForm({
             </SelectField>
           </div>
           <Area label="Short description" name="shortDescription" defaultValue={values.shortDescription} required />
-          <Area label="Full description" name="fullDescription" defaultValue={values.fullDescription} rows={8} hint="Separate paragraphs with a blank line." />
-          <ImageField name="image" label="Image" defaultValue={values.image} />
+          <RichTextField label="Full description" name="fullDescription" defaultValue={values.fullDescription} minHeight="260px" hint="Use headings, lists, highlight, and alignment." />
+          <ImageField name="image" label="Service image" defaultValue={values.image} hint="Wide cover for the service page" aspect="wide" />
           <Field label="Image alt text" name="imageAlt" defaultValue={values.imageAlt} />
           <Area label="Process" name="processText" defaultValue={values.processText} hint="One step per line: Title | Description" />
           <Field label="Tech stack" name="techStack" defaultValue={values.techStack} placeholder="Comma separated" />
@@ -84,12 +85,12 @@ export function ContentForm({
             <Field label="Category" name="category" defaultValue={values.category} required placeholder="SaaS, Web, Mobile…" />
           </div>
           <Area label="Excerpt" name="excerpt" defaultValue={values.excerpt} />
-          <ImageField name="coverImage" label="Cover image" defaultValue={values.coverImage} />
+          <ImageField name="coverImage" label="Cover image" defaultValue={values.coverImage} hint="Main project photo shown on listings" aspect="wide" />
           <Field label="Cover alt text" name="coverImageAlt" defaultValue={values.coverImageAlt} />
           <GalleryField defaultValue={values.gallery} />
-          <Area label="Problem" name="problem" defaultValue={values.problem} rows={4} />
-          <Area label="Solution" name="solution" defaultValue={values.solution} rows={4} />
-          <Area label="Result" name="result" defaultValue={values.result} rows={4} />
+          <RichTextField label="Problem" name="problem" defaultValue={values.problem} />
+          <RichTextField label="Solution" name="solution" defaultValue={values.solution} />
+          <RichTextField label="Result" name="result" defaultValue={values.result} />
           <Area label="Metrics" name="metricsText" defaultValue={values.metricsText} hint="One per line: Value | Label" />
           <Field label="Tech stack" name="techStack" defaultValue={values.techStack} />
           <Field label="Live product backlink" name="externalLink" defaultValue={values.externalLink} placeholder="https://" />
@@ -119,8 +120,8 @@ export function ContentForm({
             <Field label="Published date" name="publishedAt" defaultValue={values.publishedAt?.slice(0, 10)} type="date" />
           </div>
           <Area label="Excerpt" name="excerpt" defaultValue={values.excerpt} required />
-          <Area label="Content" name="content" defaultValue={values.content} rows={12} hint="Separate paragraphs with a blank line." />
-          <ImageField name="featuredImage" label="Featured image" defaultValue={values.featuredImage} />
+          <RichTextField label="Content" name="content" defaultValue={values.content} required minHeight="360px" hint="Headings, lists, highlight, links, and alignment are available in the toolbar." />
+          <ImageField name="featuredImage" label="Featured image" defaultValue={values.featuredImage} hint="Cover photo for the post" aspect="wide" />
           <Field label="Image alt text" name="featuredImageAlt" defaultValue={values.featuredImageAlt} />
         </>
       ) : null}
@@ -132,9 +133,9 @@ export function ContentForm({
             <Field label="Role" name="role" defaultValue={values.role} required />
             <Field label="LinkedIn URL" name="linkedin" defaultValue={values.linkedin} />
           </div>
-          <Area label="Bio" name="bio" defaultValue={values.bio} rows={4} />
-          <ImageField name="photo" label="Photo" defaultValue={values.photo} />
+          <ImageField name="photo" label="Profile photo" defaultValue={values.photo} hint="Square or portrait photo works best" aspect="portrait" />
           <Field label="Photo alt text" name="photoAlt" defaultValue={values.photoAlt} />
+          <RichTextField label="Bio" name="bio" defaultValue={values.bio} minHeight="180px" />
         </>
       ) : null}
 
@@ -165,7 +166,7 @@ export function ContentForm({
             <Field label="Deadline" name="deadline" type="date" defaultValue={values.deadline} />
           </div>
           <Area label="Summary" name="summary" defaultValue={values.summary} required />
-          <Area label="Description" name="description" defaultValue={values.description} rows={8} hint="Separate paragraphs with a blank line." />
+          <RichTextField label="Description" name="description" defaultValue={values.description} minHeight="280px" />
           <Area label="Requirements" name="requirements" defaultValue={values.requirements} hint="One requirement per line." />
         </>
       ) : null}
@@ -180,8 +181,8 @@ export function ContentForm({
           </div>
           <Area label="Eligibility" name="eligibility" defaultValue={values.eligibility} />
           <Area label="Summary" name="summary" defaultValue={values.summary} required />
-          <Area label="Description" name="description" defaultValue={values.description} rows={8} />
-          <ImageField name="coverImage" label="Cover image" defaultValue={values.coverImage} />
+          <RichTextField label="Description" name="description" defaultValue={values.description} minHeight="280px" />
+          <ImageField name="coverImage" label="Cover image" defaultValue={values.coverImage} hint="Scholarship listing photo" aspect="wide" />
           <Field label="Cover alt text" name="coverImageAlt" defaultValue={values.coverImageAlt} />
           <Field label="Application URL" name="applicationUrl" defaultValue={values.applicationUrl} placeholder="Leave blank to use the contact form" />
         </>
@@ -223,8 +224,8 @@ export function ContentForm({
             <Field label="Kicker" name="kicker" defaultValue={values.kicker} />
           </div>
           <Field label="Title" name="title" defaultValue={values.title} />
-          <Area label="Body" name="body" defaultValue={values.body} rows={5} />
-          <ImageField name="image" label="Image" defaultValue={values.image} />
+          <RichTextField label="Body" name="body" defaultValue={values.body} />
+          <ImageField name="image" label="Section image" defaultValue={values.image} aspect="wide" />
           <Field label="Image alt text" name="imageAlt" defaultValue={values.imageAlt} />
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Button label" name="ctaLabel" defaultValue={values.ctaLabel} />
@@ -236,9 +237,9 @@ export function ContentForm({
       {section === "pages" ? (
         <>
           <Field label="Path" name="path" defaultValue={values.path} required placeholder="/about" />
-          <p className="text-sm text-muted-foreground">
-            This is the visible page. Kicker, heading, introduction, extra copy, and image appear on that URL. The browser title and description are the SEO fields.
-            Homepage hero text and the hero photo are edited in Settings. Homepage block headings are edited in Homepage.
+          <p className="rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+            Edit the page heading, introduction, rich content, and image here. SEO title and description are at the bottom.
+            Homepage hero text and the hero photo are in Settings. Homepage block headings are in Homepage.
           </p>
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Kicker" name="kicker" defaultValue={values.kicker} placeholder="About Us" />
@@ -246,8 +247,8 @@ export function ContentForm({
           </div>
           <Field label="Page heading" name="heading" defaultValue={values.heading} placeholder="The large title on the page" />
           <Area label="Introduction" name="lead" defaultValue={values.lead} rows={3} />
-          <Area label="Page content" name="body" defaultValue={values.body} rows={8} hint="Extra paragraphs. Separate paragraphs with a blank line." />
-          <ImageField name="image" label="Page image" defaultValue={values.image} />
+          <RichTextField label="Page content" name="body" defaultValue={values.body} minHeight="280px" hint="Add headings, lists, highlighted text, and alignment." />
+          <ImageField name="image" label="Page image" defaultValue={values.image} hint="Optional banner under the page title" aspect="wide" />
           <Field label="Image alt text" name="imageAlt" defaultValue={values.imageAlt} />
           <Field label="Browser title" name="title" defaultValue={values.title} required />
           <Area label="Browser description" name="description" defaultValue={values.description} required />

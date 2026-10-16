@@ -53,7 +53,12 @@ export function formatDate(iso: string) {
 }
 
 export function readingMinutes(content: string) {
-  const words = content.trim().split(/\s+/).filter(Boolean).length;
+  const plain = content
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const words = plain.split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(words / 200));
 }
 

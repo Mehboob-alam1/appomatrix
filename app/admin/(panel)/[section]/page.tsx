@@ -34,12 +34,12 @@ const META: Record<SectionKey, { title: string; description: string; columns: st
   },
   blog: {
     title: "Blog",
-    description: "Posts on the public blog and the homepage.",
+    description: "Posts with a rich text editor, featured image, and category.",
     columns: ["Title", "Category", "Status"],
   },
   team: {
     title: "Team",
-    description: "People shown on the team and about pages.",
+    description: "Upload portraits and edit bios with headings, lists, and highlight.",
     columns: ["Name", "Role", "Status"],
   },
   testimonials: {

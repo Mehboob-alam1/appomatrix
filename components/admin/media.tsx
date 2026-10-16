@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { ImagePlus, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { csrfTokenFromDocument } from "@/lib/csrf-client";
 import type { GalleryImage } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 async function uploadFile(file: File) {
   const body = new FormData();
@@ -33,25 +35,115 @@ export function ImageField({
   name,
   label,
   defaultValue = "",
+  hint,
+  aspect = "wide",
 }: {
   name: string;
   label: string;
   defaultValue?: string;
+  hint?: string;
+  aspect?: "wide" | "square" | "portrait";
 }) {
   const [url, setUrl] = useState(defaultValue);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [broken, setBroken] = useState(false);
+  const [dragging, setDragging] = useState(false);
+
+  async function takeFile(file?: File | null) {
+    if (!file) return;
+    setBusy(true);
+    setError("");
+    try {
+      setBroken(false);
+      setUrl(await uploadFile(file));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <div className="space-y-2">
-      <Label htmlFor={name}>{label}</Label>
+      <div className="flex items-end justify-between gap-3">
+        <Label htmlFor={name}>{label}</Label>
+        {hint ? <span className="text-xs text-muted-foreground">{hint}</span> : null}
+      </div>
       <input type="hidden" name={name} value={url} />
+      <div
+        className={cn(
+          "relative overflow-hidden rounded-2xl border border-dashed border-border bg-muted/30 transition-colors",
+          dragging && "border-brand bg-brand-soft/40",
+          aspect === "square" && "max-w-xs",
+          aspect === "portrait" && "max-w-xs",
+        )}
+        onDragOver={(event) => {
+          event.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(event) => {
+          event.preventDefault();
+          setDragging(false);
+          void takeFile(event.dataTransfer.files?.[0]);
+        }}
+      >
+        {url && !broken ? (
+          <img
+            src={url}
+            alt=""
+            className={cn(
+              "w-full object-cover",
+              aspect === "wide" && "aspect-[16/9]",
+              aspect === "square" && "aspect-square",
+              aspect === "portrait" && "aspect-[4/5]",
+            )}
+            onError={() => setBroken(true)}
+          />
+        ) : (
+          <div
+            className={cn(
+              "grid place-items-center gap-2 px-4 py-10 text-center text-sm text-muted-foreground",
+              aspect === "wide" && "aspect-[16/9]",
+              aspect === "square" && "aspect-square",
+              aspect === "portrait" && "aspect-[4/5]",
+            )}
+          >
+            <ImagePlus className="size-8 text-brand" />
+            <p>{busy ? "Uploading…" : "Drop an image here, or upload from your computer"}</p>
+            <p className="text-xs">JPG, PNG, WEBP, or GIF up to 5 MB</p>
+          </div>
+        )}
+      </div>
       <div className="flex flex-col gap-2 sm:flex-row">
-        <Input id={name} value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://… or /uploads/…" className="h-10" />
+        <Input
+          id={name}
+          value={url}
+          onChange={(event) => {
+            setUrl(event.target.value);
+            setBroken(false);
+          }}
+          placeholder="https://… or /uploads/…"
+          className="h-10"
+        />
+        <label className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground">
+          <Upload className="size-4" />
+          {busy ? "Uploading…" : "Upload"}
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className="sr-only"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              event.target.value = "";
+              void takeFile(file);
+            }}
+          />
+        </label>
         <button
           type="button"
-          className="inline-flex h-10 items-center justify-center rounded-lg border border-border px-3 text-sm"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border px-3 text-sm"
           onClick={async () => {
             const current = url;
             setUrl("");
@@ -65,36 +157,11 @@ export function ImageField({
             }
           }}
         >
+          <Trash2 className="size-4" />
           Remove
         </button>
-        <label className="inline-flex h-10 cursor-pointer items-center justify-center rounded-lg border border-border px-3 text-sm">
-          {busy ? "Uploading…" : "Upload"}
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif"
-            className="sr-only"
-            onChange={async (event) => {
-              const file = event.target.files?.[0];
-              event.target.value = "";
-              if (!file) return;
-              setBusy(true);
-              setError("");
-              try {
-                setBroken(false);
-                setUrl(await uploadFile(file));
-              } catch (err) {
-                setError(err instanceof Error ? err.message : "Upload failed");
-              } finally {
-                setBusy(false);
-              }
-            }}
-          />
-        </label>
       </div>
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
-      {url && !broken ? (
-        <img src={url} alt="" className="h-32 max-w-sm rounded-xl object-cover" onError={() => setBroken(true)} />
-      ) : null}
       {url && broken ? <p className="text-sm text-muted-foreground">This image is missing. Upload a replacement or clear it.</p> : null}
     </div>
   );
@@ -103,6 +170,7 @@ export function ImageField({
 export function GalleryField({ defaultValue }: { defaultValue?: string }) {
   const initial = parse(defaultValue);
   const [images, setImages] = useState<GalleryImage[]>(initial);
+  const [busy, setBusy] = useState(false);
 
   function update(index: number, patch: Partial<GalleryImage>) {
     setImages((current) => current.map((image, i) => (i === index ? { ...image, ...patch } : image)));
@@ -110,24 +178,56 @@ export function GalleryField({ defaultValue }: { defaultValue?: string }) {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <Label>Gallery</Label>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => setImages((current) => [...current, { url: "", alt: "", caption: "" }])}
-        >
-          Add image
-        </Button>
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <Label>Gallery</Label>
+          <p className="text-xs text-muted-foreground">Upload project photos. Add alt text and a short caption for each one.</p>
+        </div>
+        <div className="flex gap-2">
+          <label className="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground">
+            <Upload className="size-4" />
+            {busy ? "Uploading…" : "Upload photos"}
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              multiple
+              className="sr-only"
+              onChange={async (event) => {
+                const files = Array.from(event.target.files || []);
+                event.target.value = "";
+                if (!files.length) return;
+                setBusy(true);
+                try {
+                  const urls = await Promise.all(files.map((file) => uploadFile(file)));
+                  setImages((current) => [
+                    ...current,
+                    ...urls.map((url) => ({ url, alt: "", caption: "" })),
+                  ]);
+                } catch (err) {
+                  alert(err instanceof Error ? err.message : "Upload failed");
+                } finally {
+                  setBusy(false);
+                }
+              }}
+            />
+          </label>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setImages((current) => [...current, { url: "", alt: "", caption: "" }])}
+          >
+            Add blank
+          </Button>
+        </div>
       </div>
       <input type="hidden" name="gallery" value={JSON.stringify(images.filter((image) => image.url.trim()))} />
-      <p className="text-xs text-muted-foreground">Each image appears in the portfolio showcase. Add a caption and alt text.</p>
       {images.map((image, index) => (
         <div key={index} className="space-y-2 rounded-xl border border-border p-3">
           <div className="flex flex-col gap-2 sm:flex-row">
             <Input value={image.url} onChange={(event) => update(index, { url: event.target.value })} placeholder="Image URL" className="h-10" />
-            <label className="inline-flex h-10 cursor-pointer items-center justify-center rounded-lg border border-border px-3 text-sm">
-              Upload
+            <label className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-border px-3 text-sm">
+              <Upload className="size-4" />
+              Replace
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp,image/gif"
@@ -166,7 +266,12 @@ export function GalleryField({ defaultValue }: { defaultValue?: string }) {
               alt={image.alt || ""}
               className="h-28 rounded-lg object-cover"
               onError={(event) => {
-                event.currentTarget.replaceWith(Object.assign(document.createElement("p"), { className: "text-sm text-muted-foreground", textContent: "This image is missing." }));
+                event.currentTarget.replaceWith(
+                  Object.assign(document.createElement("p"), {
+                    className: "text-sm text-muted-foreground",
+                    textContent: "This image is missing.",
+                  }),
+                );
               }}
             />
           ) : null}

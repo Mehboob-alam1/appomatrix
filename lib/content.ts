@@ -4,6 +4,7 @@ import { all, get, run } from "@/lib/db";
 import { defaultSettings } from "@/lib/defaults";
 import { readingMinutes, slugify } from "@/lib/format";
 import { getSettings, getUser, isSection, SECTION_TABLE, type SectionKey } from "@/lib/queries";
+import { sanitizeRichText } from "@/lib/rich-text";
 import type { ActionResult, GalleryImage, Settings } from "@/lib/types";
 
 const DUMMY_HASH = `${"0".repeat(32)}:${"0".repeat(64)}`;
@@ -227,7 +228,7 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
       title,
       parent_id: parentId || null,
       short_description: required(clip(text(formData, "shortDescription"), 2000), "Short description"),
-      full_description: text(formData, "fullDescription"),
+      full_description: sanitizeRichText(text(formData, "fullDescription")),
       icon: text(formData, "icon") || "globe",
       image: clip(text(formData, "image"), 1000),
       image_alt: clip(text(formData, "imageAlt"), 500),
@@ -250,9 +251,9 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
       cover_image: clip(text(formData, "coverImage"), 1000),
       cover_image_alt: clip(text(formData, "coverImageAlt"), 500),
       gallery: JSON.stringify(parseGallery(text(formData, "gallery"))),
-      problem: text(formData, "problem"),
-      solution: text(formData, "solution"),
-      result: text(formData, "result"),
+      problem: sanitizeRichText(text(formData, "problem")),
+      solution: sanitizeRichText(text(formData, "solution")),
+      result: sanitizeRichText(text(formData, "result")),
       metrics_text: text(formData, "metricsText"),
       tech_stack: clip(text(formData, "techStack"), 1000),
       external_link: link ? httpUrl(link, "Live product link") : "",
@@ -265,7 +266,7 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
 
   if (section === "blog") {
     const title = required(clip(text(formData, "title"), 255), "Title");
-    const content = text(formData, "content");
+    const content = sanitizeRichText(text(formData, "content"));
     const categoryId = text(formData, "categoryId");
     let categoryName = clip(text(formData, "category"), 191);
     if (categoryId) {
@@ -307,7 +308,7 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
       role: required(clip(text(formData, "role"), 255), "Role"),
       photo: clip(text(formData, "photo"), 1000),
       photo_alt: clip(text(formData, "photoAlt"), 500),
-      bio: text(formData, "bio"),
+      bio: sanitizeRichText(text(formData, "bio")),
       linkedin: linkedin ? httpUrl(linkedin, "LinkedIn URL") : "",
       sort_order: sortOrder,
       published,
@@ -337,7 +338,7 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
       location: clip(text(formData, "location"), 255),
       department: clip(text(formData, "department"), 255),
       summary: required(clip(text(formData, "summary"), 2000), "Summary"),
-      description: text(formData, "description"),
+      description: sanitizeRichText(text(formData, "description")),
       requirements: text(formData, "requirements"),
       deadline: clip(text(formData, "deadline"), 40),
       sort_order: sortOrder,
@@ -355,7 +356,7 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
       eligibility: clip(text(formData, "eligibility"), 2000),
       deadline: clip(text(formData, "deadline"), 40),
       summary: required(clip(text(formData, "summary"), 2000), "Summary"),
-      description: text(formData, "description"),
+      description: sanitizeRichText(text(formData, "description")),
       cover_image: clip(text(formData, "coverImage"), 1000),
       cover_image_alt: clip(text(formData, "coverImageAlt"), 500),
       application_url: application ? pathOrUrl(application, "Application URL") : "",
@@ -394,7 +395,7 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
       section_key: key,
       kicker: clip(text(formData, "kicker"), 255),
       title: clip(text(formData, "title"), 500),
-      body: text(formData, "body"),
+      body: sanitizeRichText(text(formData, "body")),
       image: clip(text(formData, "image"), 1000),
       image_alt: clip(text(formData, "imageAlt"), 500),
       cta_label: clip(text(formData, "ctaLabel"), 255),
@@ -415,7 +416,7 @@ async function buildRecord(section: SectionKey, formData: FormData, id: string):
     kicker: clip(text(formData, "kicker"), 255),
     heading: clip(text(formData, "heading"), 500),
     lead: clip(text(formData, "lead"), 2000),
-    body: text(formData, "body"),
+    body: sanitizeRichText(text(formData, "body")),
     secondary_title: clip(text(formData, "secondaryTitle"), 255),
     image: clip(text(formData, "image"), 1000),
     image_alt: clip(text(formData, "imageAlt"), 500),
@@ -436,6 +437,7 @@ export async function saveSettings(username: string, formData: FormData): Promis
   (Object.keys(defaultSettings) as (keyof Settings)[]).forEach((key) => {
     if (formData.has(key)) next[key] = text(formData, key);
   });
+  if (formData.has("aboutBody")) next.aboutBody = sanitizeRichText(next.aboutBody);
   if (!next.siteName) return { ok: false, error: "Site name is required." };
   if (next.linkedinUrl) {
     try {

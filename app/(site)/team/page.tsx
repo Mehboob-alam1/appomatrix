@@ -42,7 +42,7 @@ export default async function TeamPage() {
             )}
             <h2 className="mt-4 text-xl tracking-tight">{person.name}</h2>
             <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-brand">{person.role}</p>
-            <p className="mt-2 text-sm leading-relaxed text-black/60">{person.bio}</p>
+            {person.bio ? <Prose text={person.bio} className="mt-2 text-sm" /> : null}
             {person.linkedin ? (
               <a href={person.linkedin} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm underline decoration-black/30 underline-offset-4">
                 LinkedIn
