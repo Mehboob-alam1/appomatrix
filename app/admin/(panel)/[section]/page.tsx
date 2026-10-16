@@ -4,6 +4,7 @@ import { AdminShell } from "@/components/admin/shell";
 import { InquiryTable } from "@/components/admin/inquiry-table";
 import { RecordActions } from "@/components/admin/record-actions";
 import {
+  getSettings,
   isSection,
   listCareers,
   listCategories,
@@ -148,7 +149,10 @@ export default async function SectionPage({
   return (
     <AdminShell title={meta.title} description={meta.description}>
       {section === "inquiries" ? (
-        <InquiryTable inquiries={await listInquiries()} />
+        <InquiryTable
+          inquiries={await listInquiries()}
+          companyEmail={(await getSettings()).email || "hello@appomatrix.com"}
+        />
       ) : (
         <>
           {saved ? <p className="mb-4 text-sm text-primary" role="status">Saved.</p> : null}
