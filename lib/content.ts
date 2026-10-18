@@ -209,6 +209,20 @@ export async function saveRecord(section: string, formData: FormData): Promise<A
     if (section === "categories" && previousName && previousName !== data.name) {
       await run("UPDATE posts SET category = ? WHERE category_id = ?", [String(data.name), id]);
     }
+    if (section === "pages" && data.path === "/about") {
+      const settings = await getSettings();
+      const next = {
+        ...settings,
+        aboutHeadline: String(data.heading || settings.aboutHeadline),
+        aboutSecondary: String(data.lead || settings.aboutSecondary),
+        aboutBody: String(data.body || settings.aboutBody),
+      };
+      await run(
+        `INSERT INTO settings (\`key\`, value) VALUES ('site', ?)
+         ON DUPLICATE KEY UPDATE value = VALUES(value)`,
+        [JSON.stringify(next)],
+      );
+    }
   } catch (error) {
     return { ok: false, error: dbMessage(error) };
   }
@@ -475,6 +489,17 @@ export async function saveSettings(username: string, formData: FormData): Promis
      ON DUPLICATE KEY UPDATE value = VALUES(value)`,
     [JSON.stringify(next)],
   );
+  // Keep the public About page in sync with Settings about copy.
+  if (formData.has("aboutHeadline") || formData.has("aboutSecondary") || formData.has("aboutBody")) {
+    await run(
+      `UPDATE page_meta SET
+        heading = ?,
+        lead = ?,
+        body = ?
+       WHERE path = '/about'`,
+      [next.aboutHeadline, next.aboutSecondary, next.aboutBody],
+    );
+  }
   if (password) {
     await run("UPDATE users SET password_hash = ? WHERE username = ?", [hashPassword(password), username]);
   }

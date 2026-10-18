@@ -35,7 +35,11 @@ export function ContentForm({
         event.preventDefault();
         setPending(true);
         setError("");
-        const form = new FormData(event.currentTarget);
+        const target = event.currentTarget;
+        target.querySelectorAll<HTMLInputElement>("input[data-rich-text]").forEach((input) => {
+          input.defaultValue = input.value;
+        });
+        const form = new FormData(target);
         form.set("csrf", csrfTokenFromDocument());
         const result = await saveContent(section, form);
         setPending(false);

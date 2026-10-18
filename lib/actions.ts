@@ -31,6 +31,15 @@ async function csrfError(token: string): Promise<ActionResult | null> {
 
 function refresh() {
   revalidatePath("/", "layout");
+  revalidatePath("/services");
+  revalidatePath("/portfolio");
+  revalidatePath("/blog");
+  revalidatePath("/about");
+  revalidatePath("/contact");
+  revalidatePath("/team");
+  revalidatePath("/career-development");
+  revalidatePath("/scholarships");
+  revalidatePath("/admin", "layout");
 }
 
 async function limit(kind: "login" | "contact") {
