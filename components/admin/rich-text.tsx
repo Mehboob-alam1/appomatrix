@@ -1,6 +1,6 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Highlight from "@tiptap/extension-highlight";
@@ -23,10 +23,15 @@ import {
   Quote,
   Underline as UnderlineIcon,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Label } from "@/components/ui/label";
-import { editorHtml } from "@/lib/rich-text";
+import { editorHtml, richTextPlain } from "@/lib/rich-text";
 import { cn } from "@/lib/utils";
+
+function htmlForForm(editor: { isEmpty: boolean; getHTML: () => string } | null) {
+  if (!editor || editor.isEmpty) return "";
+  return editor.getHTML();
+}
 
 export function RichTextField({
   label,
@@ -43,6 +48,12 @@ export function RichTextField({
   hint?: string;
   minHeight?: string;
 }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [html, setHtml] = useState(() => {
+    const initial = editorHtml(defaultValue);
+    return richTextPlain(initial) ? initial : "";
+  });
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -61,6 +72,17 @@ export function RichTextField({
     ],
     content: editorHtml(defaultValue),
     immediatelyRender: false,
+    shouldRerenderOnTransaction: true,
+    onCreate: ({ editor: instance }) => {
+      const next = htmlForForm(instance);
+      setHtml(next);
+      if (inputRef.current) inputRef.current.value = next;
+    },
+    onUpdate: ({ editor: instance }) => {
+      const next = htmlForForm(instance);
+      setHtml(next);
+      if (inputRef.current) inputRef.current.value = next;
+    },
     editorProps: {
       attributes: {
         class:
@@ -73,19 +95,33 @@ export function RichTextField({
   useEffect(() => {
     if (!editor) return;
     const next = editorHtml(defaultValue);
-    if (editor.getHTML() !== next) editor.commands.setContent(next, { emitUpdate: false });
+    const current = editor.getHTML();
+    if (current !== next) {
+      editor.commands.setContent(next, { emitUpdate: false });
+      const formValue = htmlForForm(editor);
+      setHtml(formValue);
+      if (inputRef.current) inputRef.current.value = formValue;
+    }
   }, [defaultValue, editor]);
+
+  useEffect(() => {
+    if (inputRef.current) inputRef.current.value = html;
+  }, [html]);
 
   return (
     <div className="space-y-1.5">
       <Label htmlFor={name}>{label}</Label>
       <input
+        ref={inputRef}
         type="hidden"
         id={name}
         name={name}
+        data-rich-text={name}
         required={required}
-        value={editor?.isEmpty ? "" : editor?.getHTML() || ""}
-        readOnly
+        value={html}
+        onChange={() => {
+          /* controlled for React; FormData reads the live DOM value */
+        }}
       />
       <div className="overflow-hidden rounded-xl border border-input bg-background">
         {editor ? <Toolbar editor={editor} /> : null}
@@ -97,6 +133,25 @@ export function RichTextField({
 }
 
 function Toolbar({ editor }: { editor: NonNullable<ReturnType<typeof useEditor>> }) {
+  const state = useEditorState({
+    editor,
+    selector: ({ editor: instance }) => ({
+      bold: instance.isActive("bold"),
+      italic: instance.isActive("italic"),
+      underline: instance.isActive("underline"),
+      highlight: instance.isActive("highlight"),
+      h2: instance.isActive("heading", { level: 2 }),
+      h3: instance.isActive("heading", { level: 3 }),
+      bullet: instance.isActive("bulletList"),
+      ordered: instance.isActive("orderedList"),
+      quote: instance.isActive("blockquote"),
+      left: instance.isActive({ textAlign: "left" }),
+      center: instance.isActive({ textAlign: "center" }),
+      right: instance.isActive({ textAlign: "right" }),
+      justify: instance.isActive({ textAlign: "justify" }),
+      link: instance.isActive("link"),
+    }),
+  });
 
   const button = (
     active: boolean,
@@ -124,23 +179,23 @@ function Toolbar({ editor }: { editor: NonNullable<ReturnType<typeof useEditor>>
 
   return (
     <div className="flex flex-wrap gap-0.5 border-b border-border bg-muted/40 px-2 py-1.5">
-      {button(editor.isActive("bold"), () => editor.chain().focus().toggleBold().run(), <Bold className="size-4" />, "Bold")}
-      {button(editor.isActive("italic"), () => editor.chain().focus().toggleItalic().run(), <Italic className="size-4" />, "Italic")}
-      {button(editor.isActive("underline"), () => editor.chain().focus().toggleUnderline().run(), <UnderlineIcon className="size-4" />, "Underline")}
-      {button(editor.isActive("highlight"), () => editor.chain().focus().toggleHighlight().run(), <Highlighter className="size-4" />, "Highlight")}
+      {button(state.bold, () => editor.chain().focus().toggleBold().run(), <Bold className="size-4" />, "Bold")}
+      {button(state.italic, () => editor.chain().focus().toggleItalic().run(), <Italic className="size-4" />, "Italic")}
+      {button(state.underline, () => editor.chain().focus().toggleUnderline().run(), <UnderlineIcon className="size-4" />, "Underline")}
+      {button(state.highlight, () => editor.chain().focus().toggleHighlight().run(), <Highlighter className="size-4" />, "Highlight")}
       <span className="mx-1 w-px self-stretch bg-border" />
-      {button(editor.isActive("heading", { level: 2 }), () => editor.chain().focus().toggleHeading({ level: 2 }).run(), <Heading2 className="size-4" />, "Heading")}
-      {button(editor.isActive("heading", { level: 3 }), () => editor.chain().focus().toggleHeading({ level: 3 }).run(), <Heading3 className="size-4" />, "Subheading")}
-      {button(editor.isActive("bulletList"), () => editor.chain().focus().toggleBulletList().run(), <List className="size-4" />, "Bullet list")}
-      {button(editor.isActive("orderedList"), () => editor.chain().focus().toggleOrderedList().run(), <ListOrdered className="size-4" />, "Numbered list")}
-      {button(editor.isActive("blockquote"), () => editor.chain().focus().toggleBlockquote().run(), <Quote className="size-4" />, "Quote")}
+      {button(state.h2, () => editor.chain().focus().toggleHeading({ level: 2 }).run(), <Heading2 className="size-4" />, "Heading")}
+      {button(state.h3, () => editor.chain().focus().toggleHeading({ level: 3 }).run(), <Heading3 className="size-4" />, "Subheading")}
+      {button(state.bullet, () => editor.chain().focus().toggleBulletList().run(), <List className="size-4" />, "Bullet list")}
+      {button(state.ordered, () => editor.chain().focus().toggleOrderedList().run(), <ListOrdered className="size-4" />, "Numbered list")}
+      {button(state.quote, () => editor.chain().focus().toggleBlockquote().run(), <Quote className="size-4" />, "Quote")}
       <span className="mx-1 w-px self-stretch bg-border" />
-      {button(editor.isActive({ textAlign: "left" }), () => editor.chain().focus().setTextAlign("left").run(), <AlignLeft className="size-4" />, "Align left")}
-      {button(editor.isActive({ textAlign: "center" }), () => editor.chain().focus().setTextAlign("center").run(), <AlignCenter className="size-4" />, "Align center")}
-      {button(editor.isActive({ textAlign: "right" }), () => editor.chain().focus().setTextAlign("right").run(), <AlignRight className="size-4" />, "Align right")}
-      {button(editor.isActive({ textAlign: "justify" }), () => editor.chain().focus().setTextAlign("justify").run(), <AlignJustify className="size-4" />, "Justify")}
+      {button(state.left, () => editor.chain().focus().setTextAlign("left").run(), <AlignLeft className="size-4" />, "Align left")}
+      {button(state.center, () => editor.chain().focus().setTextAlign("center").run(), <AlignCenter className="size-4" />, "Align center")}
+      {button(state.right, () => editor.chain().focus().setTextAlign("right").run(), <AlignRight className="size-4" />, "Align right")}
+      {button(state.justify, () => editor.chain().focus().setTextAlign("justify").run(), <AlignJustify className="size-4" />, "Justify")}
       <span className="mx-1 w-px self-stretch bg-border" />
-      {button(editor.isActive("link"), () => {
+      {button(state.link, () => {
         if (editor.isActive("link")) {
           editor.chain().focus().unsetLink().run();
           return;

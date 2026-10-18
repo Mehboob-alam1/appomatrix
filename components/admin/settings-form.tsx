@@ -85,7 +85,11 @@ export function SettingsForm({ settings }: { settings: Settings }) {
         setPending(true);
         setSaved(false);
         setError("");
-        const form = new FormData(event.currentTarget);
+        const target = event.currentTarget;
+        target.querySelectorAll<HTMLInputElement>("input[data-rich-text]").forEach((input) => {
+          input.defaultValue = input.value;
+        });
+        const form = new FormData(target);
         form.set("csrf", csrfTokenFromDocument());
         const result = await saveSettingsAction(form);
         setPending(false);
