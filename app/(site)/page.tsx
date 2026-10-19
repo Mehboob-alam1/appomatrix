@@ -81,8 +81,6 @@ export default async function HomePage() {
   const principles = parsePairs(settings.principlesText);
   const ribbon = services.flatMap((group) => [group.title, ...group.children.map((child) => child.title)]);
   const whatsapp = whatsappHref(settings.whatsappNumber, settings.whatsappMessage);
-  const aboutCards = principles.slice(0, 4);
-  const valueList = principles.length > 4 ? principles.slice(4) : principles;
 
   return (
     <>
@@ -283,41 +281,37 @@ export default async function HomePage() {
 
       {aboutBlock.show ? (
         <section className="section-pad">
-          <Container className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-            <div>
-              <SectionHeader
-                eyebrow={aboutBlock.kicker || "About"}
-                title={settings.aboutHeadline || aboutBlock.title || "About Appo Matrix"}
-                description={<Prose text={settings.aboutBody} className="text-sm" />}
-              />
+          <Container className="grid items-start gap-8 lg:grid-cols-12 lg:gap-12">
+            <div className="min-w-0 lg:col-span-8">
+              <p className="text-[12px] font-medium uppercase tracking-[0.16em] text-primary">
+                {aboutBlock.kicker || "About"}
+              </p>
+              <h2 className="font-display mt-2 max-w-xl">
+                {settings.aboutHeadline || aboutBlock.title || "About Appo Matrix"}
+              </h2>
+              <Prose text={settings.aboutBody} className="mt-4 max-w-none text-base leading-relaxed text-muted-foreground" />
               <SiteLinkButton href={aboutBlock.ctaHref || "/about"} className="mt-6">
                 {aboutBlock.ctaLabel || "About Us"}
               </SiteLinkButton>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {aboutCards.map((item) => (
-                <div key={item.title} className="rounded-xl border border-border bg-card p-4">
-                  <h3 className="text-base font-semibold">{item.title}</h3>
-                  <p className="mt-2 line-clamp-4 text-sm text-muted-foreground">{item.body}</p>
+            {principles.length > 0 ? (
+              <aside className="lg:col-span-4 lg:justify-self-end lg:w-full lg:max-w-[280px]">
+                <div className="rounded-xl border border-border bg-muted/40 p-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">What guides us</p>
+                  <ul className="mt-2 divide-y divide-border">
+                    {principles.map((item) => (
+                      <li key={item.title} className="py-2.5 first:pt-0 last:pb-0">
+                        <p className="text-sm font-semibold leading-snug text-foreground">{item.title}</p>
+                        {item.body ? (
+                          <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{item.body}</p>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              ))}
-            </div>
+              </aside>
+            ) : null}
           </Container>
-          {valueList.length > 0 ? (
-            <Container className="mt-10">
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {valueList.map((item) => (
-                  <div key={item.title} className="flex gap-3 rounded-xl border border-border/80 bg-muted/30 p-3">
-                    <span className="mt-0.5 size-2 shrink-0 rounded-full bg-primary" />
-                    <div>
-                      <p className="text-sm font-semibold">{item.title}</p>
-                      <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.body}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Container>
-          ) : null}
         </section>
       ) : null}
 
