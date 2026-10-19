@@ -18,7 +18,7 @@ export function SectionHeader({
   light?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div className="max-w-2xl">
         {eyebrow ? (
           <p
@@ -30,9 +30,9 @@ export function SectionHeader({
             {eyebrow}
           </p>
         ) : null}
-        <h2 className={cn("mt-2 font-display", light ? "text-white" : "text-foreground")}>{title}</h2>
+        <h2 className={cn("mt-1.5 font-display", light ? "text-white" : "text-foreground")}>{title}</h2>
         {description ? (
-          <div className={cn("mt-3 text-sm leading-relaxed", light ? "text-white/70" : "text-muted-foreground")}>
+          <div className={cn("mt-2 text-sm leading-relaxed", light ? "text-white/70" : "text-muted-foreground")}>
             {description}
           </div>
         ) : null}

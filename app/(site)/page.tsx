@@ -87,7 +87,7 @@ export default async function HomePage() {
   return (
     <>
       <section className="section-pad border-b border-border">
-        <Container className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+        <Container className="grid items-center gap-6 lg:grid-cols-2 lg:gap-8">
           <div>
             {settings.city ? <Chip>{settings.city}</Chip> : null}
             <h1 className="font-display mt-4 text-balance">
@@ -126,7 +126,7 @@ export default async function HomePage() {
       </section>
 
       {stats.length > 0 ? (
-        <section className="border-b border-border bg-card">
+        <section className="border-b border-border">
           <Container className="grid grid-cols-2 gap-6 py-8 md:grid-cols-4 md:gap-0">
             {stats.map((stat, index) => (
               <div
@@ -169,7 +169,7 @@ export default async function HomePage() {
               href="/services"
               linkLabel="All services"
             />
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {services.map((service, index) => (
                 <Link
                   key={service.id}
@@ -206,7 +206,7 @@ export default async function HomePage() {
       ) : null}
 
       {portfolioBlock.show ? (
-        <section className="section-pad border-y border-border bg-card">
+        <section className="section-pad border-y border-border">
           <Container>
             <SectionHeader
               eyebrow={portfolioBlock.kicker || "Portfolio"}
@@ -215,7 +215,7 @@ export default async function HomePage() {
               href="/portfolio"
               linkLabel="Complete portfolio"
             />
-            <div className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
+            <div className="mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
               {shown.map((project) => (
                 <Link
                   key={project.id}
@@ -251,7 +251,7 @@ export default async function HomePage() {
         <section className="section-pad">
           <Container>
             <SectionHeader eyebrow="Process" title="How we ship" />
-            <div className="mt-8">
+            <div className="mt-5">
               <Stepper steps={process} />
             </div>
           </Container>
@@ -259,14 +259,14 @@ export default async function HomePage() {
       ) : null}
 
       {industriesBlock.show && industries.length > 0 ? (
-        <section className="section-pad border-y border-border bg-card">
+        <section className="section-pad border-y border-border">
           <Container>
             <SectionHeader
               eyebrow={industriesBlock.kicker || "Industries"}
               title={industriesBlock.title || "Industries we support"}
               description={industriesBlock.body ? <Prose text={industriesBlock.body} className="text-sm" /> : null}
             />
-            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {industries.map((industry) => (
                 <div key={industry.title} className="rounded-xl border border-border bg-background p-4">
                   <span className="grid size-10 place-items-center rounded-xl bg-primary-50 text-primary">
@@ -283,7 +283,7 @@ export default async function HomePage() {
 
       {aboutBlock.show ? (
         <section className="section-pad">
-          <Container className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+          <Container className="grid gap-6 lg:grid-cols-2 lg:gap-8">
             <div>
               <SectionHeader
                 eyebrow={aboutBlock.kicker || "About"}
@@ -322,10 +322,10 @@ export default async function HomePage() {
       ) : null}
 
       {clientsBlock.show && quotes.length > 0 ? (
-        <section className="section-pad border-y border-border bg-card">
+        <section className="section-pad border-y border-border">
           <Container>
             <SectionHeader eyebrow={clientsBlock.kicker || "Clients"} title={clientsBlock.title || "What clients say"} />
-            <div className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible">
+            <div className="mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible">
               {quotes.map((quote) => (
                 <figure
                   key={quote.id}
@@ -362,7 +362,7 @@ export default async function HomePage() {
               href="/career-development"
               linkLabel="All openings"
             />
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
               {careers.map((career) => (
                 <Link
                   key={career.id}
@@ -383,7 +383,7 @@ export default async function HomePage() {
       ) : null}
 
       {scholarshipsBlock.show && scholarships.length > 0 ? (
-        <section className="section-pad border-t border-border bg-card">
+        <section className="section-pad border-t border-border">
           <Container>
             <SectionHeader
               eyebrow={scholarshipsBlock.kicker || "Scholarships"}
@@ -391,7 +391,7 @@ export default async function HomePage() {
               href="/scholarships"
               linkLabel="All scholarships"
             />
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
               {scholarships.map((item) => (
                 <Link
                   key={item.id}
@@ -417,7 +417,7 @@ export default async function HomePage() {
               href={notesBlock.ctaHref || "/blog"}
               linkLabel={notesBlock.ctaLabel || "All posts"}
             />
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
               {posts.map((post) => (
                 <Link
                   key={post.id}
@@ -450,7 +450,7 @@ export default async function HomePage() {
 
       {closingBlock.show ? (
         <section className="bg-surface-dark">
-          <Container className="flex flex-col gap-6 py-14 md:flex-row md:items-end md:justify-between">
+          <Container className="flex flex-col gap-6 py-10 md:flex-row md:items-end md:justify-between">
             <div className="max-w-xl">
               <h2 className="font-display text-white">{closingBlock.title || "Start with a written brief."}</h2>
               {closingBlock.body ? <Prose text={closingBlock.body} className="mt-3 text-sm text-white/70" /> : null}

@@ -86,17 +86,17 @@ export function PageHero({
     { href: here, label: ancestors.length > 0 ? title : kicker },
   ];
   return (
-    <section className="border-b border-border bg-card/40">
+    <section className="border-b border-border">
       <JsonLd data={breadcrumbJsonLd(trail)} />
-      <Container className="pt-8 pb-10 md:pb-14">
+      <Container className="pt-6 pb-7 md:pt-8 md:pb-9">
         <Breadcrumbs items={trail} />
-        <div className="mt-6 max-w-3xl">
+        <div className="mt-4 max-w-3xl">
           <Chip>{kicker}</Chip>
-          <h1 className="font-display mt-4 text-balance">{title}</h1>
-          {lead ? <Prose text={lead} className="mt-4 max-w-2xl text-base text-muted-foreground md:text-lg" /> : null}
+          <h1 className="font-display mt-3 text-balance">{title}</h1>
+          {lead ? <Prose text={lead} className="mt-3 max-w-2xl text-base text-muted-foreground" /> : null}
         </div>
         {image ? (
-          <div className="media-card mt-8 max-w-4xl">
+          <div className="media-card mt-5 max-w-4xl">
             <SafeImage src={image} alt={imageAlt || title} className="aspect-[16/8] w-full object-cover" />
           </div>
         ) : null}

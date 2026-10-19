@@ -25,7 +25,7 @@ export function Footer({
 
   return (
     <footer className="bg-surface-dark text-[#f3f6f8]">
-      <div className="site-container grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+      <div className="site-container grid gap-8 py-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-6">
         <div className="lg:col-span-4">
           <SafeImage
             src={

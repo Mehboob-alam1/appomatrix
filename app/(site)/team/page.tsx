@@ -25,11 +25,11 @@ export default async function TeamPage() {
     <>
       <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
       {copy.body ? (
-        <Container className="pt-8">
+        <Container className="pt-5">
           <Prose text={copy.body} className="max-w-2xl text-sm text-muted-foreground" />
         </Container>
       ) : null}
-      <Container className="grid gap-5 py-10 sm:grid-cols-2 lg:grid-cols-4 lg:py-14">
+      <Container className="grid gap-5 py-7 sm:grid-cols-2 lg:grid-cols-4 lg:py-9">
         {team.length === 0 ? <p className="text-muted-foreground">Team profiles will appear here once they are published.</p> : null}
         {team.map((person) => (
           <article key={person.id} className="group overflow-hidden rounded-xl border border-border bg-card">
