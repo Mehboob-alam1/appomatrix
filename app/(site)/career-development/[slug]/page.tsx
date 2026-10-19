@@ -33,7 +33,7 @@ export default async function CareerPage({ params }: Params) {
         path={`/career-development/${career.slug}`}
         ancestors={[{ href: "/career-development", label: "Career Development" }]}
       />
-      <Container className="grid gap-10 py-14 lg:grid-cols-12">
+      <Container className="grid gap-8 py-10 lg:grid-cols-12 lg:gap-10 lg:py-14">
         <div className="space-y-8 lg:col-span-7">
           <Prose text={career.description} />
           {career.requirements ? (
@@ -43,14 +43,14 @@ export default async function CareerPage({ params }: Params) {
             </div>
           ) : null}
         </div>
-        <aside className="h-fit border border-black bg-black p-6 text-white lg:col-span-5">
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">{career.kind}</p>
+        <aside className="h-fit rounded-xl border border-border bg-surface-dark p-6 text-white lg:sticky lg:top-24 lg:col-span-5">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-primary-300">{career.kind}</p>
           {career.department ? <p className="mt-2 text-sm text-white/70">{career.department}</p> : null}
           <p className="mt-4 text-sm text-white/70">{career.location}</p>
           {career.deadline ? <p className="mt-1 text-sm">Apply by {formatDate(career.deadline)}</p> : null}
           <Link
             href={`/contact?topic=${encodeURIComponent(`Career: ${career.title}`)}`}
-            className="mt-6 inline-flex h-11 items-center bg-white px-4 text-sm text-black"
+            className="mt-6 inline-flex min-h-11 items-center rounded-[10px] bg-white px-4 text-sm font-semibold text-surface-dark"
           >
             Apply through Contact Us
           </Link>

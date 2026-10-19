@@ -50,15 +50,15 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     console.error(error);
     const settings = defaultSettings;
     return (
-      <div className="grid min-h-screen place-items-center bg-[#f4f7f9] px-5 py-16">
-        <div className="w-full max-w-lg border border-black/10 bg-white p-8">
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">{settings.siteName}</p>
-          <h1 className="font-display mt-3 text-4xl">Site is reconnecting</h1>
-          <p className="mt-4 text-sm leading-relaxed text-black/65">{databaseHint(error)}</p>
-          <p className="mt-4 text-sm text-black/55">
+      <div className="grid min-h-screen place-items-center bg-background px-5 py-16">
+        <div className="w-full max-w-lg rounded-xl border border-border bg-card p-8">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-primary">{settings.siteName}</p>
+          <h1 className="font-display mt-3">Site is reconnecting</h1>
+          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{databaseHint(error)}</p>
+          <p className="mt-4 text-sm text-muted-foreground">
             Open Hostinger → Environment variables and confirm <code>DB_HOST</code>, <code>DB_USER</code>,{" "}
             <code>DB_PASSWORD</code>, and <code>DB_NAME</code>. Then restart the Node.js app and check{" "}
-            <Link className="underline" href="/api/health">
+            <Link className="font-medium text-primary underline" href="/api/health">
               /api/health
             </Link>
             .

@@ -53,17 +53,17 @@ export default async function ProjectPage({ params }: Params) {
       />
       <Container className="pt-8 pb-10">
         <Breadcrumbs items={crumbs} />
-        <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-brand">
+        <p className="mt-4 text-[12px] font-semibold uppercase tracking-[0.14em] text-primary">
           {project.category} · {project.clientName}
         </p>
-        <h1 className="font-display mt-3 max-w-4xl text-5xl md:text-7xl">{project.title}</h1>
-        <Prose text={project.excerpt} className="mt-5 max-w-2xl text-lg text-black/65" />
+        <h1 className="font-display mt-3 max-w-4xl">{project.title}</h1>
+        <Prose text={project.excerpt} className="mt-5 max-w-2xl text-lg text-muted-foreground" />
         {project.externalLink ? (
           <a
             href={project.externalLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-flex h-12 items-center gap-2 bg-brand px-5 text-sm font-medium text-white"
+            className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-[10px] bg-primary px-5 text-sm font-semibold text-primary-foreground hover:bg-primary-600"
           >
             Visit live product <ArrowUpRight className="size-4" />
           </a>

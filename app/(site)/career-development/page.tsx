@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Container, PageHero, Prose } from "@/components/site/chrome";
+import { Chip } from "@/components/site/ui";
 import { formatDate } from "@/lib/format";
 import { pageIntro, pageSeed } from "@/lib/page-copy";
+import { richTextPlain } from "@/lib/rich-text";
 import { getPageMeta, listCareers } from "@/lib/queries";
 import { metadataFor } from "@/lib/seo";
 
@@ -26,30 +28,32 @@ export default async function CareersPage() {
   return (
     <>
       <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
-      <Container className="grid gap-10 py-16 lg:grid-cols-12">
-        <div className="lg:col-span-4">
-          {copy.body ? <Prose text={copy.body} /> : null}
-        </div>
-        <div className="border-t border-black/10 lg:col-span-8">
+      <Container className="grid gap-8 py-10 lg:grid-cols-12 lg:py-14">
+        <div className="lg:col-span-4">{copy.body ? <Prose text={copy.body} className="text-sm text-muted-foreground" /> : null}</div>
+        <div className="grid gap-3 lg:col-span-8">
           {careers.length === 0 ? (
-            <p className="border-b border-black/10 py-8 text-muted-foreground">
+            <p className="rounded-xl border border-dashed border-border bg-card p-6 text-muted-foreground">
               No openings are published right now. Send a note through Contact Us and we will keep it on file.
             </p>
           ) : (
             careers.map((career) => (
-              <Link key={career.id} href={`/career-development/${career.slug}`} className="group grid gap-3 border-b border-black/10 py-6 md:grid-cols-12 md:items-start">
-                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-brand md:col-span-3">
-                  {career.kind}
-                  <span className="mt-1 block text-black/45">{career.location}</span>
-                </p>
+              <Link
+                key={career.id}
+                href={`/career-development/${career.slug}`}
+                className="card-lift group grid gap-3 rounded-xl border border-border bg-card p-5 md:grid-cols-12 md:items-start"
+              >
+                <div className="md:col-span-3">
+                  <Chip className="bg-primary-50 text-primary">{career.kind}</Chip>
+                  <p className="mt-2 text-sm text-muted-foreground">{career.location}</p>
+                </div>
                 <div className="md:col-span-8">
-                  <h2 className="font-display text-3xl group-hover:text-brand">{career.title}</h2>
-                  <Prose text={career.summary} className="mt-2 text-sm text-black/60" />
+                  <h2 className="text-xl font-semibold group-hover:text-primary">{career.title}</h2>
+                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{richTextPlain(career.summary)}</p>
                   {career.deadline ? (
-                    <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-black/40">Apply by {formatDate(career.deadline)}</p>
+                    <p className="mt-3 text-xs font-medium text-muted-foreground">Apply by {formatDate(career.deadline)}</p>
                   ) : null}
                 </div>
-                <ArrowUpRight className="hidden size-5 md:col-span-1 md:block md:justify-self-end" />
+                <ArrowUpRight className="hidden size-5 text-primary md:col-span-1 md:block md:justify-self-end" />
               </Link>
             ))
           )}

@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { Prose } from "@/components/site/prose";
+import { Chip } from "@/components/site/ui";
+import { richTextPlain } from "@/lib/rich-text";
 import type { Project } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 export function PortfolioBrowser({ projects }: { projects: Project[] }) {
   const categories = useMemo(
@@ -22,7 +24,12 @@ export function PortfolioBrowser({ projects }: { projects: Project[] }) {
             key={item}
             type="button"
             onClick={() => setCategory(item)}
-            className={`px-3 py-1.5 text-sm ${category === item ? "bg-black text-white" : "text-black/60 hover:text-black"}`}
+            className={cn(
+              "inline-flex min-h-10 items-center rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
+              category === item
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground",
+            )}
           >
             {item}
           </button>
@@ -31,22 +38,39 @@ export function PortfolioBrowser({ projects }: { projects: Project[] }) {
       {visible.length === 0 ? (
         <p className="mt-8 text-muted-foreground">No projects in this category yet.</p>
       ) : (
-        <div className="mt-6 border-t border-black/10">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((project) => (
-            <Link key={project.id} href={`/portfolio/${project.slug}`} className="group grid items-center gap-6 border-b border-black/10 py-6 md:grid-cols-12">
-              <div className="media-card md:col-span-5">
+            <Link
+              key={project.id}
+              href={`/portfolio/${project.slug}`}
+              className="card-lift group overflow-hidden rounded-xl border border-border bg-card"
+            >
+              <div className="media-card rounded-none border-0">
                 {project.coverImage ? (
-                  <img src={project.coverImage} alt={project.coverImageAlt || project.title} className="aspect-[16/10] w-full object-cover" onError={(event) => { event.currentTarget.style.display = "none"; }} />
+                  <img
+                    src={project.coverImage}
+                    alt={project.coverImageAlt || `${project.title} cover`}
+                    className="aspect-[16/10] w-full object-cover"
+                    loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.style.display = "none";
+                    }}
+                  />
                 ) : (
-                  <div className="grid aspect-[16/10] place-items-center bg-black text-4xl text-white">{project.title.slice(0, 1)}</div>
+                  <div className="grid aspect-[16/10] place-items-center bg-muted text-3xl font-semibold text-muted-foreground">
+                    {project.title.slice(0, 1)}
+                  </div>
                 )}
               </div>
-              <div className="md:col-span-6">
-                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-brand">{project.category} · {project.clientName}</p>
-                <h2 className="font-display mt-2 text-3xl md:text-4xl">{project.title}</h2>
-                <Prose text={project.excerpt} className="mt-2 max-w-lg text-sm text-black/60" />
+              <div className="p-4">
+                <Chip className="bg-primary-50 text-primary">{project.category}</Chip>
+                <h2 className="mt-3 text-lg font-semibold group-hover:text-primary">{project.title}</h2>
+                <p className="mt-1 text-xs text-muted-foreground">{project.clientName}</p>
+                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{richTextPlain(project.excerpt)}</p>
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary">
+                  View case <ArrowUpRight className="size-4" />
+                </span>
               </div>
-              <ArrowUpRight className="hidden size-5 md:col-span-1 md:block md:justify-self-end group-hover:text-brand" />
             </Link>
           ))}
         </div>

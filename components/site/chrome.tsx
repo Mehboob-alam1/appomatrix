@@ -2,6 +2,7 @@ import Link from "next/link";
 import { JsonLd } from "@/components/site/json-ld";
 import { Prose } from "@/components/site/prose";
 import { SafeImage } from "@/components/site/safe-image";
+import { Chip } from "@/components/site/ui";
 import { breadcrumbJsonLd, type Crumb } from "@/lib/seo-core";
 import { cn } from "@/lib/utils";
 
@@ -25,12 +26,12 @@ export function Container({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <div className={cn("mx-auto w-full max-w-7xl px-5", className)}>{children}</div>;
+  return <div className={cn("site-container", className)}>{children}</div>;
 }
 
 export function Kicker({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
   return (
-    <p className={cn("font-mono text-[11px] uppercase tracking-[0.22em]", light ? "text-brand" : "text-brand")}>
+    <p className={cn("text-[12px] font-medium uppercase tracking-[0.16em]", light ? "text-primary-300" : "text-primary")}>
       {children}
     </p>
   );
@@ -39,16 +40,18 @@ export function Kicker({ children, light = false }: { children: React.ReactNode;
 export function Breadcrumbs({ items }: { items: Crumb[] }) {
   return (
     <nav aria-label="Breadcrumb">
-      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-black/55">
+      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
         {items.map((item, index) => {
           const last = index === items.length - 1;
           return (
             <li key={`${item.href}-${item.label}`} className="flex items-center gap-2">
-              {index > 0 ? <span aria-hidden="true">/</span> : null}
+              {index > 0 ? <span aria-hidden="true" className="text-border">/</span> : null}
               {last ? (
-                <span aria-current="page" className="text-black">{item.label}</span>
+                <span aria-current="page" className="font-medium text-foreground">{item.label}</span>
               ) : (
-                <Link href={item.href} className="hover:text-brand">{item.label}</Link>
+                <Link href={item.href} className="hover:text-primary">
+                  {item.label}
+                </Link>
               )}
             </li>
           );
@@ -83,17 +86,17 @@ export function PageHero({
     { href: here, label: ancestors.length > 0 ? title : kicker },
   ];
   return (
-    <section className="border-b border-black/10">
+    <section className="border-b border-border bg-card/40">
       <JsonLd data={breadcrumbJsonLd(trail)} />
-      <Container className="pt-8 pb-16 md:pb-24">
+      <Container className="pt-8 pb-10 md:pb-14">
         <Breadcrumbs items={trail} />
-        <div className="mt-8">
-          <Kicker>{kicker}</Kicker>
+        <div className="mt-6 max-w-3xl">
+          <Chip>{kicker}</Chip>
+          <h1 className="font-display mt-4 text-balance">{title}</h1>
+          {lead ? <Prose text={lead} className="mt-4 max-w-2xl text-base text-muted-foreground md:text-lg" /> : null}
         </div>
-        <h1 className="font-display mt-4 max-w-4xl text-5xl leading-[0.95] text-balance md:text-7xl">{title}</h1>
-        {lead ? <Prose text={lead} className="mt-6 max-w-xl text-lg text-muted-foreground" /> : null}
         {image ? (
-          <div className="media-card mt-10 max-w-4xl">
+          <div className="media-card mt-8 max-w-4xl">
             <SafeImage src={image} alt={imageAlt || title} className="aspect-[16/8] w-full object-cover" />
           </div>
         ) : null}
@@ -103,12 +106,17 @@ export function PageHero({
 }
 
 export function EmptyNote({ children }: { children: React.ReactNode }) {
-  return <p className="border border-dashed border-black/15 px-5 py-8 text-muted-foreground">{children}</p>;
+  return (
+    <p className="rounded-xl border border-dashed border-border bg-card px-5 py-8 text-muted-foreground">{children}</p>
+  );
 }
 
 export function TextLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <Link href={href} className="text-sm font-medium underline decoration-black/30 underline-offset-4 hover:decoration-brand">
+    <Link
+      href={href}
+      className="text-sm font-medium text-primary underline decoration-primary/30 underline-offset-4 hover:decoration-primary"
+    >
       {children}
     </Link>
   );

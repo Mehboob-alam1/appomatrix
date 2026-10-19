@@ -24,8 +24,8 @@ export default async function PortfolioPage() {
   return (
     <>
       <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
-      <Container className="py-14">
-        {copy.body ? <Prose text={copy.body} className="mb-10 max-w-2xl" /> : null}
+      <Container className="section-pad">
+        {copy.body ? <Prose text={copy.body} className="mb-8 max-w-2xl text-sm text-muted-foreground" /> : null}
         <PortfolioBrowser projects={projects} />
       </Container>
     </>
