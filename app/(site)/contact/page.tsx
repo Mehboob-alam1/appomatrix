@@ -41,7 +41,7 @@ export default async function ContactPage({
   return (
     <>
       <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
-      <Container className="grid gap-8 py-10 lg:grid-cols-12 lg:gap-6 lg:py-9">
+      <Container className="grid gap-6 py-7 lg:grid-cols-12 lg:gap-6 lg:py-9">
         <div className="rounded-xl border border-border bg-card p-5 md:p-6 lg:col-span-7">
           <ContactForm topics={topics} defaultTopic={defaultTopic} />
         </div>
