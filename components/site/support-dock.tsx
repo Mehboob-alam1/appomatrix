@@ -41,45 +41,45 @@ export function SupportDock({
   }, [open]);
 
   const circle =
-    "relative grid size-14 place-items-center rounded-full text-white shadow-[0_8px_24px_rgba(0,0,0,0.22)] transition duration-200 hover:scale-105 active:scale-95";
+    "relative grid size-12 place-items-center rounded-full text-white shadow-[0_8px_24px_rgba(15,20,25,0.18)] transition duration-200 hover:scale-105 active:scale-95 sm:size-14";
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-5 sm:right-5">
+    <div className="fixed right-4 bottom-4 z-50 flex flex-col items-end gap-3 pb-[env(safe-area-inset-bottom)] sm:right-5 sm:bottom-5">
       {open ? (
         <section
           id={panelId}
           aria-label="Customer support"
-          className="dock-panel mb-1 w-[min(100vw-5.5rem,22rem)] border border-black/10 bg-white p-5 shadow-[0_20px_50px_rgba(0,0,0,0.12)]"
+          className="dock-panel mb-1 w-[min(100vw-5.5rem,22rem)] rounded-xl border border-border bg-card p-5 shadow-[0_16px_40px_rgba(15,20,25,0.12)]"
         >
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">Customer support</p>
-              <h2 className="font-display mt-2 text-2xl">Talk with the team</h2>
+              <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-primary">Customer support</p>
+              <h2 className="mt-2 text-xl font-semibold">Talk with the team</h2>
             </div>
-            <button type="button" className="grid size-8 place-items-center border border-black/10" onClick={() => setOpen(false)} aria-label="Close customer support">
+            <button type="button" className="grid size-10 place-items-center rounded-[10px] border border-border" onClick={() => setOpen(false)} aria-label="Close customer support">
               <X className="size-4" />
             </button>
           </div>
-          <p className="mt-3 text-sm leading-relaxed text-black/60">
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Message {siteName} on WhatsApp, or send a note through the studio. We reply within one business day.
           </p>
           <div className="mt-4 grid gap-2">
             {whatsapp ? (
-              <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="inline-flex h-11 items-center justify-center gap-2 bg-[#25D366] px-4 text-sm font-medium text-white">
+              <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] bg-[#25D366] px-4 text-sm font-semibold text-white">
                 <WhatsAppMark /> WhatsApp
               </a>
             ) : null}
             {email ? (
-              <a href={`mailto:${email}`} className="inline-flex h-11 items-center justify-center gap-2 border border-black/15 px-4 text-sm">
+              <a href={`mailto:${email}`} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] border border-border px-4 text-sm">
                 <Mail className="size-4" /> {email}
               </a>
             ) : null}
             {tel ? (
-              <a href={`tel:${tel}`} className="inline-flex h-11 items-center justify-center gap-2 border border-black/15 px-4 text-sm">
+              <a href={`tel:${tel}`} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] border border-border px-4 text-sm">
                 <Phone className="size-4" /> {phone}
               </a>
             ) : null}
-            <Link href="/contact" className="inline-flex h-11 items-center justify-center bg-brand px-4 text-sm font-medium text-white" onClick={() => setOpen(false)}>
+            <Link href="/contact" className="inline-flex min-h-11 items-center justify-center rounded-[10px] bg-primary px-4 text-sm font-semibold text-primary-foreground" onClick={() => setOpen(false)}>
               Contact Us
             </Link>
           </div>
@@ -93,7 +93,7 @@ export function SupportDock({
         )}
         <button
           type="button"
-          className={`${circle} bg-brand`}
+          className={`${circle} bg-primary`}
           aria-label={open ? "Close customer support" : "Customer support"}
           aria-expanded={open}
           aria-controls={panelId}

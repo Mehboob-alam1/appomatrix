@@ -61,11 +61,11 @@ export default async function ServicePage({ params }: Params) {
           areaServed: "Worldwide",
         }}
       />
-      <Container className="grid gap-10 py-14 lg:grid-cols-12">
+      <Container className="grid gap-8 py-10 lg:grid-cols-12 lg:gap-10 lg:py-14">
         <div className="space-y-8 lg:col-span-7">
           {service.image ? (
             <div className="media-card">
-              <img src={service.image} alt={service.imageAlt || service.title} className="aspect-[16/9] w-full object-cover" />
+              <img src={service.image} alt={service.imageAlt || service.title} className="aspect-[16/9] w-full object-cover" loading="lazy" />
             </div>
           ) : null}
           <Prose text={service.fullDescription} />
@@ -74,10 +74,10 @@ export default async function ServicePage({ params }: Params) {
               <Kicker>How it runs</Kicker>
               <ol className="mt-4 space-y-3">
                 {steps.map((step, index) => (
-                  <li key={step.title} className="grid grid-cols-[auto_1fr] gap-3">
-                    <span className="font-display text-primary">{String(index + 1).padStart(2, "0")}</span>
+                  <li key={step.title} className="grid grid-cols-[auto_1fr] gap-3 rounded-xl border border-border bg-card p-4">
+                    <span className="text-sm font-semibold text-primary">{String(index + 1).padStart(2, "0")}</span>
                     <span>
-                      <span className="block font-medium">{step.title}</span>
+                      <span className="block font-semibold">{step.title}</span>
                       <span className="text-sm text-muted-foreground">{step.body}</span>
                     </span>
                   </li>
@@ -86,40 +86,49 @@ export default async function ServicePage({ params }: Params) {
             </div>
           ) : null}
         </div>
-        <aside className="space-y-6 lg:col-span-5">
-          <div className="bg-black p-6 text-white">
-            <h2 className="font-display text-3xl text-white">Start with this service</h2>
-            <p className="mt-3 text-sm text-white/65">Tell us the outcome and the date. We reply with a scope, not a slide.</p>
-            <Link href={`/contact?topic=${encodeURIComponent(service.title)}`} className="mt-6 inline-flex h-11 items-center gap-2 bg-brand px-4 text-sm text-white">
-              Contact Us <ArrowUpRight className="size-4" />
+        <aside className="space-y-4 lg:col-span-5 lg:sticky lg:top-24 lg:self-start">
+          <div className="rounded-xl border border-border bg-surface-dark p-6 text-white">
+            <h2 className="text-2xl font-semibold text-white">Plan a project</h2>
+            <p className="mt-3 text-sm text-white/65">Tell us the outcome and the date. We reply with a clear next step.</p>
+            <Link
+              href={`/contact?topic=${encodeURIComponent(service.title)}`}
+              className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-[10px] bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary-600"
+            >
+              Get a quote <ArrowUpRight className="size-4" />
             </Link>
             {stack.length > 0 ? (
-              <div className="mt-6 flex flex-wrap gap-x-3 gap-y-1">
+              <div className="mt-6 flex flex-wrap gap-2">
                 {stack.map((item) => (
-                  <span key={item} className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/50">{item}</span>
+                  <span key={item} className="rounded-full border border-white/15 px-2.5 py-1 text-xs text-white/60">
+                    {item}
+                  </span>
                 ))}
               </div>
             ) : null}
           </div>
           {children.length > 0 ? (
-            <div>
-              <h2 className="font-medium">Within {service.title}</h2>
+            <div className="rounded-xl border border-border bg-card p-5">
+              <h2 className="font-semibold">Within {service.title}</h2>
               <ul className="mt-3 space-y-2">
                 {children.map((child) => (
                   <li key={child.id}>
-                    <Link href={`/services/${child.slug}`} className="text-sm hover:text-primary">{child.title}</Link>
+                    <Link href={`/services/${child.slug}`} className="text-sm text-muted-foreground hover:text-primary">
+                      {child.title}
+                    </Link>
                   </li>
                 ))}
               </ul>
             </div>
           ) : null}
           {siblings.length > 0 ? (
-            <div>
-              <h2 className="font-medium">Related services</h2>
+            <div className="rounded-xl border border-border bg-card p-5">
+              <h2 className="font-semibold">Related services</h2>
               <ul className="mt-3 space-y-2">
                 {siblings.map((item) => (
                   <li key={item.id}>
-                    <Link href={`/services/${item.slug}`} className="text-sm hover:text-primary">{item.title}</Link>
+                    <Link href={`/services/${item.slug}`} className="text-sm text-muted-foreground hover:text-primary">
+                      {item.title}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -128,14 +137,14 @@ export default async function ServicePage({ params }: Params) {
         </aside>
       </Container>
       {projects.length > 0 ? (
-        <Container className="pb-16">
+        <Container className="pb-14">
           <Kicker>Related work</Kicker>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             {projects.map((project) => (
-              <Link key={project.id} href={`/portfolio/${project.slug}`} className="border-t border-black/10 py-4">
-                <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">{project.category}</p>
-                <p className="font-display mt-1 text-2xl">{project.title}</p>
-                <Prose text={project.excerpt} className="mt-1 text-sm text-muted-foreground" />
+              <Link key={project.id} href={`/portfolio/${project.slug}`} className="card-lift rounded-xl border border-border bg-card p-5">
+                <p className="text-xs font-medium uppercase tracking-[0.12em] text-primary">{project.category}</p>
+                <p className="mt-2 text-xl font-semibold">{project.title}</p>
+                <Prose text={project.excerpt} className="mt-2 line-clamp-2 text-sm text-muted-foreground" />
               </Link>
             ))}
           </div>

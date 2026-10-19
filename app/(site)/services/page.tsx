@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Container, PageHero, Prose } from "@/components/site/chrome";
+import { ServiceIcon } from "@/components/site/service-icon";
+import { Chip } from "@/components/site/ui";
 import { pageIntro, pageSeed } from "@/lib/page-copy";
+import { richTextPlain } from "@/lib/rich-text";
 import { getPageMeta, serviceTree } from "@/lib/queries";
 import { metadataFor } from "@/lib/seo";
 
@@ -25,31 +28,57 @@ export default async function ServicesPage() {
   return (
     <>
       <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
-      <Container className="py-10">
-        {copy.body ? <Prose text={copy.body} className="mb-10 max-w-2xl" /> : null}
-        {groups.map((group) => (
-          <section key={group.id} className="border-t border-black/10 py-10">
-            <div className="grid gap-4 md:grid-cols-12">
-              <div className="md:col-span-4">
-                <h2 className="font-display text-3xl">
-                  <Link href={`/services/${group.slug}`}>{group.title}</Link>
-                </h2>
-                <Prose text={group.shortDescription} className="mt-2 text-sm text-black/60" />
-              </div>
-              <div className="divide-y divide-black/10 border-y border-black/10 md:col-span-8">
-                {(group.children.length > 0 ? group.children : [group]).map((service) => (
-                  <Link key={service.id} href={`/services/${service.slug}`} className="group flex items-start justify-between gap-4 py-4">
-                    <span>
-                      <span className="block text-lg">{service.title}</span>
-                      <Prose text={service.shortDescription} className="mt-1 text-sm text-black/55" />
+      <Container className="section-pad">
+        {copy.body ? <Prose text={copy.body} className="mb-8 max-w-2xl" /> : null}
+        <div className="grid gap-4">
+          {groups.map((group) => (
+            <section key={group.id} className="rounded-xl border border-border bg-card p-5 md:p-6">
+              <div className="grid gap-5 lg:grid-cols-12">
+                <div className="lg:col-span-4">
+                  <div className="flex items-start gap-3">
+                    <span className="grid size-11 place-items-center rounded-xl bg-primary-50 text-primary">
+                      <ServiceIcon name={group.icon} className="size-5" />
                     </span>
-                    <ArrowUpRight className="mt-1 size-4 shrink-0 group-hover:text-brand" />
-                  </Link>
-                ))}
+                    <div>
+                      <h2 className="text-xl font-semibold">
+                        <Link href={`/services/${group.slug}`} className="hover:text-primary">
+                          {group.title}
+                        </Link>
+                      </h2>
+                      <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+                        {richTextPlain(group.shortDescription)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="grid gap-2 sm:grid-cols-2 lg:col-span-8">
+                  {(group.children.length > 0 ? group.children : [group]).map((service) => (
+                    <Link
+                      key={service.id}
+                      href={`/services/${service.slug}`}
+                      className="card-lift group flex items-start justify-between gap-3 rounded-xl border border-border bg-background p-4"
+                    >
+                      <span>
+                        <span className="block font-semibold group-hover:text-primary">{service.title}</span>
+                        <span className="mt-1 block line-clamp-2 text-sm text-muted-foreground">
+                          {richTextPlain(service.shortDescription)}
+                        </span>
+                      </span>
+                      <ArrowUpRight className="mt-1 size-4 shrink-0 text-primary" />
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
-          </section>
-        ))}
+              {group.children.length > 0 ? (
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {group.children.map((child) => (
+                    <Chip key={child.id}>{child.title}</Chip>
+                  ))}
+                </div>
+              ) : null}
+            </section>
+          ))}
+        </div>
       </Container>
     </>
   );

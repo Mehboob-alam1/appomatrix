@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import { Container, Kicker, Prose } from "@/components/site/chrome";
+import { ArrowUpRight, Building2, Quote } from "lucide-react";
+import { Container, Prose } from "@/components/site/chrome";
 import { SafeImage } from "@/components/site/safe-image";
+import { ServiceIcon } from "@/components/site/service-icon";
+import { Chip, SectionHeader, SiteLinkButton, StatItem, Stepper } from "@/components/site/ui";
+import { whatsappHref } from "@/lib/contact";
 import { parsePairs, parseStats, formatDate } from "@/lib/format";
+import { richTextPlain } from "@/lib/rich-text";
 import {
   getSettings,
   listCareers,
@@ -42,6 +46,15 @@ function sectionOf(sections: HomeSection[], key: string) {
   };
 }
 
+function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || "")
+    .join("");
+}
+
 export default async function HomePage() {
   const settings = await getSettings();
   const sections = await listSections(false);
@@ -66,280 +79,400 @@ export default async function HomePage() {
   const process = parsePairs(settings.processText);
   const industries = parsePairs(settings.industriesText);
   const principles = parsePairs(settings.principlesText);
-  const marquee = services.flatMap((group) => [group.title, ...group.children.map((child) => child.title)]);
+  const ribbon = services.flatMap((group) => [group.title, ...group.children.map((child) => child.title)]);
+  const whatsapp = whatsappHref(settings.whatsappNumber, settings.whatsappMessage);
+  const aboutCards = principles.slice(0, 4);
+  const valueList = principles.length > 4 ? principles.slice(4) : principles;
 
   return (
     <>
-      <section className="overflow-hidden">
-        <Container className="grid items-end gap-8 pt-10 pb-8 md:grid-cols-12 md:pt-14 md:pb-10">
-          <div className="md:col-span-8">
-            <div className="flex items-center justify-between gap-4">
-              <Kicker>{settings.heroKicker}</Kicker>
-              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-black/40">{settings.city}</p>
-            </div>
-            <h1 className="font-display mt-6 text-[12vw] md:text-[5.6rem]">
+      <section className="section-pad border-b border-border">
+        <Container className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+          <div>
+            {settings.city ? <Chip>{settings.city}</Chip> : null}
+            <h1 className="font-display mt-4 text-balance">
               {settings.heroTitle}
-              <span className="mt-1 block text-brand">{settings.heroHighlight}</span>
+              {settings.heroHighlight ? <span className="mt-1 block text-primary">{settings.heroHighlight}</span> : null}
             </h1>
-          </div>
-          <div className="md:col-span-4 md:pb-2">
-            <Prose text={settings.heroLead} className="text-lg text-black/65" />
+            <Prose text={settings.heroLead} className="mt-4 max-w-xl text-base text-muted-foreground md:text-lg" />
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href={settings.ctaPrimaryHref || "/contact"} className="inline-flex h-12 items-center gap-2 bg-brand px-5 text-sm font-medium text-white">
+              <SiteLinkButton href={settings.ctaPrimaryHref || "/contact"}>
                 {settings.ctaPrimaryLabel || "Plan a project"} <ArrowUpRight className="size-4" />
-              </Link>
-              <Link href={settings.ctaSecondaryHref || "/portfolio"} className="inline-flex h-12 items-center border border-black px-5 text-sm">
+              </SiteLinkButton>
+              <SiteLinkButton href={settings.ctaSecondaryHref || "/portfolio"} variant="outline">
                 {settings.ctaSecondaryLabel || "See the work"}
-              </Link>
+              </SiteLinkButton>
             </div>
           </div>
-        </Container>
-        <div className="overflow-hidden border-y border-black/10 bg-white">
-          <div className="marquee-track py-3.5">
-            {[...marquee, ...marquee].map((item, index) => (
-              <span key={`${item}-${index}`} className="mx-5 font-mono text-[11px] uppercase tracking-[0.22em] text-black/50">
-                {item} <span className="text-brand">/</span>
-              </span>
-            ))}
-          </div>
-        </div>
-        <figure className="relative">
-          <SafeImage src={settings.heroImage} alt={settings.heroImageAlt || settings.siteName} className="h-[62vh] min-h-[380px] w-full object-cover" />
-          <figcaption className="absolute inset-x-0 bottom-0 flex justify-between bg-gradient-to-t from-black/70 to-transparent px-5 py-6 font-mono text-[11px] uppercase tracking-[0.18em] text-white md:px-10">
-            <span>{settings.city}</span>
-            <span>{settings.heroCaption}</span>
-          </figcaption>
-        </figure>
-      </section>
-
-      <section className="border-y border-black/10">
-        <Container className="grid md:grid-cols-4">
-          {stats.map((stat, index) => (
-            <div key={stat.label} className={`px-0 py-8 md:px-6 ${index > 0 ? "md:border-l md:border-black/10" : ""}`}>
-              <p className="font-display text-5xl md:text-6xl">{stat.value}</p>
-              <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-black/45">{stat.label}</p>
+          <div className="relative">
+            <div className="media-card overflow-hidden rounded-2xl">
+              <SafeImage
+                src={settings.heroImage}
+                alt={settings.heroImageAlt || settings.siteName}
+                priority
+                className="aspect-[4/3] w-full object-cover md:aspect-[5/4]"
+              />
             </div>
-          ))}
+            {(settings.tagline || settings.heroCaption) && (
+              <div className="absolute right-3 bottom-3 left-3 rounded-xl border border-white/25 bg-white/85 p-3 shadow-sm backdrop-blur-md md:right-auto md:bottom-4 md:left-4 md:max-w-[16rem]">
+                <p className="text-xs font-medium text-primary">{settings.heroKicker || settings.city}</p>
+                <p className="mt-1 text-sm font-semibold text-foreground">
+                  {richTextPlain(settings.tagline) || settings.heroCaption}
+                </p>
+              </div>
+            )}
+          </div>
         </Container>
       </section>
 
-      {servicesBlock.show ? <section className="py-16 md:py-24">
-        <Container>
-          <div className="flex items-end justify-between gap-6">
-            <div>
-              <Kicker>{servicesBlock.kicker || "Services"}</Kicker>
-              <h2 className="font-display mt-3 max-w-xl text-4xl md:text-6xl">{servicesBlock.title || "What we actually ship"}</h2>
-              {servicesBlock.body ? <Prose text={servicesBlock.body} className="mt-4 max-w-xl text-sm text-black/60" /> : null}
-            </div>
-            <Link href="/services" className="hidden items-center gap-1 text-sm md:inline-flex">
-              All services <ArrowUpRight className="size-4" />
-            </Link>
-          </div>
-          <div className="mt-10 border-b border-black/10">
-            {services.map((service, index) => (
-              <article key={service.id} className="group grid gap-4 border-t border-black/10 px-0 py-8 transition-colors hover:bg-brand-soft md:grid-cols-12 md:items-start md:px-6">
-                <p className="font-mono text-xs text-brand md:col-span-1">{String(index + 1).padStart(2, "0")}</p>
-                <div className="md:col-span-4">
-                  <h3 className="font-display text-3xl">
-                    <Link href={`/services/${service.slug}`} className="hover:text-brand">{service.title}</Link>
-                  </h3>
-                  <Prose text={service.shortDescription} className="mt-2 text-sm text-black/60" />
-                </div>
-                <ul className="grid gap-1 md:col-span-7 md:grid-cols-2">
-                  {service.children.map((child) => (
-                    <li key={child.id}>
-                      <Link href={`/services/${child.slug}`} className="inline-flex items-center gap-2 py-1 text-sm hover:text-brand">
-                        <ArrowUpRight className="size-3.5 text-brand" />
-                        {child.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </article>
+      {stats.length > 0 ? (
+        <section className="border-b border-border bg-card">
+          <Container className="grid grid-cols-2 gap-6 py-8 md:grid-cols-4 md:gap-0">
+            {stats.map((stat, index) => (
+              <div
+                key={`${stat.value}-${stat.label}`}
+                className={`min-w-0 md:px-6 ${index > 0 ? "md:border-l md:border-border" : ""}`}
+              >
+                <StatItem value={stat.value} label={stat.label} />
+              </div>
             ))}
-          </div>
-        </Container>
-      </section> : null}
+          </Container>
+        </section>
+      ) : null}
 
-      {portfolioBlock.show ? <section className="bg-white py-16 md:py-24">
-        <Container>
-          <div className="mb-8 flex items-end justify-between">
-            <div>
-              <Kicker>{portfolioBlock.kicker || "Portfolio"}</Kicker>
-              <h2 className="font-display mt-3 text-4xl md:text-6xl">{portfolioBlock.title || "Selected products"}</h2>
-              {portfolioBlock.body ? <Prose text={portfolioBlock.body} className="mt-4 max-w-xl text-sm text-black/60" /> : null}
+      {ribbon.length > 0 ? (
+        <section className="border-b border-border bg-primary-50/50 py-3" aria-label="Services ribbon">
+          <div className="hidden overflow-hidden md:block">
+            <div className="chip-marquee gap-2 px-2">
+              {[...ribbon, ...ribbon].map((item, index) => (
+                <Chip key={`${item}-${index}`} className="bg-card whitespace-nowrap">
+                  {item}
+                </Chip>
+              ))}
             </div>
-            <Link href="/portfolio" className="inline-flex items-center gap-1 text-sm">
-              Complete portfolio <ArrowUpRight className="size-4" />
-            </Link>
           </div>
-          <div className="space-y-12">
-            {shown.map((project, index) => (
-              <Link key={project.id} href={`/portfolio/${project.slug}`} className="group grid items-center gap-6 md:grid-cols-12">
-                <div className={index % 2 === 0 ? "md:col-span-7" : "md:order-2 md:col-span-7"}>
-                  <div className="media-card">
+          <Container className="flex flex-wrap gap-2 md:hidden">
+            {ribbon.map((item) => (
+              <Chip key={item}>{item}</Chip>
+            ))}
+          </Container>
+        </section>
+      ) : null}
+
+      {servicesBlock.show ? (
+        <section className="section-pad">
+          <Container>
+            <SectionHeader
+              eyebrow={servicesBlock.kicker || "Services"}
+              title={servicesBlock.title || "What we actually ship"}
+              description={servicesBlock.body ? <Prose text={servicesBlock.body} className="text-sm" /> : null}
+              href="/services"
+              linkLabel="All services"
+            />
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {services.map((service, index) => (
+                <Link
+                  key={service.id}
+                  href={`/services/${service.slug}`}
+                  className="card-lift group flex h-full flex-col rounded-xl border border-border bg-card p-5"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="grid size-11 place-items-center rounded-xl bg-primary-50 text-primary">
+                      <ServiceIcon name={service.icon} className="size-5" />
+                    </span>
+                    <span className="text-xs font-semibold text-primary">{String(index + 1).padStart(2, "0")}</span>
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold group-hover:text-primary">{service.title}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                    {richTextPlain(service.shortDescription)}
+                  </p>
+                  {service.children.length > 0 ? (
+                    <div className="mt-4 flex flex-wrap gap-1.5">
+                      {service.children.slice(0, 4).map((child) => (
+                        <Chip key={child.id} className="bg-muted/60">
+                          {child.title}
+                        </Chip>
+                      ))}
+                    </div>
+                  ) : null}
+                  <span className="mt-auto inline-flex items-center gap-1 pt-5 text-sm font-medium text-primary">
+                    Explore <ArrowUpRight className="size-4" />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
+
+      {portfolioBlock.show ? (
+        <section className="section-pad border-y border-border bg-card">
+          <Container>
+            <SectionHeader
+              eyebrow={portfolioBlock.kicker || "Portfolio"}
+              title={portfolioBlock.title || "Selected products"}
+              description={portfolioBlock.body ? <Prose text={portfolioBlock.body} className="text-sm" /> : null}
+              href="/portfolio"
+              linkLabel="Complete portfolio"
+            />
+            <div className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
+              {shown.map((project) => (
+                <Link
+                  key={project.id}
+                  href={`/portfolio/${project.slug}`}
+                  className="card-lift group w-[85%] shrink-0 snap-start overflow-hidden rounded-xl border border-border bg-background md:w-auto"
+                >
+                  <div className="media-card rounded-none border-0">
                     {project.coverImage ? (
-                      <SafeImage src={project.coverImage} alt={project.coverImageAlt || project.title} className="aspect-[16/10] w-full object-cover" />
-                    ) : null}
+                      <SafeImage
+                        src={project.coverImage}
+                        alt={project.coverImageAlt || `${project.title} cover`}
+                        className="aspect-[16/10] w-full object-cover"
+                      />
+                    ) : (
+                      <div className="grid aspect-[16/10] place-items-center bg-muted text-2xl font-semibold text-muted-foreground">
+                        {project.title.slice(0, 1)}
+                      </div>
+                    )}
                   </div>
-                </div>
-                <div className="md:col-span-5">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">{project.category}</p>
-                  <h3 className="font-display mt-2 text-4xl">{project.title}</h3>
-                  <Prose text={project.excerpt} className="mt-3 text-black/60" />
-                  <p className="mt-4 text-sm">{project.clientName}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </Container>
-      </section> : null}
-
-      <section className="border-y border-black/10 py-8">
-        <Container className="grid gap-6 md:grid-cols-4">
-          {process.map((step, index) => (
-            <div key={step.title}>
-              <p className="font-mono text-xs text-brand">{String(index + 1).padStart(2, "0")}</p>
-              <p className="mt-2 font-medium">{step.title}</p>
-              <p className="mt-1 text-sm text-black/55">{step.body}</p>
+                  <div className="p-4">
+                    <Chip className="bg-primary-50 text-primary">{project.category}</Chip>
+                    <h3 className="mt-3 text-lg font-semibold group-hover:text-primary">{project.title}</h3>
+                    <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{richTextPlain(project.excerpt)}</p>
+                  </div>
+                </Link>
+              ))}
             </div>
-          ))}
-        </Container>
-      </section>
+          </Container>
+        </section>
+      ) : null}
 
-      {industriesBlock.show ? <section className="py-16 md:py-24">
-        <Container className="grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <Kicker>{industriesBlock.kicker || "Industries"}</Kicker>
-            <h2 className="font-display mt-3 text-4xl">{industriesBlock.title || "Different controls for different work"}</h2>
-            {industriesBlock.body ? <Prose text={industriesBlock.body} className="mt-4 text-sm text-black/60" /> : null}
-            {industriesBlock.image ? (
-              <SafeImage src={industriesBlock.image} alt={industriesBlock.imageAlt || industriesBlock.title} className="mt-6 aspect-[16/9] w-full object-cover" />
-            ) : null}
-          </div>
-          <div className="divide-y divide-black/10 border-y border-black/10 lg:col-span-8">
-            {industries.map((industry) => (
-              <div key={industry.title} className="grid gap-2 py-5 md:grid-cols-2">
-                <h3 className="font-display text-2xl">{industry.title}</h3>
-                <p className="text-sm leading-relaxed text-black/60">{industry.body}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section> : null}
+      {process.length > 0 ? (
+        <section className="section-pad">
+          <Container>
+            <SectionHeader eyebrow="Process" title="How we ship" />
+            <div className="mt-8">
+              <Stepper steps={process} />
+            </div>
+          </Container>
+        </section>
+      ) : null}
 
-      {aboutBlock.show ? <section className="ink py-16 md:py-24">
-        <Container className="grid gap-12 lg:grid-cols-2">
-          <div>
-            <Kicker light>{aboutBlock.kicker || "About"}</Kicker>
-            <h2 className="font-display mt-3 text-4xl text-white md:text-6xl">{settings.aboutHeadline}</h2>
-            <Prose text={settings.aboutBody} className="mt-6 text-white/70" />
-            <Link href={aboutBlock.ctaHref || "/about"} className="mt-8 inline-flex h-11 items-center bg-white px-5 text-sm text-black">
-              {aboutBlock.ctaLabel || "About Us"}
-            </Link>
-          </div>
-          <div className="divide-y divide-white/15 border-y border-white/15">
-            {principles.map((item) => (
-              <div key={item.title} className="py-5">
-                <h3 className="text-lg text-white">{item.title}</h3>
-                <p className="mt-1 text-sm text-white/60">{item.body}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section> : null}
-
-      {clientsBlock.show ? <section className="py-16 md:py-24">
-        <Container>
-          <Kicker>{clientsBlock.kicker || "Clients"}</Kicker>
-          <div className="mt-8 grid gap-10 md:grid-cols-2">
-            {quotes.map((quote) => (
-              <figure key={quote.id} className="border-t border-black/10 pt-6">
-                <blockquote className="font-display text-3xl leading-tight">
-                  <Prose text={quote.quote} className="font-display text-3xl leading-tight text-foreground" />
-                </blockquote>
-                <figcaption className="mt-5 text-sm text-black/55">
-                  {quote.clientName} · {quote.role}, {quote.company}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </Container>
-      </section> : null}
-
-      <section className="border-t border-black/10 bg-white">
-        <Container className="grid md:grid-cols-2">
-          {careersBlock.show ? <div className="border-black/10 py-12 md:border-r md:pr-10">
-            <Kicker>{careersBlock.kicker || "Career Development"}</Kicker>
-            <ul className="mt-6 divide-y divide-black/10 border-y border-black/10">
-              {careers.map((career) => (
-                <li key={career.id}>
-                  <Link href={`/career-development/${career.slug}`} className="flex items-center justify-between py-4">
-                    <span>
-                      <span className="block text-lg">{career.title}</span>
-                      <span className="text-sm text-black/50">{career.kind} · {career.location}</span>
-                    </span>
-                    <ArrowUpRight className="size-4" />
-                  </Link>
-                </li>
+      {industriesBlock.show && industries.length > 0 ? (
+        <section className="section-pad border-y border-border bg-card">
+          <Container>
+            <SectionHeader
+              eyebrow={industriesBlock.kicker || "Industries"}
+              title={industriesBlock.title || "Industries we support"}
+              description={industriesBlock.body ? <Prose text={industriesBlock.body} className="text-sm" /> : null}
+            />
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {industries.map((industry) => (
+                <div key={industry.title} className="rounded-xl border border-border bg-background p-4">
+                  <span className="grid size-10 place-items-center rounded-xl bg-primary-50 text-primary">
+                    <Building2 className="size-5" />
+                  </span>
+                  <h3 className="mt-3 text-base font-semibold">{industry.title}</h3>
+                  <p className="mt-1 line-clamp-3 text-sm text-muted-foreground">{industry.body}</p>
+                </div>
               ))}
-            </ul>
-          </div> : null}
-          {scholarshipsBlock.show ? <div className="py-12 md:pl-10">
-            <Kicker>{scholarshipsBlock.kicker || "Scholarships"}</Kicker>
-            <ul className="mt-6 divide-y divide-black/10 border-y border-black/10">
-              {scholarships.map((item) => (
-                <li key={item.id}>
-                  <Link href={`/scholarships/${item.slug}`} className="flex items-center justify-between py-4">
-                    <span>
-                      <span className="block text-lg">{item.title}</span>
-                      <span className="text-sm text-black/50">{item.award}</span>
-                    </span>
-                    <ArrowUpRight className="size-4" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div> : null}
-        </Container>
-      </section>
+            </div>
+          </Container>
+        </section>
+      ) : null}
 
-      {notesBlock.show ? <section className="py-16 md:py-24">
-        <Container>
-          <div className="flex items-end justify-between">
+      {aboutBlock.show ? (
+        <section className="section-pad">
+          <Container className="grid gap-8 lg:grid-cols-2 lg:gap-12">
             <div>
-              <h2 className="font-display text-4xl md:text-6xl">{notesBlock.title || "Notes"}</h2>
-              {notesBlock.body ? <Prose text={notesBlock.body} className="mt-3 max-w-xl text-sm text-black/60" /> : null}
+              <SectionHeader
+                eyebrow={aboutBlock.kicker || "About"}
+                title={settings.aboutHeadline || aboutBlock.title || "About Appo Matrix"}
+                description={<Prose text={settings.aboutBody} className="text-sm" />}
+              />
+              <SiteLinkButton href={aboutBlock.ctaHref || "/about"} className="mt-6">
+                {aboutBlock.ctaLabel || "About Us"}
+              </SiteLinkButton>
             </div>
-            <Link href={notesBlock.ctaHref || "/blog"} className="text-sm">{notesBlock.ctaLabel || "All posts"}</Link>
-          </div>
-          <div className="mt-8 grid gap-8 md:grid-cols-3">
-            {posts.map((post) => (
-              <Link key={post.id} href={`/blog/${post.slug}`} className="group">
-                {post.featuredImage ? (
-                  <div className="media-card">
-                    <SafeImage src={post.featuredImage} alt={post.featuredImageAlt || post.title} className="aspect-[4/3] w-full object-cover" />
+            <div className="grid gap-3 sm:grid-cols-2">
+              {aboutCards.map((item) => (
+                <div key={item.title} className="rounded-xl border border-border bg-card p-4">
+                  <h3 className="text-base font-semibold">{item.title}</h3>
+                  <p className="mt-2 line-clamp-4 text-sm text-muted-foreground">{item.body}</p>
+                </div>
+              ))}
+            </div>
+          </Container>
+          {valueList.length > 0 ? (
+            <Container className="mt-10">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {valueList.map((item) => (
+                  <div key={item.title} className="flex gap-3 rounded-xl border border-border/80 bg-muted/30 p-3">
+                    <span className="mt-0.5 size-2 shrink-0 rounded-full bg-primary" />
+                    <div>
+                      <p className="text-sm font-semibold">{item.title}</p>
+                      <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.body}</p>
+                    </div>
                   </div>
-                ) : null}
-                <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.16em] text-black/45">{post.category} · {formatDate(post.publishedAt)}</p>
-                <h3 className="mt-2 text-2xl tracking-tight group-hover:text-brand">{post.title}</h3>
-              </Link>
-            ))}
-          </div>
-        </Container>
-      </section> : null}
+                ))}
+              </div>
+            </Container>
+          ) : null}
+        </section>
+      ) : null}
 
-      {closingBlock.show ? <section className="bg-brand">
-        <Container className="flex flex-col justify-between gap-8 py-20 md:flex-row md:items-end">
-          <div>
-            <h2 className="font-display max-w-xl text-5xl text-white md:text-7xl">{closingBlock.title || "Start with a written brief."}</h2>
-            {closingBlock.body ? <Prose text={closingBlock.body} className="mt-4 max-w-xl text-white/80" /> : null}
-          </div>
-          <Link href={closingBlock.ctaHref || "/contact"} className="inline-flex h-12 items-center gap-2 bg-white px-6 text-sm font-medium text-brand">
-            {closingBlock.ctaLabel || "Contact Us"} <ArrowUpRight className="size-4" />
-          </Link>
-        </Container>
-      </section> : null}
+      {clientsBlock.show && quotes.length > 0 ? (
+        <section className="section-pad border-y border-border bg-card">
+          <Container>
+            <SectionHeader eyebrow={clientsBlock.kicker || "Clients"} title={clientsBlock.title || "What clients say"} />
+            <div className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible">
+              {quotes.map((quote) => (
+                <figure
+                  key={quote.id}
+                  className="card-lift flex h-full w-[88%] shrink-0 snap-start flex-col rounded-xl border border-border bg-background p-5 md:w-auto"
+                >
+                  <Quote className="size-6 text-primary" aria-hidden="true" />
+                  <blockquote className="mt-3 flex-1 text-base font-medium leading-relaxed text-foreground">
+                    <span className="line-clamp-5">{richTextPlain(quote.quote)}</span>
+                  </blockquote>
+                  <figcaption className="mt-5 flex items-center gap-3">
+                    <span className="grid size-10 place-items-center rounded-full bg-primary-50 text-sm font-semibold text-primary">
+                      {initials(quote.clientName)}
+                    </span>
+                    <span>
+                      <span className="block text-sm font-semibold">{quote.clientName}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {quote.role}, {quote.company}
+                      </span>
+                    </span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
+
+      {careersBlock.show ? (
+        <section className="section-pad">
+          <Container>
+            <SectionHeader
+              eyebrow={careersBlock.kicker || "Career Development"}
+              title={careersBlock.title || "Open paths"}
+              href="/career-development"
+              linkLabel="All openings"
+            />
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {careers.map((career) => (
+                <Link
+                  key={career.id}
+                  href={`/career-development/${career.slug}`}
+                  className="card-lift flex h-full flex-col rounded-xl border border-border bg-card p-5"
+                >
+                  <Chip className="w-fit bg-primary-50 text-primary">{career.kind}</Chip>
+                  <h3 className="mt-3 text-lg font-semibold">{career.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">{career.location}</p>
+                  <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-medium text-primary">
+                    View role <ArrowUpRight className="size-4" />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
+
+      {scholarshipsBlock.show && scholarships.length > 0 ? (
+        <section className="section-pad border-t border-border bg-card">
+          <Container>
+            <SectionHeader
+              eyebrow={scholarshipsBlock.kicker || "Scholarships"}
+              title={scholarshipsBlock.title || "Scholarships"}
+              href="/scholarships"
+              linkLabel="All scholarships"
+            />
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {scholarships.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/scholarships/${item.slug}`}
+                  className="card-lift rounded-xl border border-border bg-background p-5"
+                >
+                  <h3 className="text-lg font-semibold">{item.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">{item.award}</p>
+                </Link>
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
+
+      {notesBlock.show ? (
+        <section className="section-pad">
+          <Container>
+            <SectionHeader
+              eyebrow={notesBlock.kicker || "Notes"}
+              title={notesBlock.title || "Notes"}
+              description={notesBlock.body ? <Prose text={notesBlock.body} className="text-sm" /> : null}
+              href={notesBlock.ctaHref || "/blog"}
+              linkLabel={notesBlock.ctaLabel || "All posts"}
+            />
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {posts.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`/blog/${post.slug}`}
+                  className="card-lift group overflow-hidden rounded-xl border border-border bg-card"
+                >
+                  <div className="media-card rounded-none border-0">
+                    {post.featuredImage ? (
+                      <SafeImage
+                        src={post.featuredImage}
+                        alt={post.featuredImageAlt || post.title}
+                        className="aspect-[16/10] w-full object-cover"
+                      />
+                    ) : (
+                      <div className="aspect-[16/10] bg-muted" />
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {post.category} · {formatDate(post.publishedAt)}
+                    </p>
+                    <h3 className="mt-2 line-clamp-2 text-lg font-semibold group-hover:text-primary">{post.title}</h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
+
+      {closingBlock.show ? (
+        <section className="bg-surface-dark">
+          <Container className="flex flex-col gap-6 py-14 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-xl">
+              <h2 className="font-display text-white">{closingBlock.title || "Start with a written brief."}</h2>
+              {closingBlock.body ? <Prose text={closingBlock.body} className="mt-3 text-sm text-white/70" /> : null}
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <SiteLinkButton href={closingBlock.ctaHref || "/contact"} variant="dark">
+                {closingBlock.ctaLabel || "Contact Us"} <ArrowUpRight className="size-4" />
+              </SiteLinkButton>
+              {whatsapp ? (
+                <a
+                  href={whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] border border-white/20 px-4 text-sm font-semibold text-white hover:border-white/40"
+                >
+                  WhatsApp
+                </a>
+              ) : null}
+            </div>
+          </Container>
+        </section>
+      ) : null}
     </>
   );
 }

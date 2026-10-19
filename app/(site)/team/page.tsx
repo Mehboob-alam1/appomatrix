@@ -25,29 +25,38 @@ export default async function TeamPage() {
     <>
       <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
       {copy.body ? (
-        <Container className="pt-12">
-          <Prose text={copy.body} className="max-w-2xl" />
+        <Container className="pt-8">
+          <Prose text={copy.body} className="max-w-2xl text-sm text-muted-foreground" />
         </Container>
       ) : null}
-      <Container className="grid gap-x-6 gap-y-12 py-16 sm:grid-cols-2 lg:grid-cols-4">
+      <Container className="grid gap-5 py-10 sm:grid-cols-2 lg:grid-cols-4 lg:py-14">
         {team.length === 0 ? <p className="text-muted-foreground">Team profiles will appear here once they are published.</p> : null}
         {team.map((person) => (
-          <article key={person.id}>
+          <article key={person.id} className="group overflow-hidden rounded-xl border border-border bg-card">
             {person.photo ? (
-              <div className="media-card">
+              <div className="media-card rounded-none border-0">
                 <SafeImage src={person.photo} alt={person.photoAlt || person.name} className="aspect-[4/5] w-full object-cover" />
               </div>
             ) : (
-              <div className="grid aspect-[4/5] place-items-center bg-black font-display text-6xl text-white">{person.name.slice(0, 1)}</div>
+              <div className="grid aspect-[4/5] place-items-center bg-muted text-5xl font-semibold text-muted-foreground">
+                {person.name.slice(0, 1)}
+              </div>
             )}
-            <h2 className="mt-4 text-xl tracking-tight">{person.name}</h2>
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-brand">{person.role}</p>
-            {person.bio ? <Prose text={person.bio} className="mt-2 text-sm" /> : null}
-            {person.linkedin ? (
-              <a href={person.linkedin} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm underline decoration-black/30 underline-offset-4">
-                LinkedIn
-              </a>
-            ) : null}
+            <div className="p-4">
+              <h2 className="text-lg font-semibold">{person.name}</h2>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-primary">{person.role}</p>
+              {person.bio ? <Prose text={person.bio} className="mt-2 line-clamp-3 text-sm text-muted-foreground" /> : null}
+              {person.linkedin ? (
+                <a
+                  href={person.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-block text-sm font-medium text-primary opacity-0 transition group-hover:opacity-100"
+                >
+                  LinkedIn
+                </a>
+              ) : null}
+            </div>
           </article>
         ))}
       </Container>
