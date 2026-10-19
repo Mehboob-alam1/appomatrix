@@ -86,7 +86,7 @@ export default async function ProjectPage({ params }: Params) {
           ))}
         </Container>
       ) : null}
-      <Container className="grid gap-8 py-12 md:grid-cols-3">
+      <Container className="grid gap-5 py-8 md:grid-cols-3">
         {[
           ["Problem", project.problem],
           ["Solution", project.solution],

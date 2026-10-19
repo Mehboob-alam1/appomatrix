@@ -28,7 +28,7 @@ export default async function CareersPage() {
   return (
     <>
       <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
-      <Container className="grid gap-8 py-10 lg:grid-cols-12 lg:py-14">
+      <Container className="grid gap-8 py-7 lg:grid-cols-12 lg:py-9">
         <div className="lg:col-span-4">{copy.body ? <Prose text={copy.body} className="text-sm text-muted-foreground" /> : null}</div>
         <div className="grid gap-3 lg:col-span-8">
           {careers.length === 0 ? (

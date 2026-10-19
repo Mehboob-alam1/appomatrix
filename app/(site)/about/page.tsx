@@ -33,7 +33,7 @@ export default async function AboutPage() {
   return (
     <>
       <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
-      <Container className="grid gap-8 py-10 lg:grid-cols-12 lg:py-14">
+      <Container className="grid gap-8 py-7 lg:grid-cols-12 lg:py-9">
         <Prose text={copy.body} className="lg:col-span-7" />
         <div className="grid grid-cols-2 gap-3 lg:col-span-5">
           {stats.map((stat) => (
@@ -44,10 +44,10 @@ export default async function AboutPage() {
         </div>
       </Container>
       {principles.length > 0 ? (
-        <section className="border-y border-border bg-card">
+        <section className="border-y border-border">
           <Container className="section-pad">
             <SectionHeader eyebrow="Values" title="How we work" />
-            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {principles.map((item, index) => (
                 <article key={item.title} className="rounded-xl border border-border bg-background p-4">
                   <p className="text-xs font-semibold text-primary">{String(index + 1).padStart(2, "0")}</p>
@@ -61,7 +61,7 @@ export default async function AboutPage() {
       ) : null}
       <Container className="section-pad">
         <SectionHeader eyebrow="Team" title={copy.secondaryTitle} href="/team" linkLabel="Full team" />
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {team.map((person) => (
             <article key={person.id} className="overflow-hidden rounded-xl border border-border bg-card">
               {person.photo ? (

@@ -74,7 +74,7 @@
   --primary-800: #0c4a6e;
   --primary-900: #0a3a56;
 
-  --background: #f7f9fb;
+  --background: #ffffff;
   --foreground: #12171c;
   --card: #ffffff;
   --card-foreground: #12171c;
@@ -84,7 +84,7 @@
   --primary-foreground: #ffffff;
   --secondary: #e1eff8;
   --secondary-foreground: #0e5f8f;
-  --muted: #eef2f5;
+  --muted: #f4f6f8;
   --muted-foreground: #5b6b76;
   --accent: #e1eff8;
   --accent-foreground: #12171c;
@@ -107,30 +107,6 @@
   --sidebar-accent-foreground: #12171c;
   --sidebar-border: #e3e8ed;
   --sidebar-ring: #1b7fbb;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f1419;
-    --foreground: #f3f6f8;
-    --card: #171d24;
-    --card-foreground: #f3f6f8;
-    --popover: #171d24;
-    --popover-foreground: #f3f6f8;
-    --primary: #5aa6d4;
-    --primary-foreground: #0a3a56;
-    --secondary: #1c2833;
-    --secondary-foreground: #e1eff8;
-    --muted: #1c2833;
-    --muted-foreground: #9aabb6;
-    --accent: #1c2833;
-    --accent-foreground: #f3f6f8;
-    --destructive: #e06a6a;
-    --border: rgb(255 255 255 / 10%);
-    --input: rgb(255 255 255 / 12%);
-    --ring: #5aa6d4;
-    --surface-dark: #0a0e12;
-  }
 }
 
 .dark {
@@ -243,18 +219,18 @@ button:focus-visible,
 }
 
 .section-pad {
-  padding-block: 36px;
+  padding-block: 28px;
 }
 
 @media (min-width: 768px) {
   .section-pad {
-    padding-block: 56px;
+    padding-block: 40px;
   }
 }
 
 @media (min-width: 1024px) {
   .section-pad {
-    padding-block: 72px;
+    padding-block: 48px;
   }
 }
 

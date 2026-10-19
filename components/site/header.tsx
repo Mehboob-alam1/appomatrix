@@ -78,7 +78,7 @@ export function Header({
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/85 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-border bg-white/90 backdrop-blur-xl">
       <a
         href="#content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-[10px] focus:bg-primary focus:px-3 focus:py-2 focus:text-primary-foreground"

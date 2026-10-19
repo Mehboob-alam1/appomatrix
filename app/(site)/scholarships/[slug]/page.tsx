@@ -36,7 +36,7 @@ export default async function ScholarshipPage({ params }: Params) {
         path={`/scholarships/${item.slug}`}
         ancestors={[{ href: "/scholarships", label: "Scholarships" }]}
       />
-      <Container className="grid gap-10 py-14 lg:grid-cols-12">
+      <Container className="grid gap-6 py-8 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-7">
           {item.coverImage ? (
             <div className="media-card">

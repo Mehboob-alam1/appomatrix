@@ -32,7 +32,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
     <>
       <PageHero kicker={copy.kicker} title={copy.heading} lead={copy.lead} image={copy.image} imageAlt={copy.imageAlt} />
       {categories.length > 0 ? (
-        <Container className="flex flex-wrap gap-2 pt-8">
+        <Container className="flex flex-wrap gap-2 pt-5">
           <Link
             href="/blog"
             className={cn(
@@ -66,7 +66,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
       <Container className="section-pad">
         {posts.length === 0 ? <p className="text-muted-foreground">No posts yet.</p> : null}
         {featured ? (
-          <Link href={`/blog/${featured.slug}`} className="card-lift group mb-8 grid gap-5 overflow-hidden rounded-xl border border-border bg-card md:grid-cols-2">
+          <Link href={`/blog/${featured.slug}`} className="card-lift group mb-5 grid gap-5 overflow-hidden rounded-xl border border-border bg-card md:grid-cols-2">
             <div className="media-card rounded-none border-0">
               {featured.featuredImage ? (
                 <SafeImage

@@ -64,7 +64,7 @@ export default async function PostPage({ params }: Params) {
           </div>
         </Container>
       ) : null}
-      <Container className="max-w-3xl py-10">
+      <Container className="max-w-3xl py-7">
         <Prose text={post.content} />
       </Container>
     </article>
