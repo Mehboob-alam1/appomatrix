@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 export function PortfolioBrowser({ projects }: { projects: Project[] }) {
   const categories = useMemo(
-    () => ["All", ...Array.from(new Set(projects.map((project) => project.category)))],
+    () => ["All", ...Array.from(new Set(projects.map((project) => project.category).filter(Boolean)))],
     [projects],
   );
   const [category, setCategory] = useState("All");
@@ -25,10 +25,10 @@ export function PortfolioBrowser({ projects }: { projects: Project[] }) {
             type="button"
             onClick={() => setCategory(item)}
             className={cn(
-              "inline-flex min-h-10 items-center rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
+              "inline-flex min-h-10 items-center rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
               category === item
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground",
+                ? "border-primary bg-primary text-primary-foreground shadow-[0_8px_24px_rgba(115,92,255,0.35)]"
+                : "border-border bg-card/50 text-muted-foreground hover:border-primary/40 hover:text-foreground",
             )}
           >
             {item}
@@ -38,12 +38,12 @@ export function PortfolioBrowser({ projects }: { projects: Project[] }) {
       {visible.length === 0 ? (
         <p className="mt-8 text-muted-foreground">No projects in this category yet.</p>
       ) : (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-5 sm:grid-cols-2">
           {visible.map((project) => (
             <Link
               key={project.id}
               href={`/portfolio/${project.slug}`}
-              className="card-lift group overflow-hidden rounded-xl border border-border bg-card"
+              className="card-lift group overflow-hidden rounded-2xl border border-border bg-card/50"
             >
               <div className="media-card rounded-none border-0">
                 {project.coverImage ? (
@@ -62,13 +62,15 @@ export function PortfolioBrowser({ projects }: { projects: Project[] }) {
                   </div>
                 )}
               </div>
-              <div className="p-4">
-                <Chip className="bg-primary-50 text-primary">{project.category}</Chip>
-                <h2 className="mt-3 text-lg font-semibold group-hover:text-primary">{project.title}</h2>
-                <p className="mt-1 text-xs text-muted-foreground">{project.clientName}</p>
+              <div className="p-5">
+                {project.category ? (
+                  <Chip className="bg-primary/10 text-primary-300">{project.category}</Chip>
+                ) : null}
+                <h2 className="mt-3 text-xl font-semibold group-hover:text-primary-300">{project.title}</h2>
+                {project.clientName ? <p className="mt-1 text-xs text-muted-foreground">{project.clientName}</p> : null}
                 <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{richTextPlain(project.excerpt)}</p>
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary">
-                  View case <ArrowUpRight className="size-4" />
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-400">
+                  View case study <ArrowUpRight className="size-4" />
                 </span>
               </div>
             </Link>

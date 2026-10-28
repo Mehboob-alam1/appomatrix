@@ -5,27 +5,23 @@ export function Logo({
   name,
   logoUrl = "",
   logoAlt = "",
-  light = false,
+  light = true,
 }: {
   name: string;
   logoUrl?: string;
   logoAlt?: string;
   light?: boolean;
 }) {
+  const isMark = !logoUrl || logoUrl.includes("mark") || logoUrl.includes("favicon");
+  const src = light
+    ? logoUrl && !isMark
+      ? logoUrl
+      : "/brand/appo-matrix-logo-on-dark.png"
+    : logoUrl || "/brand/appo-matrix-mark.png";
+
   return (
-    <Link href="/" className="inline-flex items-center gap-2.5">
-      {logoUrl ? (
-        <SafeImage src={logoUrl} alt={logoAlt || name} className="h-9 w-auto max-w-12 object-contain" />
-      ) : (
-        <span
-          className={`grid size-8 place-items-center text-[11px] font-semibold tracking-tight ${
-            light ? "bg-white text-brand" : "bg-brand text-white"
-          }`}
-        >
-          AM
-        </span>
-      )}
-      <span className={`text-[15px] font-medium tracking-tight ${light ? "text-white" : "text-black"}`}>{name}</span>
+    <Link href="/" className="inline-flex items-center gap-2.5" aria-label={name}>
+      <SafeImage src={src} alt={logoAlt || name} className="h-8 w-auto max-w-[10rem] object-contain md:h-9" />
     </Link>
   );
 }

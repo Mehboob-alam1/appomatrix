@@ -16,7 +16,7 @@ export function ContactForm({ topics, defaultTopic }: { topics: string[]; defaul
 
   if (done) {
     return (
-      <div className="rounded-xl border border-primary/20 bg-primary-50 p-6">
+      <div className="rounded-2xl border border-primary/30 bg-primary/10 p-6">
         <h2 className="text-2xl font-semibold tracking-tight">Received.</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           We reply within one business day with a next step. Nothing is approved until you confirm scope.
@@ -60,21 +60,26 @@ export function ContactForm({ topics, defaultTopic }: { topics: string[]; defaul
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="space-y-1.5">
-          <Label htmlFor="topic">Topic</Label>
+          <Label htmlFor="topic">Project type</Label>
           <select
             id="topic"
             name="topic"
             defaultValue={defaultTopic || topics[0] || "General inquiry"}
-            className="h-11 w-full rounded-[10px] border border-input bg-background px-3 text-sm"
+            className="h-11 w-full rounded-xl border border-input bg-background/60 px-3 text-sm text-foreground"
           >
-            {topics.map((topic) => (
-              <option key={topic}>{topic}</option>
+            {topics.map((item) => (
+              <option key={item}>{item}</option>
             ))}
           </select>
         </label>
         <label className="space-y-1.5">
           <Label htmlFor="budget">Budget</Label>
-          <select id="budget" name="budget" className="h-11 w-full rounded-[10px] border border-input bg-background px-3 text-sm" defaultValue={BUDGETS[0]}>
+          <select
+            id="budget"
+            name="budget"
+            className="h-11 w-full rounded-xl border border-input bg-background/60 px-3 text-sm text-foreground"
+            defaultValue={BUDGETS[0]}
+          >
             {BUDGETS.map((budget) => (
               <option key={budget}>{budget}</option>
             ))}
@@ -82,11 +87,22 @@ export function ContactForm({ topics, defaultTopic }: { topics: string[]; defaul
         </label>
       </div>
       <label className="block space-y-1.5">
-        <Label htmlFor="message">What are you building?</Label>
-        <Textarea id="message" name="message" required rows={6} className="min-h-32 rounded-[10px]" placeholder="Goals, timeline, and anything we should know." />
+        <Label htmlFor="message">Project description</Label>
+        <Textarea
+          id="message"
+          name="message"
+          required
+          rows={6}
+          className="min-h-32 rounded-xl border-input bg-background/60"
+          placeholder="Goals, timeline, and anything we should know."
+        />
       </label>
-      {error ? <p className="text-sm text-destructive" role="alert">{error}</p> : null}
-      <Button type="submit" className="h-11 min-w-40 rounded-[10px] px-5" disabled={pending}>
+      {error ? (
+        <p className="text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      ) : null}
+      <Button type="submit" className="btn-primary h-11 min-w-44 rounded-xl px-5" disabled={pending}>
         {pending ? "Sending…" : "Send message"}
       </Button>
     </form>
@@ -107,7 +123,7 @@ function Field({
   return (
     <label className="space-y-1.5">
       <Label htmlFor={name}>{label}</Label>
-      <Input id={name} name={name} type={type} required={required} className="h-11 rounded-[10px]" />
+      <Input id={name} name={name} type={type} required={required} className="h-11 rounded-xl border-input bg-background/60" />
     </label>
   );
 }
