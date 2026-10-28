@@ -22,7 +22,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     ]);
     const cta = ctaLinks[0] || { href: "/contact", label: "Contact Us" };
     return (
-      <div className="flex min-h-screen flex-col">
+      <div className="relative flex min-h-screen flex-col overflow-x-clip bg-background text-foreground">
         <JsonLd data={organizationJsonLd(settings, social.map((link) => link.url))} />
         <JsonLd data={websiteJsonLd(settings)} />
         <Header
@@ -31,9 +31,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           logoAlt={settings.logoAlt}
           services={services}
           links={headerLinks}
-          cta={{ href: cta.href, label: cta.label }}
+          cta={{ href: cta.href || "/contact", label: cta.label || "Let's Talk" }}
         />
-        <main id="content" className="flex-1">
+        <main id="content" className="relative flex-1">
           {children}
         </main>
         <Footer settings={settings} services={services} links={footerLinks} social={social} />

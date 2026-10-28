@@ -11,12 +11,11 @@ import { cn } from "@/lib/utils";
 
 const FALLBACK = [
   { href: "/", label: "Home" },
-  { href: "/portfolio", label: "Portfolio" },
-  { href: "/career-development", label: "Career Development" },
-  { href: "/scholarships", label: "Scholarships" },
-  { href: "/blog", label: "Blog" },
-  { href: "/team", label: "Team" },
-  { href: "/about", label: "About Us" },
+  { href: "/services", label: "Services" },
+  { href: "/portfolio", label: "Work" },
+  { href: "/about", label: "About" },
+  { href: "/blog", label: "Insights" },
+  { href: "/contact", label: "Contact" },
 ];
 
 function active(pathname: string, href: string) {
@@ -48,12 +47,20 @@ export function Header({
   const [open, setOpen] = useState(false);
   const [servicesPinned, setServicesPinned] = useState(false);
   const [mobileGroup, setMobileGroup] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
   const servicesActive = pathname.startsWith("/services");
 
   useEffect(() => {
     setOpen(false);
     setServicesPinned(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -69,8 +76,8 @@ export function Header({
       key={link.href}
       href={link.href}
       className={cn(
-        "rounded-[10px] px-2.5 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
-        active(pathname, link.href) && "font-semibold text-primary",
+        "rounded-lg px-2.5 py-2 text-sm text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground",
+        active(pathname, link.href) && "font-semibold text-foreground",
       )}
     >
       {link.label}
@@ -78,15 +85,22 @@ export function Header({
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-white/90 backdrop-blur-xl">
+    <header
+      className={cn(
+        "sticky top-0 z-40 border-b transition-[background,border-color,backdrop-filter] duration-200",
+        scrolled
+          ? "border-border bg-[#090D18]/80 backdrop-blur-xl"
+          : "border-transparent bg-transparent backdrop-blur-0",
+      )}
+    >
       <a
         href="#content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-[10px] focus:bg-primary focus:px-3 focus:py-2 focus:text-primary-foreground"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-3 focus:py-2 focus:text-primary-foreground"
       >
         Skip to content
       </a>
-      <div className="site-container flex h-16 items-center gap-3">
-        <Logo name={siteName} logoUrl={logoUrl} logoAlt={logoAlt} />
+      <div className="site-container flex h-16 items-center gap-3 md:h-[4.25rem]">
+        <Logo name={siteName} logoUrl={logoUrl} logoAlt={logoAlt} light />
         <nav className="ml-2 hidden items-center gap-0.5 lg:flex" aria-label="Main">
           {before.map(navLink)}
           <div
@@ -97,8 +111,8 @@ export function Header({
             <button
               type="button"
               className={cn(
-                "inline-flex min-h-11 items-center gap-1 rounded-[10px] px-2.5 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground",
-                (servicesActive || servicesPinned) && "font-semibold text-primary",
+                "inline-flex min-h-11 items-center gap-1 rounded-lg px-2.5 py-2 text-sm text-muted-foreground hover:bg-white/5 hover:text-foreground",
+                (servicesActive || servicesPinned) && "font-semibold text-foreground",
               )}
               aria-expanded={servicesPinned}
               aria-haspopup="true"
@@ -114,13 +128,13 @@ export function Header({
                 servicesPinned && "visible opacity-100",
               )}
             >
-              <div className="rounded-xl border border-border bg-card p-5 shadow-[0_16px_40px_rgb(15_20_25/0.08)]">
+              <div className="glass-card rounded-2xl p-5">
                 <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                   {services.map((group) => (
                     <div key={group.id}>
                       <Link
                         href={`/services/${group.slug}`}
-                        className="text-sm font-semibold text-foreground hover:text-primary"
+                        className="text-sm font-semibold text-foreground hover:text-primary-400"
                         onClick={() => setServicesPinned(false)}
                       >
                         {group.title}
@@ -130,7 +144,7 @@ export function Header({
                           <li key={child.id}>
                             <Link
                               href={`/services/${child.slug}`}
-                              className="block rounded-md px-0 py-1.5 text-sm text-muted-foreground hover:text-primary"
+                              className="block rounded-md px-0 py-1.5 text-sm text-muted-foreground hover:text-primary-400"
                               onClick={() => setServicesPinned(false)}
                             >
                               {child.title}
@@ -143,7 +157,7 @@ export function Header({
                 </div>
                 <Link
                   href="/services"
-                  className="mt-4 inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary"
+                  className="mt-4 inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-400"
                   onClick={() => setServicesPinned(false)}
                 >
                   All services <ArrowUpRight className="size-4" />
@@ -155,20 +169,20 @@ export function Header({
         </nav>
         <Link
           href={cta.href || "/contact"}
-          className="ml-auto hidden min-h-11 items-center gap-1 rounded-[10px] bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary-600 lg:inline-flex"
+          className="btn-primary ml-auto hidden min-h-11 items-center gap-1 rounded-xl px-4 text-sm font-semibold lg:inline-flex"
         >
-          {cta.label || "Contact Us"} <ArrowUpRight className="size-4" />
+          {cta.label || "Let's Talk"} <ArrowUpRight className="size-4" />
         </Link>
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger
-            className="ml-auto inline-flex size-11 items-center justify-center rounded-[10px] border border-border bg-card lg:hidden"
+            className="ml-auto inline-flex size-11 items-center justify-center rounded-xl border border-border bg-card/60 lg:hidden"
             aria-label="Open menu"
           >
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
           </SheetTrigger>
-          <SheetContent side="right" className="flex w-full flex-col overflow-y-auto sm:max-w-md">
+          <SheetContent side="right" className="flex w-full flex-col overflow-y-auto border-border bg-[#0c1222] sm:max-w-md">
             <SheetHeader>
-              <SheetTitle className="text-left text-xl">{siteName}</SheetTitle>
+              <SheetTitle className="text-left text-xl text-foreground">{siteName}</SheetTitle>
             </SheetHeader>
             <nav className="flex flex-1 flex-col gap-1 px-4 pb-6" aria-label="Mobile">
               {before.map((link) => (
@@ -176,14 +190,17 @@ export function Header({
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className={cn("min-h-12 rounded-[10px] px-3 py-3 text-lg", active(pathname, link.href) && "font-semibold text-primary")}
+                  className={cn(
+                    "min-h-12 rounded-xl px-3 py-3 text-lg text-foreground",
+                    active(pathname, link.href) && "font-semibold text-primary-400",
+                  )}
                 >
                   {link.label}
                 </Link>
               ))}
               <button
                 type="button"
-                className="flex min-h-12 items-center justify-between rounded-[10px] px-3 py-3 text-left text-lg"
+                className="flex min-h-12 items-center justify-between rounded-xl px-3 py-3 text-left text-lg text-foreground"
                 onClick={() => setMobileGroup((value) => (value === "services" ? null : "services"))}
                 aria-expanded={mobileGroup === "services"}
               >
@@ -191,7 +208,7 @@ export function Header({
                 <ChevronDown className={cn("size-5", mobileGroup === "services" && "rotate-180")} />
               </button>
               {mobileGroup === "services" ? (
-                <div className="space-y-3 rounded-xl border border-border bg-muted/40 p-3">
+                <div className="space-y-3 rounded-2xl border border-border bg-card/50 p-3">
                   {services.map((group) => (
                     <div key={group.id}>
                       <Link href={`/services/${group.slug}`} onClick={() => setOpen(false)} className="font-semibold">
@@ -219,7 +236,10 @@ export function Header({
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className={cn("min-h-12 rounded-[10px] px-3 py-3 text-lg", active(pathname, link.href) && "font-semibold text-primary")}
+                  className={cn(
+                    "min-h-12 rounded-xl px-3 py-3 text-lg text-foreground",
+                    active(pathname, link.href) && "font-semibold text-primary-400",
+                  )}
                 >
                   {link.label}
                 </Link>
@@ -227,9 +247,9 @@ export function Header({
               <Link
                 href={cta.href || "/contact"}
                 onClick={() => setOpen(false)}
-                className="mt-auto inline-flex min-h-12 items-center justify-center rounded-[10px] bg-primary px-4 text-sm font-semibold text-primary-foreground"
+                className="btn-primary mt-auto inline-flex min-h-12 items-center justify-center rounded-xl px-4 text-sm font-semibold"
               >
-                {cta.label || "Contact Us"}
+                {cta.label || "Let's Talk"}
               </Link>
             </nav>
           </SheetContent>
