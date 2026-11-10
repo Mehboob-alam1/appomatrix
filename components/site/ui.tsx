@@ -9,9 +9,15 @@ export function GradientText({ children, className }: { children: React.ReactNod
 export function BackgroundGlow({ className }: { className?: string }) {
   return (
     <div aria-hidden="true" className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}>
-      <span className="glow-orb top-[-10%] left-[-5%] h-[28rem] w-[28rem] bg-[#735CFF]/50" />
-      <span className="glow-orb right-[-8%] bottom-[-20%] h-[24rem] w-[24rem] bg-[#4BCAED]/30" style={{ animationDelay: "-4s" }} />
-      <span className="glow-orb top-[40%] right-[20%] h-[14rem] w-[14rem] bg-[#947CFF]/25" style={{ animationDelay: "-8s" }} />
+      <span className="glow-orb top-[-8%] left-[-4%] h-[16rem] w-[16rem] bg-[#735CFF]/40 md:h-[20rem] md:w-[20rem]" />
+      <span
+        className="glow-orb right-[-6%] bottom-[-12%] h-[14rem] w-[14rem] bg-[#4BCAED]/25 md:h-[18rem] md:w-[18rem]"
+        style={{ animationDelay: "-4s" }}
+      />
+      <span
+        className="glow-orb top-[45%] right-[18%] h-[10rem] w-[10rem] bg-[#947CFF]/20"
+        style={{ animationDelay: "-8s" }}
+      />
     </div>
   );
 }
@@ -32,21 +38,21 @@ export function SectionHeader({
   light?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
       <div className="max-w-2xl">
         {eyebrow ? (
           <p
             className={cn(
-              "text-[12px] font-semibold uppercase tracking-[0.18em]",
+              "text-[11px] font-semibold uppercase tracking-[0.16em]",
               light ? "text-primary-300" : "text-primary-400",
             )}
           >
             {eyebrow}
           </p>
         ) : null}
-        <h2 className={cn("mt-2 font-display text-balance", light ? "text-white" : "text-foreground")}>{title}</h2>
+        <h2 className={cn("mt-1.5 font-display text-balance", light ? "text-white" : "text-foreground")}>{title}</h2>
         {description ? (
-          <div className={cn("mt-3 text-sm leading-relaxed md:text-base", light ? "text-white/70" : "text-muted-foreground")}>
+          <div className={cn("mt-2 max-w-xl text-sm leading-relaxed", light ? "text-white/70" : "text-muted-foreground")}>
             {description}
           </div>
         ) : null}
@@ -145,16 +151,18 @@ export function ProcessPillars({
 }) {
   const cols = steps.length >= 6 ? "md:grid-cols-3 lg:grid-cols-3" : steps.length === 4 ? "md:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-3";
   return (
-    <ol className={cn("grid gap-4", cols)}>
+    <ol className={cn("grid items-start gap-3 sm:gap-4", cols)}>
       {steps.map((step, index) => (
-        <li key={step.title} className="glass-card card-lift relative overflow-hidden rounded-2xl p-6">
+        <li key={step.title} className="glass-card card-lift relative overflow-hidden rounded-2xl p-4 sm:p-5">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -top-10 -right-8 size-32 rounded-full bg-primary/20 blur-3xl"
+            className="pointer-events-none absolute -top-10 -right-8 size-24 rounded-full bg-primary/20 blur-3xl"
           />
-          <p className="font-display text-4xl text-primary-400/80">{step.number || String(index + 1).padStart(2, "0")}</p>
-          <h3 className="mt-4 text-xl font-semibold tracking-tight">{step.title}</h3>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.body}</p>
+          <p className="font-display text-2xl text-primary-400/80 sm:text-3xl">
+            {step.number || String(index + 1).padStart(2, "0")}
+          </p>
+          <h3 className="mt-3 text-lg font-semibold tracking-tight">{step.title}</h3>
+          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{step.body}</p>
         </li>
       ))}
     </ol>
@@ -181,21 +189,21 @@ export function CtaBand({
   footnotes?: string[];
 }) {
   return (
-    <section className="section-pad relative overflow-hidden">
-      <BackgroundGlow />
+    <section className="section-pad relative overflow-hidden !pt-0">
+      <BackgroundGlow className="opacity-70" />
       <div className="site-container relative">
-        <div className="glass-card relative overflow-hidden rounded-3xl px-6 py-10 md:px-12 md:py-14">
+        <div className="glass-card relative overflow-hidden rounded-2xl px-5 py-7 md:px-8 md:py-9">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(115,92,255,0.28),transparent_55%)]"
           />
-          <div className="relative max-w-2xl">
+          <div className="relative max-w-xl">
             {eyebrow ? (
-              <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-primary-300">{eyebrow}</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-primary-300">{eyebrow}</p>
             ) : null}
-            <h2 className="font-display mt-2 text-balance">{title}</h2>
-            {description ? <div className="mt-4 text-base text-muted-foreground">{description}</div> : null}
-            <div className="mt-7 flex flex-wrap gap-3">
+            <h2 className="font-display mt-1.5 text-balance">{title}</h2>
+            {description ? <div className="mt-3 text-sm text-muted-foreground md:text-base">{description}</div> : null}
+            <div className="mt-5 flex flex-wrap gap-3">
               <SiteLinkButton href={primaryHref}>
                 {primaryLabel} <ArrowUpRight className="size-4" />
               </SiteLinkButton>
@@ -206,7 +214,7 @@ export function CtaBand({
               ) : null}
             </div>
             {footnotes?.length ? (
-              <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
+              <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
                 {footnotes.map((item) => (
                   <li key={item} className="inline-flex items-center gap-2">
                     <span className="size-1.5 rounded-full bg-cyan" aria-hidden="true" />

@@ -63,7 +63,7 @@ export default async function ServicePage({ params }: Params) {
           areaServed: "Worldwide",
         }}
       />
-      <Container className="grid gap-8 py-10 lg:grid-cols-12 lg:gap-10 lg:py-14">
+      <Container className="grid gap-6 py-8 lg:grid-cols-12 lg:items-start lg:gap-10 lg:py-9">
         <div className="space-y-10 lg:col-span-7">
           {service.image ? (
             <div className="media-card glass-card overflow-hidden rounded-2xl p-1.5">

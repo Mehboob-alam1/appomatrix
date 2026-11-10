@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container, Kicker, PageHero, Prose } from "@/components/site/chrome";
+import { SiteLinkButton } from "@/components/site/ui";
 import { formatDate } from "@/lib/format";
 import { getCareer } from "@/lib/queries";
 import { contentMetadata } from "@/lib/seo";
@@ -33,27 +33,27 @@ export default async function CareerPage({ params }: Params) {
         path={`/career-development/${career.slug}`}
         ancestors={[{ href: "/career-development", label: "Career Development" }]}
       />
-      <Container className="grid gap-6 py-7 lg:grid-cols-12 lg:gap-6 lg:py-9">
-        <div className="space-y-8 lg:col-span-7">
-          <Prose text={career.description} />
+      <Container className="grid items-start gap-6 py-6 lg:grid-cols-12 lg:gap-6 lg:py-8">
+        <div className="space-y-6 lg:col-span-7">
+          <Prose text={career.description} className="prose-width" />
           {career.requirements ? (
             <div>
               <Kicker>What we look for</Kicker>
-              <Prose text={career.requirements} className="mt-4" />
+              <Prose text={career.requirements} className="prose-width mt-3" />
             </div>
           ) : null}
         </div>
-        <aside className="h-fit rounded-xl border border-border bg-surface-dark p-6 text-white lg:sticky lg:top-24 lg:col-span-5">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-primary-300">{career.kind}</p>
-          {career.department ? <p className="mt-2 text-sm text-white/70">{career.department}</p> : null}
-          <p className="mt-4 text-sm text-white/70">{career.location}</p>
+        <aside className="glass-card h-fit rounded-2xl p-5 lg:sticky lg:top-24 lg:col-span-5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary-400">{career.kind}</p>
+          {career.department ? <p className="mt-2 text-sm text-muted-foreground">{career.department}</p> : null}
+          <p className="mt-3 text-sm text-muted-foreground">{career.location}</p>
           {career.deadline ? <p className="mt-1 text-sm">Apply by {formatDate(career.deadline)}</p> : null}
-          <Link
+          <SiteLinkButton
             href={`/contact?topic=${encodeURIComponent(`Career: ${career.title}`)}`}
-            className="mt-6 inline-flex min-h-11 items-center rounded-[10px] bg-white px-4 text-sm font-semibold text-surface-dark"
+            className="mt-5 w-full"
           >
             Apply through Contact Us
-          </Link>
+          </SiteLinkButton>
         </aside>
       </Container>
     </>

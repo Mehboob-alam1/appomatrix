@@ -120,16 +120,16 @@ export function PageHero({
     <section className="relative overflow-hidden border-b border-border">
       <BackgroundGlow className="opacity-50" />
       <JsonLd data={breadcrumbJsonLd(trail)} />
-      <Container className="relative pt-10 pb-10 md:pt-14 md:pb-14">
+      <Container className="relative pt-8 pb-8 md:pt-10 md:pb-10">
         <Breadcrumbs items={trail} />
-        <div className="mt-6 max-w-3xl">
+        <div className="mt-4 max-w-3xl">
           <Chip className="border-primary/30 bg-primary/10 text-primary-300">{kicker}</Chip>
-          <h1 className="font-display mt-4 text-balance">{titleNode}</h1>
-          {lead ? <Prose text={lead} className="mt-4 max-w-2xl text-base text-muted-foreground md:text-lg" /> : null}
+          <h1 className="font-display mt-3 text-balance">{titleNode}</h1>
+          {lead ? <Prose text={lead} className="prose-width mt-3 text-base text-muted-foreground" /> : null}
         </div>
         {image ? (
-          <div className="media-card glass-card mt-8 max-w-4xl overflow-hidden rounded-2xl p-1.5">
-            <SafeImage src={image} alt={imageAlt || title} className="aspect-[16/8] w-full rounded-[0.9rem] object-contain object-center" />
+          <div className="media-card media-frame glass-card mt-6 max-w-3xl overflow-hidden rounded-2xl p-1.5">
+            <SafeImage src={image} alt={imageAlt || title} className="aspect-[16/9] w-full rounded-[0.9rem] object-contain object-center" />
           </div>
         ) : null}
       </Container>

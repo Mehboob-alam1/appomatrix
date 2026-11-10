@@ -38,14 +38,14 @@ export function PortfolioBrowser({ projects }: { projects: Project[] }) {
       {visible.length === 0 ? (
         <p className="mt-8 text-muted-foreground">No projects in this category yet.</p>
       ) : (
-        <div className="mt-8 grid gap-5 sm:grid-cols-2">
+        <div className="mt-6 grid items-start gap-4 sm:grid-cols-2">
           {visible.map((project) => (
             <Link
               key={project.id}
               href={`/portfolio/${project.slug}`}
               className="card-lift group overflow-hidden rounded-2xl border border-border bg-card/50"
             >
-              <div className="media-card rounded-none border-0">
+              <div className="media-card media-frame rounded-none border-0 bg-muted/40">
                 {project.coverImage ? (
                   <img
                     src={project.coverImage}
@@ -62,11 +62,11 @@ export function PortfolioBrowser({ projects }: { projects: Project[] }) {
                   </div>
                 )}
               </div>
-              <div className="p-5">
+              <div className="p-4">
                 {project.category ? (
                   <Chip className="bg-primary/10 text-primary-300">{project.category}</Chip>
                 ) : null}
-                <h2 className="mt-3 text-xl font-semibold group-hover:text-primary-300">{project.title}</h2>
+                <h2 className="mt-2 text-lg font-semibold group-hover:text-primary-300">{project.title}</h2>
                 {project.clientName ? <p className="mt-1 text-xs text-muted-foreground">{project.clientName}</p> : null}
                 <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{richTextPlain(project.excerpt)}</p>
                 <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-400">
