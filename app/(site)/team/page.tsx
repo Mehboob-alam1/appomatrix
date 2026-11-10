@@ -35,7 +35,7 @@ export default async function TeamPage() {
           <article key={person.id} className="group overflow-hidden rounded-2xl border border-border bg-card/50">
             {person.photo ? (
               <div className="media-card rounded-none border-0">
-                <SafeImage src={person.photo} alt={person.photoAlt || person.name} className="aspect-[4/5] w-full object-cover" />
+                <SafeImage src={person.photo} alt={person.photoAlt || person.name} className="aspect-[4/5] w-full object-contain object-center" />
               </div>
             ) : (
               <div className="grid aspect-[4/5] place-items-center bg-muted text-5xl font-semibold text-muted-foreground">

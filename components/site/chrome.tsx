@@ -129,7 +129,7 @@ export function PageHero({
         </div>
         {image ? (
           <div className="media-card glass-card mt-8 max-w-4xl overflow-hidden rounded-2xl p-1.5">
-            <SafeImage src={image} alt={imageAlt || title} className="aspect-[16/8] w-full rounded-[0.9rem] object-cover" />
+            <SafeImage src={image} alt={imageAlt || title} className="aspect-[16/8] w-full rounded-[0.9rem] object-contain object-center" />
           </div>
         ) : null}
       </Container>

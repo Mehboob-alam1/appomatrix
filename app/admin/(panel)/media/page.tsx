@@ -126,7 +126,7 @@ export default function MediaPage() {
             <img
               src={item.url}
               alt={item.alt || item.originalName || ""}
-              className="h-24 w-full rounded-lg object-cover"
+              className="h-24 w-full rounded-lg object-contain object-center"
               onError={(event) => {
                 event.currentTarget.alt = "Missing image";
               }}

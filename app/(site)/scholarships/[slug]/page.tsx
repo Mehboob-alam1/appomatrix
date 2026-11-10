@@ -40,7 +40,7 @@ export default async function ScholarshipPage({ params }: Params) {
         <div className="space-y-6 lg:col-span-7">
           {item.coverImage ? (
             <div className="media-card">
-              <img src={item.coverImage} alt={item.title} className="aspect-[16/9] w-full object-cover" />
+              <img src={item.coverImage} alt={item.title} className="aspect-[16/9] w-full object-contain object-center" />
             </div>
           ) : null}
           <Prose text={item.description} />

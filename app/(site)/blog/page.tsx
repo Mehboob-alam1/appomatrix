@@ -90,7 +90,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
                 <SafeImage
                   src={featured.featuredImage}
                   alt={featured.featuredImageAlt || featured.title}
-                  className="aspect-[16/10] h-full w-full object-cover"
+                  className="aspect-[16/10] h-full w-full object-contain object-center"
                 />
               ) : (
                 <div className="aspect-[16/10] bg-muted md:h-full" />
@@ -120,7 +120,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
                   <SafeImage
                     src={post.featuredImage}
                     alt={post.featuredImageAlt || post.title}
-                    className="aspect-[16/10] w-full object-cover"
+                    className="aspect-[16/10] w-full object-contain object-center"
                   />
                 ) : (
                   <div className="aspect-[16/10] bg-muted" />
