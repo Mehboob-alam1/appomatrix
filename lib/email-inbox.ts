@@ -1,6 +1,6 @@
 import { randomBytes } from "crypto";
 import sanitizeHtml from "sanitize-html";
-import { all, get, run } from "@/lib/db";
+import { all, allUnsafe, get, run, runUnsafe } from "@/lib/db";
 import { mailFromAddress, plainToHtml, sendMail, smtpConfigured } from "@/lib/mail";
 import type { EmailMessage, EmailThread, EmailThreadDetail } from "@/lib/types";
 
@@ -10,6 +10,16 @@ function id(prefix: string) {
 
 function now() {
   return new Date().toISOString();
+}
+
+type QueryOpts = { duringMigrate?: boolean };
+
+function execAll(sql: string, params: (string | number | null)[] = [], opts?: QueryOpts) {
+  return opts?.duringMigrate ? allUnsafe(sql, params) : all(sql, params);
+}
+
+function execRun(sql: string, params: (string | number | null)[] = [], opts?: QueryOpts) {
+  return opts?.duringMigrate ? runUnsafe(sql, params) : run(sql, params);
 }
 
 export function sanitizeEmailHtml(html: string) {
@@ -72,16 +82,19 @@ function mapMessage(row: Record<string, unknown>): EmailMessage {
   };
 }
 
-export async function createThreadFromInquiry(input: {
-  inquiryId: string;
-  name: string;
-  email: string;
-  topic: string;
-  message: string;
-  company?: string;
-  phone?: string;
-  budget?: string;
-}) {
+export async function createThreadFromInquiry(
+  input: {
+    inquiryId: string;
+    name: string;
+    email: string;
+    topic: string;
+    message: string;
+    company?: string;
+    phone?: string;
+    budget?: string;
+  },
+  opts?: QueryOpts,
+) {
   const created = now();
   const threadId = id("eth");
   const messageId = id("emsg");
@@ -94,14 +107,15 @@ export async function createThreadFromInquiry(input: {
   const bodyText = metaLines.length ? `${metaLines.join("\n")}\n\n${input.message}` : input.message;
   const providerUid = `inquiry:${input.inquiryId}`;
 
-  await run(
+  await execRun(
     `INSERT INTO email_threads
       (id, subject, participant_email, participant_name, inquiry_id, source, status, starred, unread_count, last_message_at, created_at)
      VALUES (?, ?, ?, ?, ?, 'contact_form', 'open', 0, 1, ?, ?)`,
     [threadId, subject, input.email, input.name, input.inquiryId, created, created],
+    opts,
   );
 
-  await run(
+  await execRun(
     `INSERT INTO email_messages
       (id, thread_id, direction, from_email, from_name, to_email, subject, body_text, body_html,
        message_id, in_reply_to, references_header, provider_uid, attachments_json, read_at, sent_at, error, created_at)
@@ -120,40 +134,48 @@ export async function createThreadFromInquiry(input: {
       created,
       created,
     ],
+    opts,
   );
 
   return { threadId, messageId };
 }
 
-export async function backfillInquiryThreads() {
-  const rows = await all(
+export async function backfillInquiryThreads(opts?: QueryOpts) {
+  const rows = await execAll(
     `SELECT i.* FROM inquiries i
      LEFT JOIN email_threads t ON t.inquiry_id = i.id
      WHERE t.id IS NULL
      ORDER BY i.submitted_at ASC`,
+    [],
+    opts,
   );
   for (const row of rows) {
-    await createThreadFromInquiry({
-      inquiryId: String(row.id),
-      name: String(row.name || ""),
-      email: String(row.email || ""),
-      topic: String(row.topic || ""),
-      message: String(row.message || ""),
-      company: String(row.company || ""),
-      phone: String(row.phone || ""),
-      budget: String(row.budget || ""),
-    });
+    await createThreadFromInquiry(
+      {
+        inquiryId: String(row.id),
+        name: String(row.name || ""),
+        email: String(row.email || ""),
+        topic: String(row.topic || ""),
+        message: String(row.message || ""),
+        company: String(row.company || ""),
+        phone: String(row.phone || ""),
+        budget: String(row.budget || ""),
+      },
+      opts,
+    );
     if (String(row.status) === "archived") {
-      await run(
+      await execRun(
         `UPDATE email_threads SET status = 'archived', unread_count = 0 WHERE inquiry_id = ?`,
         [String(row.id)],
+        opts,
       );
     } else if (String(row.status) === "replied" || String(row.status) === "reviewed") {
-      await run(`UPDATE email_threads SET unread_count = 0 WHERE inquiry_id = ?`, [String(row.id)]);
-      await run(
+      await execRun(`UPDATE email_threads SET unread_count = 0 WHERE inquiry_id = ?`, [String(row.id)], opts);
+      await execRun(
         `UPDATE email_messages SET read_at = COALESCE(read_at, created_at) WHERE thread_id IN
          (SELECT id FROM email_threads WHERE inquiry_id = ?)`,
         [String(row.id)],
+        opts,
       );
     }
   }
