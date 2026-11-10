@@ -55,7 +55,17 @@ export function getPool() {
 
 export function ensureReady() {
   if (!globalForDb.cmsReady) {
-    globalForDb.cmsReady = migrate(getPool()).catch((error: unknown) => {
+    globalForDb.cmsReady = (async () => {
+      await migrate(getPool());
+      // Backfill after migrate completes, using unsafe queries so we do not deadlock
+      // by awaiting this same ensureReady() promise again.
+      try {
+        const { backfillInquiryThreads } = await import("@/lib/email-inbox");
+        await backfillInquiryThreads({ duringMigrate: true });
+      } catch (error) {
+        console.error("Email inbox backfill skipped", error);
+      }
+    })().catch((error: unknown) => {
       globalForDb.cmsReady = undefined;
       throw error;
     });
@@ -63,10 +73,25 @@ export function ensureReady() {
   return globalForDb.cmsReady;
 }
 
-export async function all(sql: string, params: SqlValue[] = []) {
-  await ensureReady();
+/** Query helpers that skip migrate — only for use while migrate/backfill is already running. */
+export async function allUnsafe(sql: string, params: SqlValue[] = []) {
   const [rows] = await getPool().execute<Row[]>(sql, params);
   return rows;
+}
+
+export async function getUnsafe(sql: string, params: SqlValue[] = []) {
+  const rows = await allUnsafe(sql, params);
+  return rows[0];
+}
+
+export async function runUnsafe(sql: string, params: SqlValue[] = []) {
+  const [result] = await getPool().execute<ResultSetHeader>(sql, params);
+  return result;
+}
+
+export async function all(sql: string, params: SqlValue[] = []) {
+  await ensureReady();
+  return allUnsafe(sql, params);
 }
 
 export async function get(sql: string, params: SqlValue[] = []) {
@@ -76,6 +101,5 @@ export async function get(sql: string, params: SqlValue[] = []) {
 
 export async function run(sql: string, params: SqlValue[] = []) {
   await ensureReady();
-  const [result] = await getPool().execute<ResultSetHeader>(sql, params);
-  return result;
+  return runUnsafe(sql, params);
 }
