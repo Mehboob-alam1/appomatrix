@@ -127,7 +127,62 @@ export async function createInquiry(formData: FormData): Promise<ActionResult> {
   } catch (error) {
     console.error("Failed to mirror inquiry into email inbox", error);
   }
+  try {
+    await notifyStudioOfInquiry({ id, name, email, topic, message, company, phone, budget });
+  } catch (error) {
+    console.error("Failed to email studio about inquiry", error);
+  }
   return { ok: true };
+}
+
+async function notifyStudioOfInquiry(input: {
+  id: string;
+  name: string;
+  email: string;
+  topic: string;
+  message: string;
+  company: string;
+  phone: string;
+  budget: string;
+}) {
+  const { mailFromAddress, plainToHtml, sendMail, smtpConfigured } = await import("@/lib/mail");
+  if (!smtpConfigured()) {
+    console.warn("SMTP not configured — studio was not emailed about inquiry", input.id);
+    return;
+  }
+  const { getSettings } = await import("@/lib/queries");
+  const settings = await getSettings();
+  const to = (process.env.SMTP_NOTIFY_TO || settings.email || mailFromAddress()).trim();
+  const from = mailFromAddress(settings.email || "hello@appomatrix.com");
+  const subject = input.topic
+    ? `New inquiry: ${input.topic} — ${input.name}`
+    : `New website inquiry — ${input.name}`;
+  const lines = [
+    "A new inquiry was submitted on the website.",
+    "",
+    `Name: ${input.name}`,
+    `Email: ${input.email}`,
+    input.phone ? `Phone: ${input.phone}` : "",
+    input.company ? `Company: ${input.company}` : "",
+    input.topic ? `Topic: ${input.topic}` : "",
+    input.budget ? `Budget: ${input.budget}` : "",
+    "",
+    "Message:",
+    input.message,
+    "",
+    `Open inbox: ${(process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/$/, "")}/admin/inbox`,
+    `Inquiry ID: ${input.id}`,
+  ].filter(Boolean);
+  const text = lines.join("\n");
+  await sendMail({
+    from,
+    fromName: settings.siteName || "Appo Matrix",
+    to,
+    replyTo: input.email,
+    subject,
+    text,
+    html: plainToHtml(text),
+  });
 }
 
 export async function setInquiryStatus(id: string, status: string): Promise<ActionResult> {

@@ -13,6 +13,7 @@ export type SendMailInput = {
   from: string;
   fromName?: string;
   to: string;
+  replyTo?: string;
   subject: string;
   text: string;
   html?: string;
@@ -67,6 +68,7 @@ export async function sendMail(input: SendMailInput) {
   const info = await transport.sendMail({
     from: `"${fromName}" <${input.from}>`,
     to: input.to,
+    replyTo: input.replyTo || undefined,
     subject: input.subject,
     text: input.text,
     html: input.html || undefined,

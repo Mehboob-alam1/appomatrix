@@ -34,6 +34,8 @@ Then use **Sync mail** in the inbox UI. Provider UIDs prevent duplicate imports.
 ## Behaviour
 
 - Contact form → `inquiries` row + `email_threads` / `email_messages`
+- Contact form also emails the studio (`SMTP_NOTIFY_TO`, or site settings email) with Reply-To set to the client
 - Existing inquiries are backfilled into threads on migrate
 - Replies store Message-ID / In-Reply-To / References and mark the inquiry `replied`
 - Credentials never ship to the browser; only authenticated admins can call inbox APIs
+- If SMTP is missing, the inquiry still saves; only the notification email is skipped
