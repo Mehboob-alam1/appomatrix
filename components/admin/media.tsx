@@ -49,6 +49,7 @@ export function ImageField({
   const [busy, setBusy] = useState(false);
   const [broken, setBroken] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [dims, setDims] = useState<{ w: number; h: number } | null>(null);
 
   async function takeFile(file?: File | null) {
     if (!file) return;
@@ -90,17 +91,27 @@ export function ImageField({
         }}
       >
         {url && !broken ? (
-          <img
-            src={url}
-            alt=""
+          <div
             className={cn(
-              "w-full object-cover",
+              "grid w-full place-items-center bg-muted/40",
               aspect === "wide" && "aspect-[16/9]",
               aspect === "square" && "aspect-square",
               aspect === "portrait" && "aspect-[4/5]",
             )}
-            onError={() => setBroken(true)}
-          />
+          >
+            <img
+              src={url}
+              alt=""
+              className="max-h-full max-w-full object-contain object-center"
+              onLoad={(event) => {
+                const img = event.currentTarget;
+                if (img.naturalWidth && img.naturalHeight) {
+                  setDims({ w: img.naturalWidth, h: img.naturalHeight });
+                }
+              }}
+              onError={() => setBroken(true)}
+            />
+          </div>
         ) : (
           <div
             className={cn(
@@ -116,6 +127,11 @@ export function ImageField({
           </div>
         )}
       </div>
+      {dims ? (
+        <p className="text-xs text-muted-foreground">
+          Original {dims.w}×{dims.h}px · preview uses contain (no crop) inside the widget frame
+        </p>
+      ) : null}
       <div className="flex flex-col gap-2 sm:flex-row">
         <Input
           id={name}
@@ -123,6 +139,7 @@ export function ImageField({
           onChange={(event) => {
             setUrl(event.target.value);
             setBroken(false);
+            setDims(null);
           }}
           placeholder="https://… or /uploads/…"
           className="h-10"

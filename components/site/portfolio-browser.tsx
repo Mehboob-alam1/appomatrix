@@ -50,7 +50,7 @@ export function PortfolioBrowser({ projects }: { projects: Project[] }) {
                   <img
                     src={project.coverImage}
                     alt={project.coverImageAlt || `${project.title} cover`}
-                    className="aspect-[16/10] w-full object-cover"
+                    className="aspect-[16/10] w-full object-contain object-center"
                     loading="lazy"
                     onError={(event) => {
                       event.currentTarget.style.display = "none";

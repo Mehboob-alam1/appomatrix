@@ -70,7 +70,7 @@ export default async function ServicePage({ params }: Params) {
               <SafeImage
                 src={service.image}
                 alt={service.imageAlt || service.title}
-                className="aspect-[16/9] w-full rounded-[0.9rem] object-cover"
+                className="aspect-[16/9] w-full rounded-[0.9rem] object-contain object-center"
               />
             </div>
           ) : null}

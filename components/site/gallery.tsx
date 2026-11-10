@@ -31,7 +31,7 @@ export function Gallery({ images }: { images: GalleryImage[] }) {
             <img
               src={image.url}
               alt={image.alt || ""}
-              className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+              className="aspect-[4/3] w-full object-contain object-center transition duration-300 group-hover:scale-[1.02]"
             />
             {image.caption ? (
               <span className="block px-3 py-2 text-sm text-muted-foreground">{image.caption}</span>

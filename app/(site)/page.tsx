@@ -192,7 +192,7 @@ export default async function HomePage() {
                   src={heroVisual}
                   alt={heroVisualAlt}
                   priority
-                  className="aspect-[16/11] w-full rounded-[1.1rem] object-cover"
+                  className="aspect-[16/11] w-full rounded-[1.1rem] object-contain object-center"
                 />
                 <div className="absolute right-5 bottom-5 left-5 rounded-xl border border-white/15 bg-[#090D18]/75 p-3 backdrop-blur-md md:right-auto md:left-5 md:max-w-[15rem]">
                   <p className="text-[11px] font-semibold tracking-[0.14em] text-primary-300 uppercase">
@@ -208,7 +208,7 @@ export default async function HomePage() {
                   <SafeImage
                     src={shown[1].coverImage}
                     alt={shown[1].coverImageAlt || shown[1].title}
-                    className="aspect-[9/14] w-full rounded-xl object-cover"
+                    className="aspect-[9/14] w-full rounded-xl object-contain object-center"
                   />
                 </div>
               ) : null}
@@ -358,7 +358,7 @@ export default async function HomePage() {
                       <SafeImage
                         src={project.coverImage}
                         alt={project.coverImageAlt || `${project.title} cover`}
-                        className="aspect-[16/10] w-full object-cover"
+                        className="aspect-[16/10] w-full object-contain object-center"
                       />
                     ) : (
                       <div className="grid aspect-[16/10] place-items-center bg-muted text-2xl font-semibold text-muted-foreground">
@@ -551,7 +551,7 @@ export default async function HomePage() {
                       <SafeImage
                         src={post.featuredImage}
                         alt={post.featuredImageAlt || post.title}
-                        className="aspect-[16/10] w-full object-cover"
+                        className="aspect-[16/10] w-full object-contain object-center"
                       />
                     ) : (
                       <div className="aspect-[16/10] bg-muted" />

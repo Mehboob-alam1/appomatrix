@@ -50,7 +50,7 @@ export default async function ScholarshipsPage() {
               >
                 <div className="media-card rounded-none border-0">
                   {item.coverImage ? (
-                    <img src={item.coverImage} alt={`${item.title} cover`} className="aspect-[16/10] w-full object-cover" loading="lazy" />
+                    <img src={item.coverImage} alt={`${item.title} cover`} className="aspect-[16/10] w-full object-contain object-center" loading="lazy" />
                   ) : (
                     <div className="grid aspect-[16/10] place-items-center bg-muted text-3xl font-semibold text-muted-foreground">
                       {item.title.slice(0, 1)}

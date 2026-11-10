@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { deleteInquiryAction, setInquiryStatusAction } from "@/lib/actions";
 import { csrfTokenFromDocument } from "@/lib/csrf-client";
 import type { Inquiry } from "@/lib/types";
@@ -20,7 +21,11 @@ export function InquiryTable({
     <div className="space-y-3">
       <p className="text-sm text-muted-foreground">
         Company mail: <a className="underline underline-offset-2" href={`mailto:${companyEmail}`}>{companyEmail}</a>
-        . Reply from that inbox so customers see the Appo Matrix address.
+        .         Prefer the{" "}
+        <Link className="font-medium text-primary underline underline-offset-2" href="/admin/inbox">
+          Email inbox
+        </Link>{" "}
+        to reply from the panel with SMTP. Mailto still works as a fallback.
       </p>
       {inquiries.map((inquiry) => (
         <InquiryCard key={inquiry.id} inquiry={inquiry} companyEmail={companyEmail} />

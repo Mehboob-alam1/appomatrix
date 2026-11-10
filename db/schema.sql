@@ -253,6 +253,52 @@ CREATE TABLE IF NOT EXISTS media (
   KEY idx_media_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- CRM email inbox: conversations between clients and the studio.
+CREATE TABLE IF NOT EXISTS email_threads (
+  id VARCHAR(64) NOT NULL,
+  subject VARCHAR(500) NOT NULL DEFAULT '',
+  participant_email VARCHAR(320) NOT NULL,
+  participant_name VARCHAR(255) NOT NULL DEFAULT '',
+  inquiry_id VARCHAR(64) NULL,
+  source VARCHAR(64) NOT NULL DEFAULT 'contact_form',
+  status VARCHAR(32) NOT NULL DEFAULT 'open',
+  starred TINYINT(1) NOT NULL DEFAULT 0,
+  unread_count INT NOT NULL DEFAULT 0,
+  last_message_at VARCHAR(40) NOT NULL,
+  created_at VARCHAR(40) NOT NULL,
+  PRIMARY KEY (id),
+  KEY idx_email_threads_last (last_message_at),
+  KEY idx_email_threads_status (status),
+  KEY idx_email_threads_email (participant_email),
+  KEY idx_email_threads_inquiry (inquiry_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS email_messages (
+  id VARCHAR(64) NOT NULL,
+  thread_id VARCHAR(64) NOT NULL,
+  direction VARCHAR(16) NOT NULL,
+  from_email VARCHAR(320) NOT NULL,
+  from_name VARCHAR(255) NOT NULL DEFAULT '',
+  to_email VARCHAR(320) NOT NULL,
+  subject VARCHAR(500) NOT NULL DEFAULT '',
+  body_text LONGTEXT NOT NULL,
+  body_html LONGTEXT NOT NULL,
+  message_id VARCHAR(500) NOT NULL DEFAULT '',
+  in_reply_to VARCHAR(500) NOT NULL DEFAULT '',
+  references_header LONGTEXT NOT NULL,
+  provider_uid VARCHAR(255) NOT NULL DEFAULT '',
+  attachments_json LONGTEXT NOT NULL,
+  read_at VARCHAR(40) NULL,
+  sent_at VARCHAR(40) NULL,
+  error TEXT NULL,
+  created_at VARCHAR(40) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_email_messages_provider (provider_uid),
+  KEY idx_email_messages_thread (thread_id),
+  KEY idx_email_messages_message_id (message_id),
+  KEY idx_email_messages_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS schema_migrations (
   id VARCHAR(191) NOT NULL,
   applied_at VARCHAR(40) NOT NULL,

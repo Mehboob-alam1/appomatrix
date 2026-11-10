@@ -195,6 +195,53 @@ export type Inquiry = {
   submittedAt: string;
 };
 
+export type EmailAttachmentMeta = {
+  filename: string;
+  contentType: string;
+  size?: number;
+  url?: string;
+};
+
+export type EmailMessage = {
+  id: string;
+  threadId: string;
+  direction: "inbound" | "outbound";
+  fromEmail: string;
+  fromName: string;
+  toEmail: string;
+  subject: string;
+  bodyText: string;
+  bodyHtml: string;
+  messageId: string;
+  inReplyTo: string;
+  referencesHeader: string;
+  providerUid: string;
+  attachments: EmailAttachmentMeta[];
+  readAt: string | null;
+  sentAt: string | null;
+  error: string | null;
+  createdAt: string;
+};
+
+export type EmailThread = {
+  id: string;
+  subject: string;
+  participantEmail: string;
+  participantName: string;
+  inquiryId: string | null;
+  source: string;
+  status: string;
+  starred: boolean;
+  unreadCount: number;
+  lastMessageAt: string;
+  createdAt: string;
+  preview?: string;
+};
+
+export type EmailThreadDetail = EmailThread & {
+  messages: EmailMessage[];
+};
+
 export type Settings = {
   siteName: string;
   tagline: string;

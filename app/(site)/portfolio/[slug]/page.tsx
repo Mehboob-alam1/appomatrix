@@ -75,7 +75,7 @@ export default async function ProjectPage({ params }: Params) {
               <img
                 src={project.coverImage}
                 alt={project.coverImageAlt || project.title}
-                className="aspect-[16/8] w-full rounded-[0.9rem] object-cover"
+                className="aspect-[16/8] w-full rounded-[0.9rem] object-contain object-center"
               />
             </div>
           </Container>

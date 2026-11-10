@@ -112,21 +112,21 @@ export async function createInquiry(formData: FormData): Promise<ActionResult> {
   if (!name || !email || !message) return { ok: false, error: "Name, email, and a short note are required." };
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: "Enter a valid email address." };
   const id = `inq_${randomBytes(6).toString("hex")}`;
+  const phone = clip(text(formData, "phone"), 40);
+  const company = clip(text(formData, "company"), 200);
+  const topic = clip(text(formData, "topic"), 200);
+  const budget = clip(text(formData, "budget"), 80);
   await run(
     `INSERT INTO inquiries (id, name, email, phone, company, topic, budget, message, status, submitted_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'new', ?)`,
-    [
-      id,
-      name,
-      email,
-      clip(text(formData, "phone"), 40),
-      clip(text(formData, "company"), 200),
-      clip(text(formData, "topic"), 200),
-      clip(text(formData, "budget"), 80),
-      message,
-      new Date().toISOString(),
-    ],
+    [id, name, email, phone, company, topic, budget, message, new Date().toISOString()],
   );
+  try {
+    const { createThreadFromInquiry } = await import("@/lib/email-inbox");
+    await createThreadFromInquiry({ inquiryId: id, name, email, topic, message, company, phone, budget });
+  } catch (error) {
+    console.error("Failed to mirror inquiry into email inbox", error);
+  }
   return { ok: true };
 }
 

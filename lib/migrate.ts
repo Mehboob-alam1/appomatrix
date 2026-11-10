@@ -156,4 +156,11 @@ export async function migrate(pool: Pool) {
   await fillPageCopy(async (sql, params = []) => {
     await pool.execute(sql, params as never);
   });
+
+  try {
+    const { backfillInquiryThreads } = await import("@/lib/email-inbox");
+    await backfillInquiryThreads();
+  } catch (error) {
+    console.error("Email inbox backfill skipped", error);
+  }
 }

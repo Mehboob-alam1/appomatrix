@@ -90,7 +90,7 @@ export default async function AboutPage() {
                     <SafeImage
                       src={person.photo}
                       alt={person.photoAlt || person.name}
-                      className="aspect-[4/5] w-full object-cover"
+                      className="aspect-[4/5] w-full object-contain object-center"
                     />
                   </div>
                 ) : (

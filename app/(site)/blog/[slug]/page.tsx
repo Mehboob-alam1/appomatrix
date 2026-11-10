@@ -67,7 +67,7 @@ export default async function PostPage({ params }: Params) {
             <img
               src={post.featuredImage}
               alt={post.featuredImageAlt || post.title}
-              className="aspect-[16/9] w-full rounded-[0.9rem] object-cover"
+              className="aspect-[16/9] w-full rounded-[0.9rem] object-contain object-center"
             />
           </div>
         </Container>

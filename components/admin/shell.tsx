@@ -22,6 +22,7 @@ const NAV = [
   { href: "/admin/careers", label: "Career development" },
   { href: "/admin/scholarships", label: "Scholarships" },
   { href: "/admin/media", label: "Media" },
+  { href: "/admin/inbox", label: "Email inbox" },
   { href: "/admin/inquiries", label: "CRM inquiries" },
 ];
 
