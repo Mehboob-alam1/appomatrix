@@ -51,7 +51,7 @@ export default async function PostPage({ params }: Params) {
       />
       <section className="relative overflow-hidden border-b border-border">
         <BackgroundGlow className="opacity-40" />
-        <Container className="relative max-w-3xl pt-10 pb-12">
+        <Container className="relative max-w-3xl pt-10 pb-8">
           <Breadcrumbs items={crumbs} />
           <p className="mt-5 text-[12px] font-semibold uppercase tracking-[0.14em] text-primary-400">
             {post.category} · {formatDate(post.publishedAt)} · {post.readingTimeMinutes} min read

@@ -54,7 +54,7 @@ export default async function ProjectPage({ params }: Params) {
       />
       <section className="relative overflow-hidden border-b border-border">
         <BackgroundGlow className="opacity-40" />
-        <Container className="relative pt-10 pb-12">
+        <Container className="relative pt-10 pb-8">
           <Breadcrumbs items={crumbs} />
           <p className="mt-5 text-[12px] font-semibold uppercase tracking-[0.14em] text-primary-400">
             {[project.category, project.clientName].filter(Boolean).join(" · ")}
@@ -93,7 +93,7 @@ export default async function ProjectPage({ params }: Params) {
           ))}
         </Container>
       ) : null}
-      <Container className="grid gap-6 py-12 md:grid-cols-3">
+      <Container className="grid gap-6 py-8 md:grid-cols-3">
         {[
           ["The Challenge", project.problem],
           ["Our Solution", project.solution],
@@ -106,7 +106,7 @@ export default async function ProjectPage({ params }: Params) {
         ))}
       </Container>
       {project.gallery.length > 0 ? (
-        <Container className="pb-14">
+        <Container className="pb-9">
           <h2 className="font-display text-3xl tracking-tight">
             Product <GradientText>gallery</GradientText>
           </h2>
@@ -117,7 +117,7 @@ export default async function ProjectPage({ params }: Params) {
         </Container>
       ) : null}
       {stack.length > 0 ? (
-        <Container className="pb-14">
+        <Container className="pb-9">
           <Kicker>Technologies used</Kicker>
           <div className="mt-4 flex flex-wrap gap-2">
             {stack.map((item) => (
@@ -129,7 +129,7 @@ export default async function ProjectPage({ params }: Params) {
         </Container>
       ) : null}
       {more.length > 0 ? (
-        <Container className="border-t border-border py-14">
+        <Container className="border-t border-border py-9">
           <h2 className="font-display text-2xl">
             More <GradientText>work</GradientText>
           </h2>

@@ -46,7 +46,7 @@ export default async function ContactPage({
         imageAlt={copy.imageAlt}
         highlight="extraordinary"
       />
-      <Container className="grid gap-8 py-12 lg:grid-cols-12 lg:gap-10 lg:py-16">
+      <Container className="grid items-start gap-6 py-6 lg:grid-cols-12 lg:gap-6 lg:py-8">
         <div className="glass-card rounded-2xl p-5 md:p-8 lg:col-span-7">
           <ContactForm topics={topics} defaultTopic={defaultTopic} />
         </div>

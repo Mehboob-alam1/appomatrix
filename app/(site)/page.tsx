@@ -154,7 +154,7 @@ export default async function HomePage() {
       {/* HERO */}
       <section className="relative overflow-hidden border-b border-border">
         <BackgroundGlow />
-        <Container className="relative grid items-center gap-10 py-14 lg:grid-cols-12 lg:gap-12 lg:py-20">
+        <Container className="relative grid items-center gap-10 py-10 lg:grid-cols-12 lg:gap-8 lg:py-9">
           <div className="fade-in lg:col-span-6">
             <p className="inline-flex items-center gap-2 rounded-full border border-border bg-card/50 px-3 py-1 text-[11px] font-semibold tracking-[0.16em] text-primary-300 uppercase">
               <span className="size-1.5 rounded-full bg-cyan" aria-hidden="true" />
@@ -217,7 +217,7 @@ export default async function HomePage() {
         </Container>
 
         {stats.length > 0 ? (
-          <Container className="relative pb-12">
+          <Container className="relative pb-8">
             <div className="grid grid-cols-2 gap-6 rounded-2xl border border-border bg-card/40 px-5 py-6 md:grid-cols-4 md:gap-0 md:px-2">
               {stats.map((stat, index) => (
                 <div
@@ -244,7 +244,7 @@ export default async function HomePage() {
             }
             description="A clear path from concept to live software — built for speed without skipping craft."
           />
-          <div className="mt-10">
+          <div className="mt-6">
             <ProcessPillars steps={DDD} />
           </div>
         </Container>
@@ -263,7 +263,7 @@ export default async function HomePage() {
             }
             description="We accelerate delivery through focused scoping and modern engineering — timelines are always qualified to your project's complexity."
           />
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {SPEED_POINTS.map((item) => (
               <div key={item.title} className="glass-card rounded-2xl p-5">
                 <h3 className="text-base font-semibold">{item.title}</h3>
@@ -297,14 +297,14 @@ export default async function HomePage() {
               href="/services"
               linkLabel="All services"
             />
-            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="mt-6 grid items-start gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {services.map((service, index) => {
                 const Icon = serviceIcons[index % serviceIcons.length];
                 return (
                   <Link
                     key={service.id}
                     href={`/services/${service.slug}`}
-                    className="card-lift glass-card group flex h-full flex-col rounded-2xl p-5"
+                    className="card-lift glass-card group flex flex-col rounded-2xl p-4"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <span className="grid size-11 place-items-center rounded-xl bg-primary/15 text-primary-300">
@@ -318,7 +318,7 @@ export default async function HomePage() {
                     <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
                       {richTextPlain(service.shortDescription)}
                     </p>
-                    <span className="mt-auto inline-flex items-center gap-1 pt-5 text-sm font-semibold text-primary-400">
+                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary-400">
                       Learn more <ArrowUpRight className="size-4" />
                     </span>
                   </Link>
@@ -346,7 +346,7 @@ export default async function HomePage() {
               href="/portfolio"
               linkLabel="View all projects"
             />
-            <div className="mt-10 grid gap-5 sm:grid-cols-2">
+            <div className="mt-6 grid gap-5 sm:grid-cols-2">
               {shown.map((project) => (
                 <Link
                   key={project.id}
@@ -393,7 +393,7 @@ export default async function HomePage() {
             }
             description="Typical phases for appropriately scoped products. Exact timelines depend on scope, integrations, and complexity — we'll confirm after discovery."
           />
-          <div className="mt-10">
+          <div className="mt-6">
             <Stepper steps={process.length ? process : PHASES} />
           </div>
         </Container>
@@ -410,7 +410,7 @@ export default async function HomePage() {
               </>
             }
           />
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {(principles.length >= 3
               ? principles.map((p) => ({ title: p.title, body: p.body }))
               : WHY_US
@@ -422,7 +422,7 @@ export default async function HomePage() {
             ))}
           </div>
           {aboutBlock.show ? (
-            <div className="mt-10 flex flex-wrap items-center gap-4">
+            <div className="mt-6 flex flex-wrap items-center gap-4">
               <SiteLinkButton href={aboutBlock.ctaHref || "/about"} variant="outline">
                 {aboutBlock.ctaLabel || "About Appo Matrix"}
               </SiteLinkButton>
@@ -445,11 +445,11 @@ export default async function HomePage() {
                 )
               }
             />
-            <div className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible">
+            <div className="mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible">
               {quotes.map((quote) => (
                 <figure
                   key={quote.id}
-                  className="card-lift glass-card flex h-full w-[88%] shrink-0 snap-start flex-col rounded-2xl p-6 md:w-auto"
+                  className="card-lift glass-card flex w-[88%] shrink-0 snap-start flex-col rounded-2xl p-6 md:w-auto"
                 >
                   <Quote className="size-6 text-primary-400" aria-hidden="true" />
                   <blockquote className="mt-4 flex-1 text-base font-medium leading-relaxed text-foreground">
@@ -489,7 +489,7 @@ export default async function HomePage() {
                 <Link
                   key={career.id}
                   href={`/career-development/${career.slug}`}
-                  className="card-lift glass-card flex h-full flex-col rounded-2xl p-5"
+                  className="card-lift glass-card flex flex-col rounded-2xl p-5"
                 >
                   <Chip className="w-fit bg-primary/10 text-primary-300">{career.kind}</Chip>
                   <h3 className="mt-3 text-lg font-semibold">{career.title}</h3>

@@ -29,12 +29,12 @@ export default async function TeamPage() {
           <Prose text={copy.body} className="max-w-2xl text-sm text-muted-foreground" />
         </Container>
       ) : null}
-      <Container className="grid gap-5 py-10 sm:grid-cols-2 lg:grid-cols-4 lg:py-14">
+      <Container className="grid items-start gap-4 py-8 sm:grid-cols-2 lg:grid-cols-4">
         {team.length === 0 ? <p className="text-muted-foreground">Team profiles will appear here once they are published.</p> : null}
         {team.map((person) => (
           <article key={person.id} className="group overflow-hidden rounded-2xl border border-border bg-card/50">
             {person.photo ? (
-              <div className="media-card rounded-none border-0">
+              <div className="media-card media-frame rounded-none border-0">
                 <SafeImage src={person.photo} alt={person.photoAlt || person.name} className="aspect-[4/5] w-full object-contain object-center" />
               </div>
             ) : (

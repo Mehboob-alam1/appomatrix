@@ -62,13 +62,13 @@ export default async function ServicesPage() {
             </>
           }
         />
-        <div className="mt-10 grid gap-5">
+        <div className="mt-6 grid items-start gap-4">
           {groups.map((group, index) => (
-            <section key={group.id} className="glass-card rounded-2xl p-5 md:p-7">
-              <div className="grid gap-6 lg:grid-cols-12">
+            <section key={group.id} className="glass-card rounded-2xl p-4 md:p-5">
+              <div className="grid items-start gap-4 lg:grid-cols-12">
                 <div className="lg:col-span-4">
                   <div className="flex items-start gap-3">
-                    <span className="grid size-12 place-items-center rounded-xl bg-primary/15 text-primary-300">
+                    <span className="grid size-10 place-items-center rounded-xl bg-primary/15 text-primary-300">
                       <ServiceIcon name={group.icon} className="size-5" />
                     </span>
                     <div>
@@ -127,7 +127,7 @@ export default async function ServicesPage() {
             }
             description="A clear path from brief to live product — timelines are always qualified to your scope."
           />
-          <div className="mt-10">
+          <div className="mt-6">
             <ProcessPillars
               steps={steps.map((step, i) => ({
                 number: String(i + 1).padStart(2, "0"),

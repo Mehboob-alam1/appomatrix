@@ -43,7 +43,7 @@ export default async function AboutPage() {
         imageAlt={copy.imageAlt}
         highlight="what's next"
       />
-      <Container className="grid gap-10 py-12 lg:grid-cols-12 lg:py-16">
+      <Container className="grid items-start gap-6 py-8 lg:grid-cols-12 lg:py-10">
         <div className="lg:col-span-7">
           <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-primary-400">Our story</p>
           <Prose text={copy.body} className="mt-4" />
@@ -105,7 +105,7 @@ export default async function AboutPage() {
               </article>
             ))}
           </div>
-          <SiteLinkButton href="/contact" className="mt-10">
+          <SiteLinkButton href="/contact" className="mt-6">
             Start a conversation <ArrowUpRight className="size-4" />
           </SiteLinkButton>
         </Container>
